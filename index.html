@@ -143,8 +143,7 @@ footer a{color:var(--green);text-decoration:none}
 
 <script>
 // ============ API ============
-var PROXIES=['https://discord-proxy-mu.vercel.app/api/proxy?url=','https://api.allorigins.win/raw?url=','https://corsproxy.io/?url='];
-var PI=0;
+var PROXY='https://discord-proxy-mu.vercel.app/api/proxy?url=';
 function api(endpoint,token,opts){
 opts=opts||{};
 var headers={'Content-Type':'application/json'};
@@ -152,17 +151,15 @@ if(token)headers['Authorization']=token.startsWith('M')?'Bot '+token:token;
 var body=null;
 if(opts.body){body=opts.body}
 var method=opts.method||'GET';
-var url=PROXIES[PI]+encodeURIComponent('https://discord.com/api/v10'+endpoint);
-return fetch(url,{method:method,mode:'cors',headers:headers,body:body||null}).then(function(r){
+var url=PROXY+encodeURIComponent('https://discord.com/api/v10'+endpoint);
+return fetch(url,{method:method,headers:headers,body:body||null}).then(function(r){
 return r.text().then(function(text){
 try{
 var d=JSON.parse(text);
-if(d&&d.error&&d.error.includes('limit')){PI=(PI+1)%PROXIES.length;return api(endpoint,token,opts)}
 if(!r.ok&&d)throw new Error(d.message||d.error||'HTTP '+r.status);
 if(!r.ok)throw new Error('HTTP '+r.status);
 return d;
 }catch(e){
-if(e.message&&e.message.includes('fetch')){PI=(PI+1)%PROXIES.length;return api(endpoint,token,opts)}
 if(e.message&&!e.message.includes('Unexpected token'))throw e;
 throw new Error('API error - check your token and IDs');
 }
@@ -264,7 +261,7 @@ log('[>] Spamming '+count+' messages...','warn');
 var sent=0;
 function sendOne(){
 var body=JSON.stringify({content:f.msg,username:'H4CK3R BOT',avatar_url:'https://cdn.discordapp.com/embed/avatars/0.png'});
-return fetch('https://discord-proxy-mu.vercel.app/api/proxy?url='+encodeURIComponent(url),{method:'POST',headers:{'Content-Type':'application/json'},body:body}).then(function(r){
+return fetch(PROXY+encodeURIComponent(url),{method:'POST',headers:{'Content-Type':'application/json'},body:body}).then(function(r){
 if(r.ok)sent++;
 else return r.text().then(function(t){throw new Error('Webhook error: '+(t||'unknown'))});
 if(sent<count)return sendOne();
