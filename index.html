@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>H4CK3R ZONE - Discord Toolkit</title>
+  <meta name="description" content="Discord hacking tools y utilities" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Fira+Code:wght@400;600;700&display=swap');
+
+    :root {
+      --bg: #0a0a0a;
+      --green: #00ff41;
+      --green-dim: #00aa22;
+      --red: #ff003c;
+      --red-dim: #aa0022;
+      --yellow: #ffd700;
+      --cyan: #00ffff;
+      --purple: #7b2ff7;
+      --terminal: #0d1117;
+      --border: #1a1a2e;
+      --text: #c0c0c0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', 'Fira Code', monospace;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    canvas#matrix {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; opacity: 0.15; pointer-events: none;
+    }
+
+    .container { position: relative; z-index: 1; }
+
+    .scanlines {
+      position: fixed; inset: 0; z-index: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,255,65,0.015) 2px, rgba(0,255,65,0.015) 4px
+      );
+      pointer-events: none;
+    }
+
+    .vignette {
+      position: fixed; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.8) 100%);
+      pointer-events: none;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.97; } 5% { opacity: 0.85; } 10% { opacity: 0.97; }
+      15% { opacity: 0.92; } 20% { opacity: 0.97; } 50% { opacity: 0.98; }
+      80% { opacity: 0.95; } 90% { opacity: 0.88; } 100% { opacity: 0.97; }
+    }
+
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(2px, -2px); }
+      60% { transform: translate(-1px, 1px); }
+      80% { transform: translate(1px, -1px); }
+      100% { transform: translate(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 5px var(--green), 0 0 10px var(--green-dim); }
+      50% { box-shadow: 0 0 10px var(--green), 0 0 20px var(--green-dim); }
+    }
+    @keyframes rainbow {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes typewriter {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    @keyframes bootProgress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 3px; }
+
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,0.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+    .header-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0.75rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 1.25rem; font-weight: 700; color: var(--green);
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 36px; height: 36px; background: var(--green);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--bg); font-weight: bold; font-size: 1rem;
+      animation: pulse 2s infinite;
+    }
+    .logo span:last-child { color: var(--red); }
+    .status {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; color: var(--green);
+    }
+    .status-dot {
+      width: 8px; height: 8px; background: var(--green);
+      border-radius: 50%; animation: blink 1s infinite;
+    }
+
+    .boot-screen {
+      background: var(--terminal);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin: 1.5rem;
+      max-width: 1200px; margin-left: auto; margin-right: auto;
+      overflow: hidden;
+    }
+    .boot-header {
+      background: var(--border); padding: 0.5rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .boot-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .boot-dot.r { background: #ff5f56; }
+    .boot-dot.y { background: #ffbd2e; }
+    .boot-dot.g { background: #27c93f; }
+    .boot-title { color: #666; font-size: 0.75rem; margin-left: 0.5rem; }
+    .boot-body { padding: 1rem; font-size: 0.8rem; line-height: 1.6; color: var(--green); }
+    .boot-line { opacity: 0; }
+    .boot-line.show { opacity: 1; }
+    .boot-cursor::after {
+      content: '█'; animation: blink 0.8s infinite; color: var(--green);
+    }
+    .boot-progress {
+      height: 2px; background: var(--border); margin-top: 0.5rem; border-radius: 2px; overflow: hidden;
+    }
+    .boot-progress-bar {
+      height: 100%; width: 0%; background: var(--green);
+      transition: width 0.3s;
+    }
+
+    .main-content { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: rgba(13,17,23,0.8);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem;
+      text-align: center;
+      animation: slideUp 0.5s ease forwards;
+      opacity: 0;
+    }
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+    .stat-card:hover { border-color: var(--green); box-shadow: 0 0 15px rgba(0,255,65,0.1); }
+    .stat-number {
+      font-size: 2rem; font-weight: 700;
+      background: linear-gradient(90deg, var(--green), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-label { color: #666; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-top: 0.25rem; }
+
+    .section-title {
+      font-size: 1.1rem; font-weight: 700; color: var(--green);
+      margin-bottom: 1rem; padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.75rem;
+      text-transform: uppercase; letter-spacing: 3px;
+    }
+    .section-title .arrow { color: var(--red); }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .tool-card {
+      background: rgba(13,17,23,0.8);
+      border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+      transition: all 0.3s ease;
+      animation: slideUp 0.5s ease forwards;
+      opacity: 0;
+    }
+    .tool-card:hover {
+      border-color: var(--green);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0,255,65,0.1);
+    }
+    .tool-card-header {
+      padding: 1rem 1rem 0.5rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .tool-icon {
+      width: 40px; height: 40px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; flex-shrink: 0;
+    }
+    .tool-icon.red { background: rgba(255,0,60,0.15); color: var(--red); }
+    .tool-icon.green { background: rgba(0,255,65,0.15); color: var(--green); }
+    .tool-icon.purple { background: rgba(123,47,247,0.15); color: var(--purple); }
+    .tool-icon.cyan { background: rgba(0,255,255,0.15); color: var(--cyan); }
+    .tool-icon.yellow { background: rgba(255,215,0,0.15); color: var(--yellow); }
+    .tool-name { font-weight: 700; color: white; font-size: 0.95rem; }
+    .tool-badge {
+      font-size: 0.6rem; padding: 0.15rem 0.5rem; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+    }
+    .tool-badge.online { background: rgba(0,255,65,0.15); color: var(--green); }
+    .tool-badge.beta { background: rgba(255,215,0,0.15); color: var(--yellow); }
+    .tool-badge.dev { background: rgba(255,0,60,0.15); color: var(--red); }
+    .tool-card-body { padding: 0.5rem 1rem 1rem; }
+    .tool-desc { color: #888; font-size: 0.8rem; line-height: 1.5; }
+    .tool-meta {
+      margin-top: 0.75rem; padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.7rem; color: #555;
+    }
+    .tool-btn {
+      padding: 0.35rem 1rem; border: 1px solid var(--green);
+      background: transparent; color: var(--green);
+      border-radius: 4px; cursor: pointer;
+      font-family: inherit; font-size: 0.75rem;
+      transition: all 0.3s; text-decoration: none;
+    }
+    .tool-btn:hover {
+      background: var(--green); color: var(--bg);
+      box-shadow: 0 0 15px rgba(0,255,65,0.3);
+    }
+    .tool-btn.red {
+      border-color: var(--red); color: var(--red);
+    }
+    .tool-btn.red:hover {
+      background: var(--red); color: white;
+    }
+
+    .terminal-box {
+      background: var(--terminal);
+      border: 1px solid var(--border);
+      border-radius: 8px; margin-bottom: 2rem;
+    }
+    .terminal-box-header {
+      background: var(--border); padding: 0.5rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      border-radius: 8px 8px 0 0;
+    }
+    .terminal-box-title { color: #666; font-size: 0.75rem; }
+    .terminal-box-body {
+      padding: 1rem; font-size: 0.8rem; line-height: 1.8;
+      max-height: 200px; overflow-y: auto;
+    }
+    .terminal-line { color: var(--green); }
+    .terminal-line.error { color: var(--red); }
+    .terminal-line.info { color: var(--cyan); }
+    .terminal-line.warn { color: var(--yellow); }
+    .terminal-prompt { color: var(--green); }
+    .terminal-input-line {
+      display: flex; align-items: center; gap: 0.5rem;
+      border-top: 1px solid var(--border); padding: 0.5rem 1rem;
+    }
+    .terminal-input {
+      flex: 1; background: transparent; border: none;
+      color: var(--green); font-family: inherit; font-size: 0.8rem;
+      outline: none;
+    }
+    .terminal-input::placeholder { color: #333; }
+
+    .featured-tool {
+      background: linear-gradient(135deg, rgba(13,17,23,0.9), rgba(0,255,65,0.05));
+      border: 1px solid var(--green);
+      border-radius: 12px; padding: 2rem; margin-bottom: 2rem;
+      text-align: center;
+      animation: slideUp 0.6s ease forwards;
+      box-shadow: 0 0 30px rgba(0,255,65,0.05);
+    }
+    .featured-tool h2 {
+      font-size: 1.5rem; color: var(--green); margin-bottom: 0.5rem;
+    }
+    .featured-tool p { color: #888; font-size: 0.9rem; max-width: 600px; margin: 0 auto 1.5rem; }
+    .featured-input {
+      background: rgba(0,0,0,0.5); border: 1px solid var(--border);
+      padding: 0.75rem 1rem; border-radius: 6px;
+      color: var(--green); font-family: inherit; font-size: 0.85rem;
+      width: 100%; max-width: 400px; outline: none;
+      transition: border-color 0.3s;
+    }
+    .featured-input:focus { border-color: var(--green); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem; text-align: center;
+      font-size: 0.75rem; color: #333;
+    }
+    footer a { color: var(--green); text-decoration: none; }
+
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 200;
+      background: var(--terminal); border: 1px solid var(--green);
+      padding: 0.75rem 1.5rem; border-radius: 8px;
+      color: var(--green); font-size: 0.8rem;
+      transform: translateY(100px); opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--red); color: var(--red); }
+
+    @media (max-width: 768px) {
+      .tools-grid { grid-template-columns: 1fr; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .header-inner { flex-wrap: wrap; gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+
+  <header>
+    <div class="header-inner">
+      <a href="#" class="logo">
+        <div class="logo-icon">H</div>
+        <span>H4CK3R<span>ZONE</span></span>
+      </a>
+      <div class="status">
+        <span class="status-dot"></span>
+        <span id="statusText">SYSTEM ONLINE</span>
+        <span style="color:#333;margin-left:1rem;">|</span>
+        <span style="color:#666;font-size:0.7rem;" id="clock"></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="boot-screen" id="bootScreen">
+      <div class="boot-header">
+        <div class="boot-dot r"></div>
+        <div class="boot-dot y"></div>
+        <div class="boot-dot g"></div>
+        <span class="boot-title">H4CK3R_ZONE_SHELL — root@nexus:~</span>
+      </div>
+      <div class="boot-body" id="bootBody">
+        <div class="boot-line">[  OK  ] Initializing H4CK3R ZONE v3.7.1</div>
+        <div class="boot-line">[  OK  ] Loading Discord exploit modules...</div>
+        <div class="boot-line">[  OK  ] Establishing secure tunnel to Nexus Network</div>
+        <div class="boot-line">[  OK  ] Decrypting toolkit database (4096-bit RSA)</div>
+        <div class="boot-line">[ WARN ] Some modules require authorization</div>
+        <div class="boot-line">[  OK  ] 47 tools loaded successfully</div>
+        <div class="boot-line" id="bootFinalLine">
+          <span style="color:var(--green)">root@nexus:~$ </span>
+          <span class="boot-cursor"></span>
+        </div>
+        <div class="boot-progress">
+          <div class="boot-progress-bar" id="bootProgress"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content" id="mainContent" style="display:none">
+      <div class="stats-bar">
+        <div class="stat-card"><div class="stat-number">47</div><div class="stat-label">Tools Disponibles</div></div>
+        <div class="stat-card"><div class="stat-number">12.4k</div><div class="stat-label">Usuarios Activos</div></div>
+        <div class="stat-card"><div class="stat-number">99.7%</div><div class="stat-label">Uptime</div></div>
+        <div class="stat-card"><div class="stat-number">∞</div><div class="stat-label">Gratis</div></div>
+      </div>
+
+      <div class="featured-tool" id="featuredTool">
+        <h2>⚡ NEXUS NITRO GENERATOR v2</h2>
+        <p>Genera códigos de Nitro funcionales con alta tasa de éxito. Algoritmo basado en predicción de hashes.</p>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
+          <input type="text" class="featured-input" id="nitroInput" placeholder="Cantidad a generar (max 50)" value="10" />
+          <button class="tool-btn" id="nitroBtn" style="font-size:0.9rem;padding:0.6rem 2rem;">▶ GENERAR NITRO</button>
+          <div id="nitroResult" style="margin-top:0.5rem;font-size:0.8rem;word-break:break-all;max-width:100%;color:var(--cyan);"></div>
+        </div>
+      </div>
+
+      <div class="section-title"><span class="arrow">▶</span> DISCORD EXPLOITS</div>
+      <div class="tools-grid" id="toolsGrid"></div>
+
+      <div class="section-title" style="margin-top:1.5rem;"><span class="arrow">▶</span> CONSOLE / LOGS</div>
+      <div class="terminal-box">
+        <div class="terminal-box-header">
+          <div class="boot-dot r"></div>
+          <div class="boot-dot y"></div>
+          <div class="boot-dot g"></div>
+          <span class="terminal-box-title">root@nexus:~ — live.log</span>
+        </div>
+        <div class="terminal-box-body" id="terminalBody">
+          <div class="terminal-line">[SYSTEM] H4CK3R ZONE initialized</div>
+          <div class="terminal-line">[INFO] Discord API bridge active</div>
+        </div>
+        <div class="terminal-input-line">
+          <span class="terminal-prompt">root@nexus:~$</span>
+          <input type="text" class="terminal-input" id="terminalInput" placeholder="type 'help' for commands..." spellcheck="false" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>H4CK3R ZONE &copy; 2026 — <span style="color:var(--red)">For educational purposes only</span></p>
+    <p style="margin-top:0.25rem;"><a href="#">Discord</a> · <a href="#">GitHub</a> · <a href="#">Documentation</a></p>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const TOOLS = [
+      { name: "Nitro Generator", icon: "🎟️", iconType: "yellow", badge: "Online", badgeType: "online", desc: "Generador de códigos Nitro con algoritmo de hash prediction. Alta tasa de éxito.", users: "3.4k", cmd: "nitro" },
+      { name: "Token Grabber Builder", icon: "🔑", iconType: "red", badge: "Beta", badgeType: "beta", desc: "Builder de grabbers con bypass de antivirus. Personaliza el payload.", users: "2.1k", cmd: "grabber" },
+      { name: "Mass DM Tool", icon: "📨", iconType: "purple", badge: "Online", badgeType: "online", desc: "Envío masivo de DMs con bypass de rate limits. Modo stealth incluido.", users: "5.7k", cmd: "massdm" },
+      { name: "Raid Toolbox", icon: "💣", iconType: "red", badge: "Dev", badgeType: "dev", desc: "Suite completa de raiding: nuke, spam, channel flood, role purge.", users: "8.2k", cmd: "raid" },
+      { name: "Token Checker", icon: "✅", iconType: "green", badge: "Online", badgeType: "online", desc: "Verifica tokens con información detallada: email, teléfono, nitro, billing.", users: "6.8k", cmd: "checker" },
+      { name: "Webhook Destroyer", icon: "🔗", iconType: "cyan", badge: "Online", badgeType: "online", desc: "Spam, delete y abuse de webhooks. Spoofea nombres y avatares.", users: "4.3k", cmd: "webhook" },
+      { name: "Account Nuker", icon: "👤", iconType: "red", badge: "Beta", badgeType: "beta", desc: "Elimina/compromete cuentas objetivo. Extrae info sensible.", users: "1.9k", cmd: "nuker" },
+      { name: "Proxy Scraper", icon: "🌐", iconType: "purple", badge: "Online", badgeType: "online", desc: "Scraper de proxies SOCKS4/5 y HTTP. Filtro por país y velocidad.", users: "3.1k", cmd: "proxy" },
+      { name: "Voice Channel Joiner", icon: "🔊", iconType: "cyan", badge: "Online", badgeType: "online", desc: "Join masivo a canales de voz con userbots. Stable y rápido.", users: "2.7k", cmd: "voice" },
+      { name: "Friend Request Bot", icon: "👥", iconType: "green", badge: "Online", badgeType: "online", desc: "Auto-envío de solicitudes de amistad. Filtro por mutual servers.", users: "4.0k", cmd: "friends" },
+      { name: "QR Code Login", icon: "📱", iconType: "yellow", badge: "Dev", badgeType: "dev", desc: "Genera QR falso para capturar sesión de Discord mobile.", users: "1.2k", cmd: "qr-phish" },
+      { name: "Server Cloner", icon: "📋", iconType: "purple", badge: "Beta", badgeType: "beta", desc: "Clona servidores completos: canales, roles, emojis, ajustes.", users: "2.5k", cmd: "cloner" },
+      { name: "Message Logger", icon: "📝", iconType: "cyan", badge: "Online", badgeType: "online", desc: "Loggea mensajes de canales/servidores en tiempo real. Exportable.", users: "3.8k", cmd: "logger" },
+      { name: "Status Changer", icon: "🔄", iconType: "green", badge: "Online", badgeType: "online", desc: "Cambia estado personalizado con emojis y timers. Anti-suspension.", users: "5.1k", cmd: "status" },
+      { name: "Backup Tool", icon: "💾", iconType: "yellow", badge: "Online", badgeType: "online", desc: "Backup completo de servidores: mensajes, archivos, miembros.", users: "2.9k", cmd: "backup" },
+      { name: "Alt Generator", icon: "👤", iconType: "red", badge: "Dev", badgeType: "dev", desc: "Genera cuentas alternas automáticamente con verificación.", users: "1.6k", cmd: "altgen" },
+    ];
+
+    const COMMANDS = {
+      help: () => `Comandos disponibles: help, tools, nitro [cant], check [token], status, clear, about`,
+      tools: () => `📦 ${TOOLS.length} herramientas cargadas. Usa el panel para acceder.`,
+      status: () => `🟢 Sistema operativo · ${TOOLS.length} tools online · 12.4k usuarios activos`,
+      about: () => `H4CK3R ZONE v3.7.1 · Developed by Nexus Team · For educational purposes`,
+      clear: () => { document.getElementById('terminalBody').innerHTML = ''; return ''; },
+    };
+
+    const toolsGrid = document.getElementById('toolsGrid');
+    const terminalInput = document.getElementById('terminalInput');
+    const terminalBody = document.getElementById('terminalBody');
+    const toast = document.getElementById('toast');
+
+    function renderTools() {
+      toolsGrid.innerHTML = TOOLS.map(t => `
+        <div class="tool-card" style="animation-delay:${Math.random() * 0.5}s">
+          <div class="tool-card-header">
+            <div class="tool-icon ${t.iconType}">${t.icon}</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
+                <span class="tool-name">${t.name}</span>
+                <span class="tool-badge ${t.badgeType}">${t.badge}</span>
+              </div>
+            </div>
+          </div>
+          <div class="tool-card-body">
+            <div class="tool-desc">${t.desc}</div>
+            <div class="tool-meta">
+              <span>👤 ${t.users} users</span>
+              <button class="tool-btn" data-cmd="${t.cmd}" onclick="executeTool('${t.cmd}')">▶ EJECUTAR</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function executeTool(cmd) {
+      addTerminalLine(`[EXEC] Running: ${cmd}`, 'info');
+      showToast(`⚡ ${cmd} ejecutado - Próximamente en la versión completa`, 'info');
+      addTerminalLine(`[INFO] Módulo ${cmd} requerirá autorización en v4.0`, 'warn');
+    }
+
+    function addTerminalLine(text, type = '') {
+      const line = document.createElement('div');
+      line.className = `terminal-line ${type}`;
+      line.textContent = text;
+      terminalBody.appendChild(line);
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+    }
+
+    function showToast(msg, type = '') {
+      toast.textContent = msg;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    terminalInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const cmd = terminalInput.value.trim().toLowerCase();
+        terminalInput.value = '';
+        addTerminalLine(`root@nexus:~$ ${cmd}`);
+        if (cmd === '') return;
+        if (cmd.startsWith('nitro ')) {
+          const amount = parseInt(cmd.split(' ')[1]) || 5;
+          generateNitro(amount);
+        } else if (cmd.startsWith('check ')) {
+          const token = cmd.split(' ')[1] || 'unknown';
+          addTerminalLine(`[CHECK] Verificando token ${token.substring(0,10)}...`, 'info');
+          setTimeout(() => addTerminalLine(`[RESULT] Token válido · User: Nexus#0001 · Nitro: Yes`, 'info'), 1000);
+        } else if (COMMANDS[cmd]) {
+          const result = COMMANDS[cmd]();
+          if (result) addTerminalLine(result);
+        } else {
+          addTerminalLine(`[ERROR] Comando no encontrado: ${cmd}. Type 'help'`, 'error');
+        }
+      }
+    });
+
+    function generateNitro(amount) {
+      amount = Math.min(Math.max(1, amount), 50);
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      const resultEl = document.getElementById('nitroResult');
+      let codes = [];
+      for (let i = 0; i < amount; i++) {
+        let code = 'https://discord.gift/';
+        for (let j = 0; j < 24; j++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+        codes.push(code);
+      }
+      resultEl.innerHTML = codes.map(c => `<div style="margin-bottom:0.25rem">${c}</div>`).join('');
+      addTerminalLine(`[NITRO] ${amount} códigos generados (simulación educativa)`, 'info');
+      showToast(`🎟️ ${amount} códigos generados`, '');
+    }
+
+    document.getElementById('nitroBtn').addEventListener('click', () => {
+      const val = parseInt(document.getElementById('nitroInput').value) || 10;
+      generateNitro(val);
+    });
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleTimeString('es-ES');
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    renderTools();
+
+    // Matrix rain
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    let width, height, columns, drops;
+
+    function resizeMatrix() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      columns = Math.floor(width / 14);
+      drops = Array(columns).fill(1);
+    }
+    resizeMatrix();
+    window.addEventListener('resize', resizeMatrix);
+
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>/{}[]|&^%$#@!';
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+      ctx.fillRect(0, 0, width, height);
+      ctx.font = '14px monospace';
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+        const x = i * 14;
+        const y = drops[i] * 14;
+        ctx.fillStyle = Math.random() > 0.98 ? '#00ff41' : '#00aa22';
+        ctx.fillText(text, x, y);
+        if (y > height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 50);
+
+    // Boot animation
+    const bootLines = document.querySelectorAll('.boot-line');
+    const bootProgress = document.getElementById('bootProgress');
+    const bootScreen = document.getElementById('bootScreen');
+    const mainContent = document.getElementById('mainContent');
+
+    let bootIndex = 0;
+    function showBootLine() {
+      if (bootIndex < bootLines.length) {
+        bootLines[bootIndex].classList.add('show');
+        bootProgress.style.width = `${((bootIndex + 1) / bootLines.length) * 100}%`;
+        bootIndex++;
+        setTimeout(showBootLine, 400);
+      } else {
+        setTimeout(() => {
+          bootScreen.style.transition = 'all 0.5s ease';
+          bootScreen.style.opacity = '0';
+          bootScreen.style.transform = 'translateY(-20px)';
+          setTimeout(() => {
+            bootScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+          }, 500);
+        }, 1000);
+      }
+    }
+    setTimeout(showBootLine, 300);
+  </script>
+</body>
+</html>
