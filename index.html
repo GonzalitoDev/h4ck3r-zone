@@ -622,9 +622,9 @@ return '<pre style="font-size:0.65rem;color:var(--yellow);word-break:break-all">
 });
 
 // ============ TOOL: Avatar Grabber ============
-T('avatar','Avatar Grabber','@','cyan','user','Get any Discord user avatar via user ID (no token needed).',[f_text('user','User ID','123456789012345678')],
+T('avatar','Avatar Grabber','@','cyan','user','Get any Discord user avatar via user ID. Uses the full CDN URL.',[f_token('token','Any Token (Bot or User)','user'),f_text('user','User ID','302050872383242240')],
 function(f){
-  return api('/users/'+f.user).then(function(d){
+  return api('/users/'+f.user,f.token).then(function(d){
     var ext=d.avatar&&d.avatar.startsWith('a_')?'gif':'png';
     var url='https://cdn.discordapp.com/avatars/'+d.id+'/'+d.avatar+'.'+ext+'?size=2048';
     log('[OK] Avatar for '+d.username+'#'+(d.discriminator||'0'),'success');
