@@ -622,15 +622,14 @@ return '<pre style="font-size:0.65rem;color:var(--yellow);word-break:break-all">
 });
 
 // ============ TOOL: Avatar Grabber ============
-T('avatar','Avatar Grabber','@','cyan','user','Get a Discord user avatar via user ID (no token needed).',[f_text('user','User ID','123456789012345678')],
+T('avatar','Avatar Grabber','@','cyan','user','Get any Discord user avatar via user ID (no token needed).',[f_text('user','User ID','123456789012345678')],
 function(f){
-  return fetch('https://discord.com/api/v10/users/'+f.user).then(function(r){return r.json()}).then(function(d){
-    if(!d||d.message)throw new Error(d.message||'User not found');
+  return api('/users/'+f.user).then(function(d){
     var ext=d.avatar&&d.avatar.startsWith('a_')?'gif':'png';
     var url='https://cdn.discordapp.com/avatars/'+d.id+'/'+d.avatar+'.'+ext+'?size=2048';
-    log('[OK] Avatar for '+d.username+'#'+(d.discriminator||'0')+': '+url,'success');
+    log('[OK] Avatar for '+d.username+'#'+(d.discriminator||'0'),'success');
     return '<div style="text-align:center;padding:0.5rem">'+
-      '<img src="'+url+'" style="width:128px;height:128px;border-radius:50%;border:2px solid var(--green);margin-bottom:0.5rem"/>'+
+      '<img src="'+url+'" style="width:128px;height:128px;border-radius:50%;border:2px solid var(--green);margin-bottom:0.5rem" crossorigin="anonymous"/>'+
       '<div style="font-size:0.75rem;color:white">'+d.username+'#'+(d.discriminator||'0')+'</div>'+
       '<div style="font-size:0.6rem;color:#666;word-break:break-all;margin-top:0.3rem">'+url+'</div></div>';
   });
