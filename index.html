@@ -6,14 +6,14 @@
 <title>H4CK3R ZONE - Discord Toolkit</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a0a;--green:#00ff41;--green-dim:#00aa22;--red:#ff003c;--yellow:#ffd700;--cyan:#00ffff;--purple:#7b2ff7;--terminal:#0d1117;--border:#1a1a2e;--text:#c0c0c0}
+:root{--bg:#0a0a0a;--green:#00ff41;--green-dim:#00aa22;--red:#ff003c;--yellow:#ffd700;--cyan:#00ffff;--purple:#7b2ff7;--orange:#ff8800;--terminal:#0d1117;--border:#1a1a2e;--text:#c0c0c0}
 body{background:var(--bg);color:var(--text);font-family:monospace;overflow-x:hidden;min-height:100vh}
 canvas#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.12;pointer-events:none}
 .container{position:relative;z-index:1}
-.scanlines{position:fixed;inset:0;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,0.015) 2px,rgba(0,255,65,0.015) 4px);pointer-events:none}
-.vignette{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.8) 100%);pointer-events:none}
+.scanlines{position:fixed;inset:0;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,0.015)2px,rgba(0,255,65,0.015)4px);pointer-events:none}
+.vignette{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.8)100%);pointer-events:none}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-@keyframes pulse{0%,100%{box-shadow:0 0 5px var(--green),0 0 10px var(--green-dim)}50%{box-shadow:0 0 10px var(--green),0 0 20px var(--green-dim)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 5px var(--green)}50%{box-shadow:0 0 20px var(--green)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 ::-webkit-scrollbar{width:6px}
@@ -21,96 +21,95 @@ canvas#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opaci
 ::-webkit-scrollbar-thumb{background:var(--green-dim);border-radius:3px}
 
 header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px)}
-.header-inner{max-width:1200px;margin:0 auto;padding:0.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
-.logo{display:flex;align-items:center;gap:0.75rem;font-size:1.25rem;font-weight:700;color:var(--green);text-decoration:none}
-.logo-icon{width:36px;height:36px;background:var(--green);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;color:var(--bg);font-weight:bold;font-size:1rem;animation:pulse 2s infinite}
+.header-inner{max-width:1400px;margin:0 auto;padding:0.5rem 1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.logo{display:flex;align-items:center;gap:0.5rem;font-size:1.2rem;font-weight:700;color:var(--green);text-decoration:none}
+.logo-icon{width:32px;height:32px;background:var(--green);clip-path:polygon(50%0%,100%25%,100%75%,50%100%,0%75%,0%25%);display:flex;align-items:center;justify-content:center;color:var(--bg);font-weight:bold;font-size:0.9rem;animation:pulse 2s infinite}
 .logo span:last-child{color:var(--red)}
 .status{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:var(--green)}
 .status-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:blink 1s infinite}
 
-.boot-screen{background:var(--terminal);border:1px solid var(--border);border-radius:8px;margin:1.5rem;max-width:1200px;margin-left:auto;margin-right:auto;overflow:hidden}
-.boot-header{background:var(--border);padding:0.5rem 1rem;display:flex;align-items:center;gap:0.5rem}
+.boot-screen{background:var(--terminal);border:1px solid var(--border);border-radius:8px;margin:1.5rem;max-width:1400px;margin-left:auto;margin-right:auto;overflow:hidden}
+.boot-header{background:var(--border);padding:0.4rem 1rem;display:flex;align-items:center;gap:0.5rem;font-size:0.75rem}
 .boot-dot{width:10px;height:10px;border-radius:50%}
 .boot-dot.r{background:#ff5f56}
 .boot-dot.y{background:#ffbd2e}
 .boot-dot.g{background:#27c93f}
-.boot-title{color:#666;font-size:0.75rem;margin-left:0.5rem}
-.boot-body{padding:1rem;font-size:0.8rem;line-height:1.8;color:var(--green)}
+.boot-title{color:#666;margin-left:0.5rem}
+.boot-body{padding:0.75rem 1rem;font-size:0.8rem;line-height:1.8;color:var(--green)}
 .boot-line{opacity:0}
 .boot-line.show{opacity:1}
 .boot-cursor::after{content:'_';animation:blink 0.8s infinite;color:var(--green)}
-.boot-progress{height:2px;background:var(--border);margin-top:0.5rem;border-radius:2px;overflow:hidden}
+.boot-progress{height:2px;background:var(--border);margin-top:0.3rem;border-radius:2px;overflow:hidden}
 .boot-progress-bar{height:100%;width:0%;background:var(--green);transition:width 0.3s}
 
-.main-content{max-width:1200px;margin:0 auto;padding:1.5rem}
+.main-content{max-width:1400px;margin:0 auto;padding:1rem}
 
-.section-title{font-size:1.1rem;font-weight:700;color:var(--green);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.75rem;text-transform:uppercase;letter-spacing:3px}
+.section-title{font-size:1rem;font-weight:700;color:var(--green);margin-bottom:0.75rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.75rem;text-transform:uppercase;letter-spacing:2px}
 .section-title .arrow{color:var(--red)}
 
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:2rem}
-.tool-card{background:rgba(13,17,23,0.8);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:all 0.3s ease;animation:slideUp 0.5s ease forwards;opacity:0}
-.tool-card:hover{border-color:var(--green);transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,255,65,0.1)}
-.tool-card-header{padding:1rem 1rem 0.5rem;display:flex;align-items:center;gap:0.75rem}
-.tool-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0.75rem;margin-bottom:1.5rem}
+.tool-card{background:rgba(13,17,23,0.8);border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:all 0.3s ease;animation:slideUp 0.4s ease forwards;opacity:0}
+.tool-card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,255,65,0.08)}
+.tool-card-header{padding:0.6rem 0.75rem;display:flex;align-items:center;gap:0.6rem}
+.tool-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;font-weight:700}
 .tool-icon.red{background:rgba(255,0,60,0.15);color:var(--red)}
 .tool-icon.green{background:rgba(0,255,65,0.15);color:var(--green)}
 .tool-icon.purple{background:rgba(123,47,247,0.15);color:var(--purple)}
 .tool-icon.cyan{background:rgba(0,255,255,0.15);color:var(--cyan)}
 .tool-icon.yellow{background:rgba(255,215,0,0.15);color:var(--yellow)}
-.tool-name{font-weight:700;color:white;font-size:0.95rem}
-.tool-badge{font-size:0.6rem;padding:0.15rem 0.5rem;border-radius:4px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
-.tool-badge.online{background:rgba(0,255,65,0.15);color:var(--green)}
-.tool-badge.beta{background:rgba(255,215,0,0.15);color:var(--yellow)}
-.tool-badge.dev{background:rgba(255,0,60,0.15);color:var(--red)}
-.tool-card-body{padding:0.5rem 1rem 1rem}
-.tool-desc{color:#888;font-size:0.8rem;line-height:1.5}
-.tool-meta{margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:0.7rem;color:#555}
+.tool-icon.orange{background:rgba(255,136,0,0.15);color:var(--orange)}
+.tool-name{font-weight:700;color:white;font-size:0.85rem}
+.tool-badge{font-size:0.55rem;padding:0.1rem 0.4rem;border-radius:3px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.tool-badge.real{background:rgba(0,255,65,0.15);color:var(--green);animation:blink 1.5s infinite}
+.tool-badge.sim{background:rgba(255,255,255,0.08);color:#666}
+.tool-desc{color:#888;font-size:0.75rem;line-height:1.4;padding:0 0.75rem 0.5rem}
+.tool-meta{padding:0.4rem 0.75rem;border-top:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:space-between;font-size:0.65rem;color:#555}
 
-.tool-btn{padding:0.35rem 1rem;border:1px solid var(--green);background:transparent;color:var(--green);border-radius:4px;cursor:pointer;font-family:inherit;font-size:0.75rem;transition:all 0.3s;text-decoration:none}
-.tool-btn:hover{background:var(--green);color:var(--bg);box-shadow:0 0 15px rgba(0,255,65,0.3)}
+.tool-btn{padding:0.25rem 0.75rem;border:1px solid var(--green);background:transparent;color:var(--green);border-radius:3px;cursor:pointer;font-family:inherit;font-size:0.7rem;transition:all 0.3s;text-decoration:none}
+.tool-btn:hover{background:var(--green);color:var(--bg);box-shadow:0 0 10px rgba(0,255,65,0.2)}
 .tool-btn.red{border-color:var(--red);color:var(--red)}
 .tool-btn.red:hover{background:var(--red);color:white}
 .tool-btn:disabled{opacity:0.4;cursor:not-allowed}
 .tool-btn:disabled:hover{background:transparent;color:var(--green);box-shadow:none}
 
-.tool-panel{display:none;background:rgba(0,0,0,0.3);border-top:1px solid var(--border);padding:1rem}
+.tool-panel{display:none;background:rgba(0,0,0,0.3);border-top:1px solid var(--border);padding:0.75rem}
 .tool-panel.open{display:block}
-.tool-panel label{display:block;font-size:0.7rem;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.25rem}
-.tool-panel input,.tool-panel select{width:100%;background:rgba(0,0,0,0.5);border:1px solid var(--border);padding:0.6rem 0.75rem;border-radius:4px;color:var(--green);font-family:inherit;font-size:0.8rem;outline:none;margin-bottom:0.75rem;transition:border-color 0.3s}
+.tool-panel label{display:block;font-size:0.65rem;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.2rem}
+.tool-panel input,.tool-panel select{width:100%;background:rgba(0,0,0,0.5);border:1px solid var(--border);padding:0.5rem 0.6rem;border-radius:3px;color:var(--green);font-family:inherit;font-size:0.75rem;outline:none;margin-bottom:0.5rem;transition:border-color 0.3s}
 .tool-panel input:focus,.tool-panel select:focus{border-color:var(--green)}
 .tool-panel input::placeholder{color:#333}
-.tool-result{font-size:0.75rem;max-height:300px;overflow-y:auto;margin-top:0.5rem;line-height:1.8}
-.tool-result .user-item{display:flex;align-items:center;gap:0.75rem;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.03)}
-.tool-result .user-item img{width:28px;height:28px;border-radius:50%;border:1px solid var(--border)}
-.tool-result .user-item .u-name{color:white;font-size:0.8rem}
-.tool-result .user-item .u-tag{color:#666;font-size:0.65rem}
-.tool-result .user-item .u-id{color:#444;font-size:0.6rem}
+.tool-result{font-size:0.7rem;max-height:200px;overflow-y:auto;margin-top:0.4rem;line-height:1.6;background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:3px}
+.tool-result .user-item{display:flex;align-items:center;gap:0.5rem;padding:0.25rem 0;border-bottom:1px solid rgba(255,255,255,0.02)}
+.tool-result .user-item img{width:24px;height:24px;border-radius:50%;border:1px solid var(--border)}
+.tool-result .user-item .u-name{color:white;font-size:0.75rem}
+.tool-result .user-item .u-tag{color:#666;font-size:0.6rem}
 
-.terminal-box{background:var(--terminal);border:1px solid var(--border);border-radius:8px;margin-bottom:2rem}
-.terminal-box-header{background:var(--border);padding:0.5rem 1rem;display:flex;align-items:center;gap:0.5rem;border-radius:8px 8px 0 0}
-.terminal-box-title{color:#666;font-size:0.75rem}
-.terminal-box-body{padding:1rem;font-size:0.8rem;line-height:1.8;max-height:200px;overflow-y:auto}
+.terminal-box{background:var(--terminal);border:1px solid var(--border);border-radius:6px;margin-bottom:1.5rem}
+.terminal-box-header{background:var(--border);padding:0.4rem 0.75rem;display:flex;align-items:center;gap:0.5rem;border-radius:6px 6px 0 0;font-size:0.75rem}
+.terminal-box-title{color:#666}
+.terminal-box-body{padding:0.75rem;font-size:0.75rem;line-height:1.6;max-height:150px;overflow-y:auto}
 .terminal-line{color:var(--green)}
 .terminal-line.error{color:var(--red)}
 .terminal-line.info{color:var(--cyan)}
 .terminal-line.warn{color:var(--yellow)}
 .terminal-line.success{color:var(--green)}
-.terminal-prompt{color:var(--green)}
-.terminal-input-line{display:flex;align-items:center;gap:0.5rem;border-top:1px solid var(--border);padding:0.5rem 1rem}
-.terminal-input{flex:1;background:transparent;border:none;color:var(--green);font-family:inherit;font-size:0.8rem;outline:none}
+.terminal-input-line{display:flex;align-items:center;gap:0.5rem;border-top:1px solid var(--border);padding:0.4rem 0.75rem}
+.terminal-input{flex:1;background:transparent;border:none;color:var(--green);font-family:inherit;font-size:0.75rem;outline:none}
 .terminal-input::placeholder{color:#333}
 
-footer{border-top:1px solid var(--border);padding:1.5rem;text-align:center;font-size:0.75rem;color:#333}
+.tabs{display:flex;gap:0.25rem;margin-bottom:0.75rem;flex-wrap:wrap}
+.tab{padding:0.3rem 0.75rem;border:1px solid var(--border);background:transparent;color:#666;border-radius:4px;cursor:pointer;font-family:inherit;font-size:0.7rem;transition:all 0.2s;text-transform:uppercase;letter-spacing:1px}
+.tab:hover{border-color:var(--green);color:var(--green)}
+.tab.active{background:var(--green);color:var(--bg);border-color:var(--green);font-weight:700}
+
+footer{border-top:1px solid var(--border);padding:1rem;text-align:center;font-size:0.7rem;color:#333}
 footer a{color:var(--green);text-decoration:none}
 
-.toast{position:fixed;bottom:2rem;right:2rem;z-index:200;background:var(--terminal);border:1px solid var(--green);padding:0.75rem 1.5rem;border-radius:8px;color:var(--green);font-size:0.8rem;transform:translateY(100px);opacity:0;transition:all 0.3s ease}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;background:var(--terminal);border:1px solid var(--green);padding:0.6rem 1rem;border-radius:6px;color:var(--green);font-size:0.75rem;transform:translateY(100px);opacity:0;transition:all 0.3s ease;max-width:80vw}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.error{border-color:var(--red);color:var(--red)}
 
-.copy-btn{background:none;border:1px solid #333;color:#666;cursor:pointer;font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:3px;font-family:inherit;transition:all 0.2s}
-.copy-btn:hover{border-color:var(--green);color:var(--green)}
-
-@media(max-width:768px){.tools-grid{grid-template-columns:1fr}.header-inner{flex-wrap:wrap;gap:0.5rem}}
+@media(max-width:768px){.tools-grid{grid-template-columns:1fr}.header-inner{justify-content:center}}
 </style>
 </head>
 <body>
@@ -121,12 +120,7 @@ footer a{color:var(--green);text-decoration:none}
 <header>
 <div class="header-inner">
 <a href="#" class="logo"><div class="logo-icon">H</div><span>H4CK3R<span>ZONE</span></span></a>
-<div class="status">
-<span class="status-dot"></span>
-<span id="statusText">SYSTEM ONLINE</span>
-<span style="color:#333;margin-left:1rem;">|</span>
-<span style="color:#666;font-size:0.7rem;" id="clock"></span>
-</div>
+<div class="status"><span class="status-dot"></span><span id="statusText">ONLINE</span><span style="color:#333">|</span><span style="color:#666;font-size:0.7rem" id="clock"></span></div>
 </div>
 </header>
 
@@ -137,270 +131,537 @@ footer a{color:var(--green);text-decoration:none}
 <span class="boot-title">H4CK3R_ZONE_SHELL - root@nexus:~</span>
 </div>
 <div class="boot-body" id="bootBody">
-<div class="boot-line">[ OK ] Initializing H4CK3R ZONE v4.0</div>
-<div class="boot-line">[ OK ] Loading Discord API exploit modules...</div>
+<div class="boot-line">[ OK ] Initializing H4CK3R ZONE v5.0 ULTIMATE</div>
+<div class="boot-line">[ OK ] Loading 25 Discord API exploit modules...</div>
 <div class="boot-line">[ OK ] Establishing secure tunnel to Nexus Network</div>
 <div class="boot-line">[ OK ] Decrypting toolkit database (4096-bit RSA)</div>
-<div class="boot-line">[ WARN ] Some modules require a bot token</div>
-<div class="boot-line">[ OK ] 18 tools loaded - 2 REAL Discord API modules</div>
+<div class="boot-line">[ WARN ] Some modules require bot token + permissions</div>
+<div class="boot-line">[ OK ] 25 tools loaded - 15 REAL Discord API modules</div>
 <div class="boot-line" id="bootFinalLine"><span style="color:var(--green)">root@nexus:~$ </span><span class="boot-cursor"></span></div>
 <div class="boot-progress"><div class="boot-progress-bar" id="bootProgress"></div></div>
 </div>
 </div>
 
 <div class="main-content" id="mainContent" style="display:none">
-<div class="section-title"><span class="arrow">>></span> REAL DISCORD API TOOLS</div>
-<div class="tools-grid" id="realToolsGrid"></div>
-
-<div class="section-title" style="margin-top:1.5rem"><span class="arrow">>></span> DISCORD EXPLOITS</div>
-<div class="tools-grid" id="toolsGrid"></div>
-
-<div class="section-title" style="margin-top:1.5rem"><span class="arrow">>></span> CONSOLE / LOGS</div>
-<div class="terminal-box">
-<div class="terminal-box-header">
-<div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div>
-<span class="terminal-box-title">root@nexus:~ - live.log</span>
+<div class="tabs" id="tabBar">
+<div class="tab active" data-tab="real">REAL TOOLS</div>
+<div class="tab" data-tab="fake">SIMULATED</div>
+<div class="tab" data-tab="all">ALL</div>
 </div>
+
+<div id="toolContainer"></div>
+
+<div class="section-title" style="margin-top:1rem"><span class="arrow">>></span> CONSOLE</div>
+<div class="terminal-box">
+<div class="terminal-box-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="terminal-box-title">root@nexus:~ - live.log</span></div>
 <div class="terminal-box-body" id="terminalBody">
-<div class="terminal-line">[SYSTEM] H4CK3R ZONE initialized</div>
-<div class="terminal-line">[INFO] Discord API bridge active</div>
+<div class="terminal-line">[SYSTEM] H4CK3R ZONE v5.0 ULTIMATE initialized</div>
+<div class="terminal-line">[INFO] 15 real Discord API modules loaded</div>
 </div>
 <div class="terminal-input-line">
 <span class="terminal-prompt">root@nexus:~$</span>
-<input type="text" class="terminal-input" id="terminalInput" placeholder="type 'help' for commands..." spellcheck="false" />
+<input type="text" class="terminal-input" id="terminalInput" placeholder="'help' for commands | 'tools' for list" spellcheck="false"/>
 </div>
 </div>
 </div>
 </div>
 
 <footer>
-<p>H4CK3R ZONE &copy; 2026 - <span style="color:var(--red)">For educational purposes only</span></p>
+<p>H4CK3R ZONE v5.0 ULTIMATE - <span style="color:var(--red)">For educational purposes only</span></p>
 <p style="margin-top:0.25rem"><a href="#">Discord</a> | <a href="#">GitHub</a> | <a href="#">Documentation</a></p>
 </footer>
-
 <div class="toast" id="toast"></div>
 
 <script>
-const TOOLS=[
-{name:"Nitro Generator",icon:"T",iconType:"yellow",badge:"Online",badgeType:"online",desc:"Generador de codigos Nitro con algoritmo de hash prediction.",users:"3.4k",cmd:"nitro"},
-{name:"Token Grabber Builder",icon:"K",iconType:"red",badge:"Beta",badgeType:"beta",desc:"Builder de grabbers con bypass de antivirus.",users:"2.1k",cmd:"grabber"},
-{name:"Mass DM Tool",icon:"M",iconType:"purple",badge:"Online",badgeType:"online",desc:"Envio masivo de DMs con bypass de rate limits.",users:"5.7k",cmd:"massdm"},
-{name:"Raid Toolbox",icon:"R",iconType:"red",badge:"Dev",badgeType:"dev",desc:"Suite de raiding: nuke, spam, channel flood, role purge.",users:"8.2k",cmd:"raid"},
-{name:"Token Checker",icon:"C",iconType:"green",badge:"Online",badgeType:"online",desc:"Verifica tokens con informacion detallada.",users:"6.8k",cmd:"checker"},
-{name:"Webhook Destroyer",icon:"W",iconType:"cyan",badge:"Online",badgeType:"online",desc:"Spam, delete y abuse de webhooks.",users:"4.3k",cmd:"webhook"},
-{name:"Account Nuker",icon:"A",iconType:"red",badge:"Beta",badgeType:"beta",desc:"Elimina/compromete cuentas objetivo.",users:"1.9k",cmd:"nuker"},
-{name:"Proxy Scraper",icon:"P",iconType:"purple",badge:"Online",badgeType:"online",desc:"Scraper de proxies SOCKS4/5 y HTTP.",users:"3.1k",cmd:"proxy"},
-{name:"Voice Channel Joiner",icon:"V",iconType:"cyan",badge:"Online",badgeType:"online",desc:"Join masivo a canales de voz con userbots.",users:"2.7k",cmd:"voice"},
-{name:"Friend Request Bot",icon:"F",iconType:"green",badge:"Online",badgeType:"online",desc:"Auto-envio de solicitudes de amistad.",users:"4.0k",cmd:"friends"},
-{name:"Server Cloner",icon:"S",iconType:"purple",badge:"Beta",badgeType:"beta",desc:"Clona servidores completos.",users:"2.5k",cmd:"cloner"},
-{name:"Message Logger",icon:"L",iconType:"cyan",badge:"Online",badgeType:"online",desc:"Loggea mensajes en tiempo real.",users:"3.8k",cmd:"logger"},
-{name:"Status Changer",icon:"S",iconType:"green",badge:"Online",badgeType:"online",desc:"Cambia estado personalizado.",users:"5.1k",cmd:"status"},
-{name:"Backup Tool",icon:"B",iconType:"yellow",badge:"Online",badgeType:"online",desc:"Backup completo de servidores.",users:"2.9k",cmd:"backup"},
-{name:"Alt Generator",icon:"A",iconType:"red",badge:"Dev",badgeType:"dev",desc:"Genera cuentas alternas automaticamente.",users:"1.6k",cmd:"altgen"}
-];
+// ============ TOOL DEFINITIONS ============
+var ALL_TOOLS=[];
+var REAL_CMDS={};
 
-const REAL_TOOLS=[
-{name:"User Scraper",icon:"U",iconType:"red",badge:"REAL",badgeType:"online",desc:"Fetchea TODOS los miembros de un servidor Discord usando la API oficial. Obtiene usernames, avatares, IDs.",users:"6.2k",cmd:"scraper",fields:[{id:"scraperToken",label:"Bot Token",type:"password",placeholder:"MTA5MjM0..."},{id:"scraperGuild",label:"Guild ID",type:"text",placeholder:"123456789012345678"}]},
-{name:"Channel Creator",icon:"C",iconType:"cyan",badge:"REAL",badgeType:"online",desc:"Crea canales de texto o voz en un servidor Discord mediante la API oficial.",users:"4.8k",cmd:"creador",fields:[{id:"creatorToken",label:"Bot Token",type:"password",placeholder:"MTA5MjM0..."},{id:"creatorGuild",label:"Guild ID",type:"text",placeholder:"123456789012345678"},{id:"creatorName",label:"Channel Name",type:"text",placeholder:"hackeado-por-nexus"},{id:"creatorType",label:"Channel Type",type:"select",options:[{value:"0",label:"Texto (GUILD_TEXT)"},{value:"2",label:"Voz (GUILD_VOICE)"}]}]}
-];
-
-const COMMANDS={
-help:()=>"Comandos: help, tools, scraper <token> <guild>, creator <token> <guild> <name> [type], status, clear, about",
-tools:()=>"[TOOLS] "+(TOOLS.length+REAL_TOOLS.length)+" herramientas ("+REAL_TOOLS.length+" reales con API)",
-status:()=>"[STATUS] Sistema operativo | "+(TOOLS.length+REAL_TOOLS.length)+" tools | "+REAL_TOOLS.length+" usan Discord API real",
-about:()=>"H4CK3R ZONE v4.0 - Developed by Nexus Team - Discord API integration - Educational purposes",
-clear:()=>{document.getElementById('terminalBody').innerHTML='';return''}
-};
-
-const terminalInput=document.getElementById('terminalInput');
-const terminalBody=document.getElementById('terminalBody');
-const toast=document.getElementById('toast');
-const DC_API='https://discord.com/api/v10';
-
-async function discordFetch(endpoint,token,options){
-const res=await fetch(DC_API+endpoint,{...options,headers:{'Authorization':'Bot '+token,'Content-Type':'application/json','User-Agent':'DiscordBot (H4CK3R-ZONE, 4.0)',...(options.headers||{})}});
-const data=await res.json();
-if(!res.ok)throw new Error(data.message||'HTTP '+res.status);
-return data;
+function defTool(isReal,cmd,name,icon,iconType,desc,fields,handler){
+var t={cmd:cmd,name:name,icon:icon,iconType:iconType,desc:desc,fields:fields||[],handler:handler,real:isReal};
+ALL_TOOLS.push(t);
+if(isReal)REAL_CMDS[cmd]=true;
+return t;
 }
 
-async function scrapeUsers(token,guildId){
-addTerminalLine('[SCRAPE] Fetching members from guild '+guildId+'...','info');
-let members=[];
-let after='0';
-while(true){
-const data=await discordFetch('/guilds/'+guildId+'/members?limit=1000&after='+after,token);
-if(!data.length)break;
-members=members.concat(data);
+var DC_API='https://discord.com/api/v10';
+
+function api(endpoint,token,opts){
+opts=opts||{};
+var headers={'Authorization':'Bot '+token,'Content-Type':'application/json','User-Agent':'H4CK3R-ZONE/5.0'};
+if(opts.headers){for(var k in opts.headers)headers[k]=opts.headers[k]}
+return fetch(DC_API+endpoint,{method:opts.method||'GET',headers:headers,body:opts.body||null}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.message||'HTTP '+r.status);return d})});
+}
+
+function log(t,type){var el=document.getElementById('terminalBody'),l=document.createElement('div');l.className='terminal-line '+(type||'');l.textContent=t;el.appendChild(l);el.scrollTop=el.scrollHeight}
+function toast(m,t){var el=document.getElementById('toast');el.textContent=m;el.className='toast '+(t||'')+' show';setTimeout(function(){el.classList.remove('show')},3000)}
+
+// ============ TOOL HANDLERS ============
+
+defTool(true,'scraper','User Scraper','U','red','Fetch ALL members from a Discord server. Requires bot with GUILD_MEMBERS intent.',[
+{id:'s_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'s_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
+],function(f){
+log('[>] Scraping members from '+f.s_g+'...','info');
+var all=[],after='0';
+function next(){
+return api('/guilds/'+f.s_g+'/members?limit=1000&after='+after,f.s_t).then(function(data){
+if(!data||!data.length)return all;
+all=all.concat(data);
 after=data[data.length-1].user.id;
-addTerminalLine('[SCRAPE] '+members.length+' members fetched so far...','info');
-if(data.length<1000)break;
-}
-return members;
-}
-
-async function createChannel(token,guildId,name,type){
-addTerminalLine('[CREATE] Creating channel #'+name+' (type '+type+') in '+guildId+'...','info');
-const data=await discordFetch('/guilds/'+guildId+'/channels',token,{method:'POST',body:JSON.stringify({name:name,type:parseInt(type),reason:'H4CK3R ZONE'})});
-return data;
-}
-
-let openPanel=null;
-function togglePanel(cmd){
-openPanel=openPanel===cmd?null:cmd;
-renderRealTools();
-}
-
-function renderRealTools(){
-const grid=document.getElementById('realToolsGrid');
-grid.innerHTML=REAL_TOOLS.map(function(t,idx){
-var fields=t.fields.map(function(f){
-if(f.type==='select'){
-var opts=f.options.map(function(o){return'<option value="'+o.value+'">'+o.label+'</option>'}).join('');
-return'<label>'+f.label+'</label><select id="'+f.id+'">'+opts+'</select>';
-}
-return'<label>'+f.label+'</label><input type="'+f.type+'" id="'+f.id+'" placeholder="'+f.placeholder+'" spellcheck="false"/>';
-}).join('');
-return'<div class="tool-card" style="animation-delay:'+(idx*0.15)+'s">'+
-'<div class="tool-card-header"><div class="tool-icon '+t.iconType+'">'+t.icon+'</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap"><span class="tool-name" style="color:var(--yellow)">'+t.name+'</span><span class="tool-badge '+t.badgeType+'" style="animation:blink 1.5s infinite">* '+t.badge+'</span></div></div></div>'+
-'<div class="tool-card-body"><div class="tool-desc">'+t.desc+'</div>'+
-'<div class="tool-panel '+(t.cmd===openPanel?'open':'')+'" id="panel-'+t.cmd+'">'+fields+
-'<button class="tool-btn" onclick="executeRealTool(\''+t.cmd+'\')" id="btn-'+t.cmd+'">[>] EJECUTAR</button>'+
-'<div class="tool-result" id="result-'+t.cmd+'"></div></div>'+
-'<div class="tool-meta"><span>[*] '+t.users+' users</span><button class="tool-btn" onclick="togglePanel(\''+t.cmd+'\')">[!] CONFIGURAR</button></div></div></div>';
-}).join('');
-}
-
-function renderTools(){
-var grid=document.getElementById('toolsGrid');
-grid.innerHTML=TOOLS.map(function(t){
-return'<div class="tool-card" style="animation-delay:'+(Math.random()*0.5)+'s">'+
-'<div class="tool-card-header"><div class="tool-icon '+t.iconType+'">'+t.icon+'</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:0.5rem"><span class="tool-name">'+t.name+'</span><span class="tool-badge '+t.badgeType+'">'+t.badge+'</span></div></div></div>'+
-'<div class="tool-card-body"><div class="tool-desc">'+t.desc+'</div>'+
-'<div class="tool-meta"><span>[*] '+t.users+' users</span><button class="tool-btn" onclick="executeFakeTool(\''+t.cmd+'\')">[>] EJECUTAR</button></div></div></div>';
-}).join('');
-}
-
-function executeFakeTool(cmd){
-addTerminalLine('[EXEC] '+cmd+' - modulo simulado','warn');
-showToast('[!] '+cmd+' - version completa proximamente','');
-}
-
-async function executeRealTool(cmd){
-var btn=document.getElementById('btn-'+cmd);
-var result=document.getElementById('result-'+cmd);
-btn.disabled=true;
-btn.textContent='[*] PROCESANDO...';
-try{
-if(cmd==='scraper'){
-var token=document.getElementById('scraperToken').value.trim();
-var guild=document.getElementById('scraperGuild').value.trim();
-if(!token||!guild)throw new Error('Token y Guild ID requeridos');
-addTerminalLine('[SCRAPE] Iniciando scraping de '+guild+'...','info');
-var members=await scrapeUsers(token,guild);
-result.innerHTML='<div style="color:var(--green);margin-bottom:0.75rem;">[OK] '+members.length+' miembros obtenidos</div>';
-members.slice(0,100).forEach(function(m){
-var avatar=m.user.avatar?'<img src="https://cdn.discordapp.com/avatars/'+m.user.id+'/'+m.user.avatar+'.png"/>':'<div style="width:28px;height:28px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#666;flex-shrink:0;">'+m.user.username[0]+'</div>';
-result.innerHTML+='<div class="user-item">'+avatar+'<div><div class="u-name">'+m.user.username+'</div><div class="u-tag">'+(m.user.discriminator!=='0'?'#'+m.user.discriminator:'')+' | '+m.user.id+'</div></div></div>';
+log('[>] '+all.length+' members...','info');
+if(data.length<1000)return all;
+return next();
 });
-if(members.length>100)result.innerHTML+='<div style="color:#666;font-size:0.7rem;margin-top:0.5rem;">... y '+(members.length-100)+' mas</div>';
-addTerminalLine('[SCRAPE] [OK] '+members.length+' miembros scrapeados de '+guild,'success');
-showToast('[OK] '+members.length+' usuarios obtenidos','');
 }
-else if(cmd==='creador'){
-var token=document.getElementById('creatorToken').value.trim();
-var guild=document.getElementById('creatorGuild').value.trim();
-var name=document.getElementById('creatorName').value.trim();
-var type=document.getElementById('creatorType').value;
-if(!token||!guild||!name)throw new Error('Token, Guild ID y Channel Name requeridos');
-var channel=await createChannel(token,guild,name,type);
-result.innerHTML='<div style="color:var(--green);">[OK] Canal creado: #'+channel.name+'</div><div style="color:#666;font-size:0.7rem;margin-top:0.5rem;">ID: '+channel.id+' | Tipo: '+(channel.type===0?'Texto':'Voz')+'</div>';
-addTerminalLine('[CREATE] [OK] Canal #'+channel.name+' ('+channel.id+') creado en '+guild,'success');
-showToast('[OK] Canal #'+name+' creado','');
+return next().then(function(members){
+var html='<div style="color:var(--green)">[OK] '+members.length+' members</div>';
+members.slice(0,80).forEach(function(m){
+var u=m.user;
+var av=u.avatar?'<img src="https://cdn.discordapp.com/avatars/'+u.id+'/'+u.avatar+'.png"/>':'<div style="width:24px;height:24px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#666;flex-shrink:0">'+u.username[0]+'</div>';
+html+='<div class="user-item">'+av+'<div><div class="u-name">'+u.username+'</div><div class="u-tag">#'+(u.discriminator!=='0'?u.discriminator:'0001')+' | '+u.id+'</div></div></div>';
+});
+if(members.length>80)html+='<div style="color:#666;margin-top:0.3rem">... +'+(members.length-80)+' more</div>';
+log('[OK] Scraped '+members.length+' members','success');
+return html;
+});
+});
+
+defTool(true,'chcreate','Channel Creator','C','cyan','Create text or voice channels instantly via API. Requires MANAGE_CHANNELS.',[
+{id:'c_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'c_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
+{id:'c_n',label:'Channel Name',type:'text',ph:'hack-channel'},
+{id:'c_ty',label:'Type',type:'select',opts:[{v:'0',l:'Text'},{v:'2',l:'Voice'}]}
+],function(f){
+log('[>] Creating channel #'+f.c_n+'...','info');
+return api('/guilds/'+f.c_g+'/channels',f.c_t,{method:'POST',body:JSON.stringify({name:f.c_n,type:parseInt(f.c_ty),reason:'H4CK3R ZONE'})}).then(function(ch){
+log('[OK] Channel #'+ch.name+' ('+ch.id+') created','success');
+return '<div style="color:var(--green)">[OK] Created: #'+ch.name+'</div><div style="color:#666;font-size:0.65rem">ID: '+ch.id+' | Type: '+(ch.type===0?'Text':'Voice')+'</div>';
+});
+});
+
+defTool(true,'rolecreate','Role Creator','R','purple','Create roles with customizable name, color and permissions. Requires MANAGE_ROLES.',[
+{id:'r_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'r_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
+{id:'r_n',label:'Role Name',type:'text',ph:'hacked-role'},
+{id:'r_c',label:'Color (hex)',type:'text',ph:'ff003c'}
+],function(f){
+log('[>] Creating role '+f.r_n+'...','info');
+var color=parseInt(f.r_c.replace('#',''),16)||16711680;
+return api('/guilds/'+f.r_g+'/roles',f.r_t,{method:'POST',body:JSON.stringify({name:f.r_n,color:color,reason:'H4CK3R ZONE'})}).then(function(r){
+log('[OK] Role @'+r.name+' ('+r.id+') created','success');
+return '<div style="color:var(--green)">[OK] Role: @'+r.name+'</div><div style="color:#666;font-size:0.65rem">ID: '+r.id+' | Color: #'+r.color.toString(16).padStart(6,'0')+'</div>';
+});
+});
+
+defTool(true,'webhook','Webhook Creator','W','yellow','Create a webhook in a text channel. Can be used for spam/webhook abuse. Requires MANAGE_WEBHOOKS.',[
+{id:'w_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'w_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
+{id:'w_c',label:'Channel ID',type:'text',ph:'123456789012345678'},
+{id:'w_n',label:'Webhook Name',type:'text',ph:'pwned-webhook'}
+],function(f){
+log('[>] Creating webhook in channel '+f.w_c+'...','info');
+return api('/channels/'+f.w_c+'/webhooks',f.w_t,{method:'POST',body:JSON.stringify({name:f.w_n,reason:'H4CK3R ZONE'})}).then(function(w){
+log('[OK] Webhook created: '+w.name,'success');
+return '<div style="color:var(--green)">[OK] Webhook: '+w.name+'</div><div style="font-size:0.65rem;word-break:break-all;color:var(--cyan)">URL: https://discord.com/api/webhooks/'+w.id+'/'+w.token+'</div>';
+});
+});
+
+defTool(true,'serverinfo','Server Info','I','green','Get detailed information about a Discord server. Requires no special permissions.',[
+{id:'i_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'i_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
+],function(f){
+log('[>] Fetching server info for '+f.i_g+'...','info');
+return api('/guilds/'+f.i_g,f.i_t).then(function(g){
+var p='';
+if(g.features&&g.features.length)p=g.features.slice(0,5).join(', ');
+var html='<div style="color:var(--green)">[OK] '+g.name+'</div>';
+html+='<div style="font-size:0.65rem;margin-top:0.3rem">ID: '+g.id+'</div>';
+html+='<div style="font-size:0.65rem">Owner: '+g.owner_id+'</div>';
+html+='<div style="font-size:0.65rem">Members: '+(g.approximate_member_count||'?')+' | Online: '+(g.approximate_presence_count||'?')+'</div>';
+html+='<div style="font-size:0.65rem">Channels: ? | Roles: ?</div>';
+html+='<div style="font-size:0.65rem;color:#666">Features: '+(p||'none')+'</div>';
+html+='<div style="font-size:0.65rem;word-break:break-all">Icon: <a href="https://cdn.discordapp.com/icons/'+g.id+'/'+g.icon+'.png" target="_blank" style="color:var(--cyan)">link</a></div>';
+log('[OK] Server info retrieved: '+g.name,'success');
+return html;
+});
+});
+
+defTool(true,'bantool','Ban User','B','red','Ban a user from the server by user ID. Requires BAN_MEMBERS permission.',[
+{id:'b_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'b_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
+{id:'b_u',label:'User ID',type:'text',ph:'876543210987654321'},
+{id:'b_r',label:'Reason',type:'text',ph:'H4CK3R ZONE ban'}
+],function(f){
+log('[>] Banning user '+f.b_u+'...','info');
+return api('/guilds/'+f.b_g+'/bans/'+f.b_u,f.b_t,{method:'PUT',body:JSON.stringify({reason:f.b_r||'H4CK3R ZONE'})}).then(function(){
+log('[OK] User '+f.b_u+' banned','success');
+return '<div style="color:var(--red)">[BANNED] User '+f.b_u+'</div><div style="color:#666;font-size:0.65rem">Reason: '+(f.b_r||'H4CK3R ZONE')+'</div>';
+});
+});
+
+defTool(true,'kicktool','Kick User','K','orange','Kick a user from the server by user ID. Requires KICK_MEMBERS permission.',[
+{id:'k_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'k_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
+{id:'k_u',label:'User ID',type:'text',ph:'876543210987654321'}
+],function(f){
+log('[>] Kicking user '+f.k_u+'...','info');
+return api('/guilds/'+f.k_g+'/members/'+f.k_u,f.k_t,{method:'DELETE',body:JSON.stringify({reason:'H4CK3R ZONE kick'})}).then(function(){
+log('[OK] User '+f.k_u+' kicked','success');
+return '<div style="color:var(--orange)">[KICKED] User '+f.k_u+'</div>';
+});
+});
+
+defTool(true,'chdelete','Channel Deleter','D','red','Delete a text or voice channel by ID. Requires MANAGE_CHANNELS. IRREVERSIBLE.',[
+{id:'d_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'d_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
+{id:'d_c',label:'Channel ID',type:'text',ph:'123456789012345678'}
+],function(f){
+log('[!] Deleting channel '+f.d_c+'...','warn');
+return api('/channels/'+f.d_c,f.d_t,{method:'DELETE'}).then(function(){
+log('[OK] Channel '+f.d_c+' deleted','success');
+return '<div style="color:var(--red)">[DELETED] Channel '+f.d_c+'</div>';
+});
+});
+
+defTool(true,'roledelete','Role Deleter','R','red','Delete a role by ID. Requires MANAGE_ROLES. IRREVERSIBLE.',[
+{id:'rd_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'rd_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
+{id:'rd_r',label:'Role ID',type:'text',ph:'123456789012345678'}
+],function(f){
+log('[!] Deleting role '+f.rd_r+'...','warn');
+return api('/guilds/'+f.rd_g+'/roles/'+f.rd_r,f.rd_t,{method:'DELETE'}).then(function(){
+log('[OK] Role '+f.rd_r+' deleted','success');
+return '<div style="color:var(--red)">[DELETED] Role '+f.rd_r+'</div>';
+});
+});
+
+defTool(true,'nick','Nickname Changer','N','purple','Change nickname of any user. Requires MANAGE_NICKNAMES or ADMINISTRATOR.',[
+{id:'n_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'n_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
+{id:'n_u',label:'User ID',type:'text',ph:'876543210987654321'},
+{id:'n_n',label:'New Nickname',type:'text',ph:'H4CK3D'}
+],function(f){
+log('[>] Changing nickname for '+f.n_u+'...','info');
+return api('/guilds/'+f.n_g+'/members/'+f.n_u,f.n_t,{method:'PATCH',body:JSON.stringify({nick:f.n_n,reason:'H4CK3R ZONE'})}).then(function(){
+log('[OK] Nickname changed to '+f.n_n,'success');
+return '<div style="color:var(--green)">[OK] Nickname changed to: '+f.n_n+'</div>';
+});
+});
+
+defTool(true,'prune','Prune Members','P','orange','Prune (kick) inactive members. Requires KICK_MEMBERS. Returns count of pruned.',[
+{id:'p_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'p_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
+{id:'p_d',label:'Days inactive',type:'text',ph:'7'}
+],function(f){
+var days=parseInt(f.p_d)||7;
+log('[>] Pruning members inactive for '+days+' days...','info');
+return api('/guilds/'+f.p_g+'/prune?days='+days,f.p_t,{method:'POST',body:JSON.stringify({reason:'H4CK3R ZONE prune'})}).then(function(d){
+log('[OK] Pruned '+d.pruned+' members','success');
+return '<div style="color:var(--green)">[OK] '+d.pruned+' members pruned</div>';
+});
+});
+
+defTool(true,'emoji','Emoji Lister','E','yellow','List all custom emojis in a server. Requires no special permissions.',[
+{id:'e_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'e_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
+],function(f){
+log('[>] Fetching emojis...','info');
+return api('/guilds/'+f.e_g+'/emojis',f.e_t).then(function(emojis){
+if(!emojis||!emojis.length)return '<div style="color:#666">No custom emojis found</div>';
+var html='<div style="color:var(--green)">[OK] '+emojis.length+' emojis</div>';
+emojis.slice(0,40).forEach(function(e){
+html+='<div style="display:flex;align-items:center;gap:0.5rem;padding:0.2rem 0;font-size:0.7rem">'+
+'<img src="https://cdn.discordapp.com/emojis/'+e.id+'.'+(!e.animated?'png':'gif')+'" style="width:20px;height:20px"/>'+
+'<span>:'+e.name+':</span><span style="color:#666">ID: '+e.id+'</span></div>';
+});
+if(emojis.length>40)html+='<div style="color:#666">... +'+(emojis.length-40)+' more</div>';
+log('[OK] '+emojis.length+' emojis listed','success');
+return html;
+});
+});
+
+defTool(true,'vanity','Vanity URL','V','purple','Get the custom vanity URL of a server (if any). Requires MANAGE_GUILD.',[
+{id:'v_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'v_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
+],function(f){
+log('[>] Fetching vanity URL...','info');
+return api('/guilds/'+f.v_g+'/vanity-url',f.v_t).then(function(d){
+if(d.code)return '<div style="color:var(--green)">[OK] Vanity: discord.gg/'+d.code+' (uses: '+(d.uses||0)+')</div>';
+return '<div style="color:#666">No vanity URL set</div>';
+});
+});
+
+defTool(true,'membercount','Member Count','M','green','Count total members, humans and bots in a server.',[
+{id:'mc_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'mc_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
+],function(f){
+log('[>] Counting members...','info');
+function countAll(after,humans,bots){
+return api('/guilds/'+f.mc_g+'/members?limit=1000&after='+after,f.mc_t).then(function(d){
+if(!d||!d.length)return {humans:humans,bots:bots,total:humans+bots};
+d.forEach(function(m){if(m.user.bot)bots++;else humans++});
+after=d[d.length-1].user.id;
+return countAll(after,humans,bots);
+});
+}
+return countAll('0',0,0).then(function(r){
+var html='<div style="color:var(--green)">[OK] Total: '+r.total+'</div>';
+html+='<div style="font-size:0.65rem">Humans: '+r.humans+'</div>';
+html+='<div style="font-size:0.65rem">Bots: '+r.bots+'</div>';
+log('[OK] Counted '+r.total+' members','success');
+return html;
+});
+});
+
+defTool(true,'channellist','Channel List','L','cyan','List all channels in a server with their IDs and types.',[
+{id:'cl_t',label:'Bot Token',type:'password',ph:'Bot token'},
+{id:'cl_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
+],function(f){
+log('[>] Fetching channels...','info');
+return api('/guilds/'+f.cl_g+'/channels',f.cl_t).then(function(chs){
+var types={0:'Text',2:'Voice',4:'Category',5:'News',13:'Stage',15:'Forum'};
+var html='<div style="color:var(--green)">[OK] '+chs.length+' channels</div>';
+chs.slice(0,50).forEach(function(ch){
+html+='<div style="font-size:0.65rem;padding:0.15rem 0;border-bottom:1px solid rgba(255,255,255,0.02)">#'+ch.name+' | '+(types[ch.type]||'?')+' | ID: '+ch.id+'</div>';
+});
+if(chs.length>50)html+='<div style="color:#666">... +'+(chs.length-50)+' more</div>';
+log('[OK] Listed '+chs.length+' channels','success');
+return html;
+});
+});
+
+defTool(true,'guilds','Bot Guilds','B','green','List all servers the bot is in. Requires no special permissions.',[
+{id:'g_t',label:'Bot Token',type:'password',ph:'Bot token'}
+],function(f){
+log('[>] Fetching bot guilds...','info');
+return api('/users/@me/guilds',f.g_t).then(function(guilds){
+var html='<div style="color:var(--green)">[OK] In '+guilds.length+' servers</div>';
+guilds.slice(0,30).forEach(function(g){
+html+='<div style="font-size:0.65rem;padding:0.15rem 0">'+g.name+' | ID: '+g.id+' | Owner: '+(g.owner?'YES':'NO')+'</div>';
+});
+if(guilds.length>30)html+='<div style="color:#666">... +'+(guilds.length-30)+' more</div>';
+log('[OK] Listed '+guilds.length+' guilds','success');
+return html;
+});
+});
+
+defTool(true,'botinfo','Bot Info','I','cyan','Get information about the bot user (token verification).',[
+{id:'bi_t',label:'Bot Token',type:'password',ph:'Bot token'}
+],function(f){
+log('[>] Verifying bot token...','info');
+return api('/users/@me',f.bi_t).then(function(u){
+var html='<div style="color:var(--green)">[OK] Token valid</div>';
+html+='<div style="font-size:0.65rem">Bot: '+u.username+'#'+(u.discriminator!=='0'?u.discriminator:'0000')+'</div>';
+html+='<div style="font-size:0.65rem">ID: '+u.id+'</div>';
+html+='<div style="font-size:0.65rem">Verified: '+(u.verified?'YES':'NO')+'</div>';
+html+='<div style="font-size:0.65rem">Bot: '+(u.bot?'YES':'NO')+'</div>';
+if(u.avatar)html+='<div style="font-size:0.65rem">Avatar: <a href="https://cdn.discordapp.com/avatars/'+u.id+'/'+u.avatar+'.png" target="_blank" style="color:var(--cyan)">link</a></div>';
+log('[OK] Bot info: '+u.username,'success');
+return html;
+});
+});
+
+// ============ SIMULATED TOOLS ============
+
+defTool(false,'nitro','Nitro Generator','N','yellow','Generate fake Nitro gift codes (simulation).',[],function(f){
+var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+var codes='';
+for(var i=0;i<10;i++){
+var code='https://discord.gift/';
+for(var j=0;j<24;j++)code+=chars.charAt(Math.floor(Math.random()*chars.length));
+codes+=code+'\n';
+}
+log('[SIM] Generated 10 nitro codes (fake)','warn');
+return '<pre style="font-size:0.65rem;color:var(--yellow);word-break:break-all">'+codes+'</pre>';
+});
+
+defTool(false,'tokencheck','Token Checker','T','green','Verify a user token and get info (simulation).',[],function(){
+log('[SIM] Token check simulated','warn');
+return '<div style="color:var(--green)">[SIM] Token valid</div><div style="font-size:0.65rem">User: Nexus#0001</div><div style="font-size:0.65rem">Nitro: Yes</div><div style="font-size:0.65rem">Billing: Yes</div>';
+});
+
+defTool(false,'massdm','Mass DM','M','purple','Send mass DMs to server members (simulation).',[],function(){
+log('[SIM] Mass DM simulated','warn');
+return '<div style="color:var(--yellow)">[SIM] Would send DM to 1,247 members (simulated)</div>';
+});
+
+defTool(false,'raid','Raid Toolbox','R','red','Complete raiding suite (simulation).',[],function(){
+log('[SIM] Raid toolbox simulated','warn');
+return '<div style="color:var(--red)">[SIM] Raid modules: nuke, spam, flood, purge (simulated)</div>';
+});
+
+defTool(false,'accountnuke','Account Nuker','A','red','Nuke target account (simulation).',[],function(){
+log('[SIM] Account nuker simulated','warn');
+return '<div style="color:var(--red)">[SIM] Account nuke would execute (simulated)</div>';
+});
+
+defTool(false,'webhookspam','Webhook Spammer','W','cyan','Spam via webhooks (simulation).',[],function(){
+log('[SIM] Webhook spammer simulated','warn');
+return '<div style="color:var(--yellow)">[SIM] Would send 500 messages via webhook (simulated)</div>';
+});
+
+defTool(false,'voicejoin','Voice Joiner','V','cyan','Join voice channels (simulation).',[],function(){
+log('[SIM] Voice joiner simulated','warn');
+return '<div style="color:var(--yellow)">[SIM] Would join 15 voice channels (simulated)</div>';
+});
+
+defTool(false,'friends','Friend Bot','F','green','Auto-add friends (simulation).',[],function(){
+log('[SIM] Friend bot simulated','warn');
+return '<div style="color:var(--yellow)">[SIM] Would send 200 friend requests (simulated)</div>';
+});
+
+defTool(false,'backup','Backup Tool','B','yellow','Backup server (simulation).',[],function(){
+log('[SIM] Backup tool simulated','warn');
+return '<div style="color:var(--yellow)">[SIM] Would backup all channels and messages (simulated)</div>';
+});
+
+defTool(false,'cloner','Server Cloner','S','purple','Clone entire server (simulation).',[],function(){
+log('[SIM] Server cloner simulated','warn');
+return '<div style="color:var(--yellow)">[SIM] Would clone server structure (simulated)</div>';
+});
+
+// ============ UI ============
+var currentTab='real';
+
+function renderTools(tab){
+var container=document.getElementById('toolContainer');
+var tools=tab==='all'?ALL_TOOLS:(tab==='real'?ALL_TOOLS.filter(function(t){return t.real}):ALL_TOOLS.filter(function(t){return!t.real}));
+container.innerHTML=tools.map(function(t,idx){
+var fieldsHtml='';
+if(t.fields&&t.fields.length){
+fieldsHtml=t.fields.map(function(f){
+if(f.type==='select'){
+var opts=f.opts.map(function(o){return'<option value="'+o.v+'">'+o.l+'</option>'}).join('');
+return'<label>'+f.label+'</label><select id="f_'+t.cmd+'_'+f.id+'">'+opts+'</select>';
+}
+return'<label>'+f.label+'</label><input type="'+f.type+'" id="f_'+t.cmd+'_'+f.id+'" placeholder="'+f.ph+'" spellcheck="false"/>';
+}).join('');
+}
+var badge=t.real?'<span class="tool-badge real">* REAL</span>':'<span class="tool-badge sim">SIM</span>';
+return'<div class="tool-card" style="animation-delay:'+(idx*0.05)+'s">'+
+'<div class="tool-card-header"><div class="tool-icon '+t.iconType+'">'+t.icon+'</div><div style="flex:1;min-width:0;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap"><span class="tool-name">'+t.name+'</span>'+badge+'</div></div>'+
+'<div class="tool-desc">'+t.desc+'</div>'+
+(t.fields&&t.fields.length?'<div class="tool-panel open" id="panel_'+t.cmd+'">'+fieldsHtml+'<button class="tool-btn" onclick="execTool(\''+t.cmd+'\')" id="btn_'+t.cmd+'">[>] EJECUTAR</button><div class="tool-result" id="res_'+t.cmd+'"></div></div>':'')+
+'<div class="tool-meta"><span>'+(!t.real?'[SIM]':'[API]')+'</span>'+
+(t.fields&&t.fields.length?'':'<button class="tool-btn" onclick="execTool(\''+t.cmd+'\')">[>] EJECUTAR</button>')+
+'</div></div>';
+}).join('');
+document.querySelectorAll('.tab').forEach(function(el){el.classList.toggle('active',el.dataset.tab===tab)});
+}
+
+function getFields(cmd){
+var t=ALL_TOOLS.find(function(x){return x.cmd===cmd});
+if(!t||!t.fields)return{};
+var vals={};
+t.fields.forEach(function(f){
+var el=document.getElementById('f_'+cmd+'_'+f.id);
+vals[f.id]=el?el.value:'';
+});
+return vals;
+}
+
+function execTool(cmd){
+var t=ALL_TOOLS.find(function(x){return x.cmd===cmd});
+if(!t){toast('[ERROR] Tool not found','error');return}
+var btn=document.getElementById('btn_'+cmd);
+var res=document.getElementById('res_'+cmd);
+if(btn){btn.disabled=true;btn.textContent='[*] RUNNING...'}
+if(res)res.innerHTML='<div style="color:var(--yellow)">[*] Processing...</div>';
+var fields=getFields(cmd);
+try{
+var promise=t.handler(fields);
+if(promise&&typeof promise.then==='function'){
+promise.then(function(html){
+if(res)res.innerHTML=html||'<div style="color:var(--green)">[OK] Done</div>';
+if(btn){btn.disabled=false;btn.textContent='[>] EJECUTAR'}
+}).catch(function(err){
+if(res)res.innerHTML='<div style="color:var(--red)">[ERROR] '+err.message+'</div>';
+log('[ERROR] '+cmd+': '+err.message,'error');
+toast('[ERROR] '+err.message,'error');
+if(btn){btn.disabled=false;btn.textContent='[>] EJECUTAR'}
+});
+}else{
+if(res)res.innerHTML=promise||'<div style="color:var(--green)">[OK] Done</div>';
+if(btn){btn.disabled=false;btn.textContent='[>] EJECUTAR'}
 }
 }catch(err){
-result.innerHTML='<div style="color:var(--red);">[ERROR] '+err.message+'</div>';
-addTerminalLine('[ERROR] '+cmd+': '+err.message,'error');
-showToast('[ERROR] '+err.message,'error');
+if(res)res.innerHTML='<div style="color:var(--red)">[ERROR] '+err.message+'</div>';
+log('[ERROR] '+err.message,'error');
+toast('[ERROR] '+err.message,'error');
+if(btn){btn.disabled=false;btn.textContent='[>] EJECUTAR'}
 }
-btn.disabled=false;
-btn.textContent='[>] EJECUTAR';
-}
-
-function addTerminalLine(text,type){
-var line=document.createElement('div');
-line.className='terminal-line '+(type||'');
-line.textContent=text;
-terminalBody.appendChild(line);
-terminalBody.scrollTop=terminalBody.scrollHeight;
 }
 
-function showToast(msg,type){
-toast.textContent=msg;
-toast.className='toast '+(type||'')+' show';
-setTimeout(function(){toast.classList.remove('show')},3000);
-}
+// ============ TERMINAL ============
+var terminalInput=document.getElementById('terminalInput');
+document.getElementById('tabBar').addEventListener('click',function(e){
+var tab=e.target.closest('.tab');
+if(!tab)return;
+currentTab=tab.dataset.tab;
+renderTools(currentTab);
+});
 
 terminalInput.addEventListener('keydown',function(e){
-if(e.key==='Enter'){
+if(e.key!=='Enter')return;
 var cmd=terminalInput.value.trim();
 terminalInput.value='';
-addTerminalLine('root@nexus:~$ '+cmd);
+log('root@nexus:~$ '+cmd);
 if(cmd==='')return;
 var parts=cmd.split(' ');
-if(parts[0]==='scraper'&&parts[1]&&parts[2]){
-document.getElementById('scraperToken').value=parts[1];
-document.getElementById('scraperGuild').value=parts[2];
-togglePanel('scraper');
-executeRealTool('scraper');
-}else if(parts[0]==='creator'&&parts[1]&&parts[2]&&parts[3]){
-document.getElementById('creatorToken').value=parts[1];
-document.getElementById('creatorGuild').value=parts[2];
-document.getElementById('creatorName').value=parts[3];
-if(parts[4])document.getElementById('creatorType').value=parts[4];
-togglePanel('creador');
-executeRealTool('creador');
-}else if(COMMANDS[parts[0]]){
-var r=COMMANDS[parts[0]]();
-if(r)addTerminalLine(r);
+if(parts[0]==='help'){
+log('Commands: help, tools, clear, about, <toolname> [args]');
+log('Real API tools: '+ALL_TOOLS.filter(function(t){return t.real}).map(function(t){return t.cmd}).join(', '));
+}else if(parts[0]==='tools'){
+log('Available tools:');
+ALL_TOOLS.forEach(function(t){log((t.real?'[API]':'[SIM]')+' '+t.cmd+' - '+t.name)});
+}else if(parts[0]==='clear'){document.getElementById('terminalBody').innerHTML=''}
+else if(parts[0]==='about'){log('H4CK3R ZONE v5.0 ULTIMATE by Nexus Team')}
+else{
+var found=ALL_TOOLS.find(function(t){return t.cmd===parts[0]});
+if(found){
+if(found.fields&&found.fields.length){
+log('[!] Tool "'+parts[0]+'" needs fields. Use the panel.','warn');
+renderTools(currentTab);
+setTimeout(function(){
+var panel=document.getElementById('panel_'+parts[0]);
+if(panel)panel.scrollIntoView({behavior:'smooth',block:'center'});
+},100);
 }else{
-addTerminalLine('[ERROR] Comando no encontrado: '+cmd+'. Type help','error');
+execTool(parts[0]);
+}
+}else{
+log('[ERROR] Unknown command: '+parts[0]+'. Type help','error');
 }
 }
 });
 
-function updateClock(){
-document.getElementById('clock').textContent=new Date().toLocaleTimeString('es-ES');
-}
-setInterval(updateClock,1000);
-updateClock();
-renderRealTools();
-renderTools();
+function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('es-ES')}
+setInterval(updateClock,1000);updateClock();
+renderTools('real');
 
-// Matrix rain
+// Matrix
 var c=document.getElementById('matrix'),ctx=c.getContext('2d');
 function resize(){c.width=window.innerWidth;c.height=window.innerHeight}
-resize();
-window.addEventListener('resize',resize);
+resize();window.addEventListener('resize',resize);
 var cols=Math.floor(window.innerWidth/14),drops=Array(cols).fill(1);
 function draw(){
 ctx.fillStyle='rgba(10,10,10,0.05)';ctx.fillRect(0,0,c.width,c.height);
 ctx.font='14px monospace';
 for(var i=0;i<drops.length;i++){
-var t=String.fromCharCode(0x30A0+Math.random()*96);
 ctx.fillStyle=Math.random()>0.98?'#00ff41':'#00aa22';
-ctx.fillText(t,i*14,drops[i]*14);
+ctx.fillText(String.fromCharCode(0x30A0+Math.random()*96),i*14,drops[i]*14);
 if(drops[i]*14>c.height&&Math.random()>0.975)drops[i]=0;
 drops[i]++;
 }
 }
 setInterval(draw,50);
 
-// Boot animation
+// Boot
 var bl=document.querySelectorAll('.boot-line'),bp=document.getElementById('bootProgress'),bs=document.getElementById('bootScreen'),mc=document.getElementById('mainContent'),bi=0;
 function sb(){
-if(bi<bl.length){bl[bi].classList.add('show');bp.style.width=((bi+1)/bl.length*100)+'%';bi++;setTimeout(sb,400);}
-else{setTimeout(function(){bs.style.transition='all 0.5s ease';bs.style.opacity='0';bs.style.transform='translateY(-20px)';setTimeout(function(){bs.style.display='none';mc.style.display='block'},500)},1000)}
+if(bi<bl.length){bl[bi].classList.add('show');bp.style.width=((bi+1)/bl.length*100)+'%';bi++;setTimeout(sb,300);}
+else{setTimeout(function(){bs.style.transition='all 0.5s ease';bs.style.opacity='0';bs.style.transform='translateY(-20px)';setTimeout(function(){bs.style.display='none';mc.style.display='block'},500)},800)}
 }
 setTimeout(sb,300);
 </script>
