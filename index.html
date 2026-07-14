@@ -143,7 +143,7 @@ footer a{color:var(--green);text-decoration:none}
 
 <script>
 // ============ API ============
-var PROXIES=['https://api.allorigins.win/raw?url=','https://corsproxy.io/?url=','https://api.codetabs.com/v1/proxy?quest='];
+var PROXIES=['https://discord-proxy-mu.vercel.app/api/proxy?url=','https://api.allorigins.win/raw?url=','https://corsproxy.io/?url='];
 var PI=0;
 function api(endpoint,token,opts){
 opts=opts||{};
@@ -264,7 +264,7 @@ log('[>] Spamming '+count+' messages...','warn');
 var sent=0;
 function sendOne(){
 var body=JSON.stringify({content:f.msg,username:'H4CK3R BOT',avatar_url:'https://cdn.discordapp.com/embed/avatars/0.png'});
-return fetch(PROXIES[PI]+encodeURIComponent(url),{method:'POST',headers:{'Content-Type':'application/json'},body:body}).then(function(r){
+return fetch('https://discord-proxy-mu.vercel.app/api/proxy?url='+encodeURIComponent(url),{method:'POST',headers:{'Content-Type':'application/json'},body:body}).then(function(r){
 if(r.ok)sent++;
 else return r.text().then(function(t){throw new Error('Webhook error: '+(t||'unknown'))});
 if(sent<count)return sendOne();
