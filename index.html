@@ -143,14 +143,18 @@ footer a{color:var(--green);text-decoration:none}
 
 <script>
 // ============ API ============
-var DC_API='https://discord.com/api/v10';
 function api(endpoint,token,opts){
 opts=opts||{};
-var headers={'Authorization':token.startsWith('M')?'Bot '+token:token,'Content-Type':'application/json','User-Agent':'H4CK3R-ZONE/6.0'};
-if(opts.headers){for(var k in opts.headers)headers[k]=opts.headers[k]}
-return fetch(DC_API+endpoint,{method:opts.method||'GET',headers:headers,body:opts.body||null}).then(function(r){
-if(r.status===204||r.status===200)return r.status===204?null:r.json().catch(function(){return null});
-return r.json().then(function(d){if(!r.ok)throw new Error(d.message||'HTTP '+r.status);return d});
+var headers={'Content-Type':'application/json'};
+if(token)headers['Authorization']=token.startsWith('M')?'Bot '+token:token;
+var body=null;
+if(opts.body){body=opts.body}
+var method=opts.method||'GET';
+return fetch('/api/discord?path='+encodeURIComponent(endpoint.replace('/v10/',''))+'&method='+method,{method:'POST',headers:headers,body:body?body:null}).then(function(r){
+return r.json().then(function(d){
+if(!r.ok)throw new Error(d&&d.error?d.error:'HTTP '+r.status);
+return d;
+});
 });
 }
 
@@ -247,9 +251,10 @@ if(!url.startsWith('http'))throw new Error('Invalid webhook URL');
 log('[>] Spamming '+count+' messages...','warn');
 var sent=0;
 function sendOne(){
-return fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:f.msg,username:'H4CK3R BOT',avatar_url:'https://cdn.discordapp.com/embed/avatars/0.png'})}).then(function(r){
+var body=JSON.stringify({content:f.msg,username:'H4CK3R BOT',avatar_url:'https://cdn.discordapp.com/embed/avatars/0.png'});
+return fetch('/api/discord?webhook=1&method=POST',{method:'POST',headers:{'Content-Type':'application/json','X-Webhook-URL':encodeURIComponent(url)},body:body}).then(function(r){
 if(r.ok)sent++;
-else return r.text().then(function(t){throw new Error('Webhook error: '+t)});
+else return r.json().then(function(d){throw new Error(d.error||'Webhook error')});
 if(sent<count)return sendOne();
 });
 }
