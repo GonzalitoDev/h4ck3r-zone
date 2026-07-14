@@ -664,6 +664,40 @@ function(){
   });
 });
 
+// ============ TOOL: Keep Alive ============
+var keepAliveInterval = null;
+var keepAliveCount = 0;
+T('keepalive','Keep Alive','KA','green','user','Keep your account online. Pings Discord API every 60s using your user token. Start/Stop.',[f_token('token','User Token','user'),f_text('interval','Interval (seconds)','60')],
+function(f){
+  var el = document.getElementById('res_keepalive');
+  if (keepAliveInterval) {
+    clearInterval(keepAliveInterval);
+    keepAliveInterval = null;
+    log('[!] Keep Alive stopped after ' + keepAliveCount + ' pings','warn');
+    if (el) el.innerHTML = '<div style="color:var(--orange)">[STOPPED] ' + keepAliveCount + ' pings sent</div>';
+    return '';
+  }
+  keepAliveCount = 0;
+  var sec = Math.max(parseInt(f.interval) || 60, 10);
+  function ping() {
+    keepAliveCount++;
+    api('/users/@me', f.token).then(function(d) {
+      log('[OK] Keep Alive #' + keepAliveCount + ' - ' + d.username + '#' + (d.discriminator||'0') + ' online','success');
+      if (el) el.innerHTML = '<div style="color:var(--green)">[RUNNING] ' + keepAliveCount + ' pings | Last: ' + d.username + '#' + (d.discriminator||'0') + '</div>';
+    }).catch(function(e) {
+      if (el) el.innerHTML = '<div style="color:var(--red)">[ERROR] ' + (e.message||'Failed') + '</div>';
+      clearInterval(keepAliveInterval);
+      keepAliveInterval = null;
+      log('[ERROR] Keep Alive failed: ' + (e.message||'Unknown'),'error');
+    });
+  }
+  ping();
+  keepAliveInterval = setInterval(ping, sec * 1000);
+  log('[>] Keep Alive started - pinging every ' + sec + 's','info');
+  if (el) el.innerHTML = '<div style="color:var(--cyan)">[RUNNING] Pinging every ' + sec + 's... <button class="tool-btn" onclick="exec(\'keepalive\')" style="margin-left:0.5rem">[STOP]</button></div>';
+  return '';
+});
+
 // ============ RENDER ============
 function render(){
 var c=document.getElementById('toolContainer');
