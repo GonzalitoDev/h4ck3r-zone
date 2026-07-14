@@ -148,7 +148,8 @@ var PROXY='https://discord-proxy-mu.vercel.app/api/proxy?url=';
 function api(endpoint,token,opts){
 opts=opts||{};
 var headers={'Content-Type':'application/json'};
-if(token)headers['Authorization']=token.startsWith('M')?'Bot '+token:token;
+var isBot=token&&token.startsWith('M');
+if(token)headers['Authorization']=isBot?'Bot '+token:token;
 var body=null;
 if(opts.body){body=opts.body}
 var method=opts.method||'GET';
@@ -157,7 +158,10 @@ return fetch(url,{method:method,headers:headers,body:body||null}).then(function(
 return r.text().then(function(text){
 try{
 var d=JSON.parse(text);
-if(!r.ok&&d)throw new Error(d.message||d.error||'HTTP '+r.status);
+if(!r.ok&&d){
+if(d.code===40333||d.message==='internal network error')throw new Error('Discord bloquea Bot tokens. Usá User Token (NDU...)');
+throw new Error(d.message||d.error||'HTTP '+r.status);
+}
 if(!r.ok)throw new Error('HTTP '+r.status);
 return d;
 }catch(e){
@@ -694,20 +698,23 @@ function(f){
 });
 
 // ============ TOOL: Message Sender ============
-T('msg','Message Sender','MS','cyan','user','Send a message to a channel or DM a user using your User Token.',[f_token('token','User Token','user'),f_text('target','Channel ID or User ID','123456789012345678'),f_text('msg','Message','Hello from H4CK3R ZONE!'),f_select('type','Type',[{v:'channel',l:'Channel'},{v:'dm',l:'DM User'}])],
+T('msg','Message Sender','MS','cyan','user','Send a message to a channel or DM a user using your User Token (NDU...).',[f_token('token','User Token (NDU...)','user'),f_text('target','Channel ID or User ID','123456789012345678'),f_text('msg','Message','Hello from H4CK3R ZONE!'),f_select('type','Type',[{v:'channel',l:'Channel'},{v:'dm',l:'DM User'}])],
 function(f){
+  if(!f.token||f.token.length<10)return '<div style="color:var(--red)">[ERROR] Token inválido o muy corto</div>';
+  if(f.token.startsWith('M'))return '<div style="color:var(--red)">[ERROR] Ese es un Bot Token (MTA...). Discord lo bloquea. Usá User Token (NDU...) que empieza con N</div>';
   var msg = f.msg || 'Hello!';
+  if(!f.target||f.target.length<10)return '<div style="color:var(--red)">[ERROR] ID de destino inválido</div>';
   if (f.type === 'dm') {
     return api('/users/@me/channels', f.token, {method:'POST',body:JSON.stringify({recipient_id:f.target})}).then(function(dm){
       return api('/channels/'+dm.id+'/messages', f.token, {method:'POST',body:JSON.stringify({content:msg})}).then(function(r){
         log('[OK] DM sent to '+f.target,'success');
-        return '<div style="color:var(--green)">[OK] DM sent to <span style="color:white">'+f.target+'</span><br><span style="color:#666">Message ID: '+r.id+'</span></div>';
+        return '<div style="color:var(--green)">[OK] DM enviado a <span style="color:white">'+f.target+'</span><br><span style="color:#666">Message ID: '+r.id+'</span></div>';
       });
     });
   } else {
     return api('/channels/'+f.target+'/messages', f.token, {method:'POST',body:JSON.stringify({content:msg})}).then(function(r){
       log('[OK] Message sent to channel '+f.target,'success');
-      return '<div style="color:var(--green)">[OK] Message sent<br><span style="color:#666">Channel: '+f.target+' | Message ID: '+r.id+'</span></div>';
+      return '<div style="color:var(--green)">[OK] Mensaje enviado<br><span style="color:#666">Channel: '+f.target+' | Message ID: '+r.id+'</span></div>';
     });
   }
 });
