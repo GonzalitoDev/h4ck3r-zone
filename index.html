@@ -40,10 +40,7 @@
 
     .scanlines {
       position: fixed; inset: 0; z-index: 0;
-      background: repeating-linear-gradient(
-        0deg, transparent, transparent 2px,
-        rgba(0,255,65,0.015) 2px, rgba(0,255,65,0.015) 4px
-      );
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,65,0.015) 2px, rgba(0,255,65,0.015) 4px);
       pointer-events: none;
     }
 
@@ -53,45 +50,27 @@
       pointer-events: none;
     }
 
-    @keyframes flicker {
-      0% { opacity: 0.97; } 5% { opacity: 0.85; } 10% { opacity: 0.97; }
-      15% { opacity: 0.92; } 20% { opacity: 0.97; } 50% { opacity: 0.98; }
-      80% { opacity: 0.95; } 90% { opacity: 0.88; } 100% { opacity: 0.97; }
-    }
-
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-    @keyframes glitch {
-      0% { transform: translate(0); }
-      20% { transform: translate(-2px, 2px); }
-      40% { transform: translate(2px, -2px); }
-      60% { transform: translate(-1px, 1px); }
-      80% { transform: translate(1px, -1px); }
-      100% { transform: translate(0); }
-    }
     @keyframes pulse {
       0%, 100% { box-shadow: 0 0 5px var(--green), 0 0 10px var(--green-dim); }
       50% { box-shadow: 0 0 10px var(--green), 0 0 20px var(--green-dim); }
-    }
-    @keyframes rainbow {
-      0% { filter: hue-rotate(0deg); }
-      100% { filter: hue-rotate(360deg); }
     }
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    @keyframes typewriter {
-      from { width: 0; }
-      to { width: 100%; }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
-    @keyframes bootProgress {
-      0% { width: 0%; }
-      100% { width: 100%; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--green); }
 
     header {
       position: sticky; top: 0; z-index: 100;
@@ -129,8 +108,7 @@
       background: var(--terminal);
       border: 1px solid var(--border);
       border-radius: 8px;
-      margin: 1.5rem;
-      max-width: 1200px; margin-left: auto; margin-right: auto;
+      margin: 1.5rem; max-width: 1200px; margin-left: auto; margin-right: auto;
       overflow: hidden;
     }
     .boot-header {
@@ -145,42 +123,11 @@
     .boot-body { padding: 1rem; font-size: 0.8rem; line-height: 1.6; color: var(--green); }
     .boot-line { opacity: 0; }
     .boot-line.show { opacity: 1; }
-    .boot-cursor::after {
-      content: '█'; animation: blink 0.8s infinite; color: var(--green);
-    }
-    .boot-progress {
-      height: 2px; background: var(--border); margin-top: 0.5rem; border-radius: 2px; overflow: hidden;
-    }
-    .boot-progress-bar {
-      height: 100%; width: 0%; background: var(--green);
-      transition: width 0.3s;
-    }
+    .boot-cursor::after { content: '█'; animation: blink 0.8s infinite; color: var(--green); }
+    .boot-progress { height: 2px; background: var(--border); margin-top: 0.5rem; border-radius: 2px; overflow: hidden; }
+    .boot-progress-bar { height: 100%; width: 0%; background: var(--green); transition: width 0.3s; }
 
     .main-content { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
-
-    .stats-bar {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem; margin-bottom: 2rem;
-    }
-    .stat-card {
-      background: rgba(13,17,23,0.8);
-      border: 1px solid var(--border);
-      border-radius: 8px; padding: 1rem;
-      text-align: center;
-      animation: slideUp 0.5s ease forwards;
-      opacity: 0;
-    }
-    .stat-card:nth-child(1) { animation-delay: 0.1s; }
-    .stat-card:nth-child(2) { animation-delay: 0.2s; }
-    .stat-card:nth-child(3) { animation-delay: 0.3s; }
-    .stat-card:nth-child(4) { animation-delay: 0.4s; }
-    .stat-card:hover { border-color: var(--green); box-shadow: 0 0 15px rgba(0,255,65,0.1); }
-    .stat-number {
-      font-size: 2rem; font-weight: 700;
-      background: linear-gradient(90deg, var(--green), var(--cyan));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .stat-label { color: #666; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-top: 0.25rem; }
 
     .section-title {
       font-size: 1.1rem; font-weight: 700; color: var(--green);
@@ -239,22 +186,63 @@
       display: flex; align-items: center; justify-content: space-between;
       font-size: 0.7rem; color: #555;
     }
-    .tool-btn {
+
+    .tool-card .tool-btn, .tool-btn {
       padding: 0.35rem 1rem; border: 1px solid var(--green);
       background: transparent; color: var(--green);
       border-radius: 4px; cursor: pointer;
       font-family: inherit; font-size: 0.75rem;
       transition: all 0.3s; text-decoration: none;
     }
-    .tool-btn:hover {
+    .tool-card .tool-btn:hover, .tool-btn:hover {
       background: var(--green); color: var(--bg);
       box-shadow: 0 0 15px rgba(0,255,65,0.3);
     }
-    .tool-btn.red {
-      border-color: var(--red); color: var(--red);
+    .tool-btn.red { border-color: var(--red); color: var(--red); }
+    .tool-btn.red:hover { background: var(--red); color: white; }
+    .tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .tool-btn:disabled:hover { background: transparent; color: var(--green); box-shadow: none; }
+
+    .tool-panel {
+      display: none;
+      background: rgba(0,0,0,0.3);
+      border-top: 1px solid var(--border);
+      padding: 1rem;
     }
-    .tool-btn.red:hover {
-      background: var(--red); color: white;
+    .tool-panel.open { display: block; }
+    .tool-panel label {
+      display: block; font-size: 0.7rem; color: #666;
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem;
+    }
+    .tool-panel input, .tool-panel select {
+      width: 100%; background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border); padding: 0.6rem 0.75rem;
+      border-radius: 4px; color: var(--green);
+      font-family: inherit; font-size: 0.8rem; outline: none;
+      margin-bottom: 0.75rem; transition: border-color 0.3s;
+    }
+    .tool-panel input:focus, .tool-panel select:focus { border-color: var(--green); }
+    .tool-panel input::placeholder { color: #333; }
+    .tool-result {
+      font-size: 0.75rem; max-height: 300px; overflow-y: auto;
+      margin-top: 0.5rem; line-height: 1.8;
+    }
+    .tool-result .user-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .tool-result .user-item img {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 1px solid var(--border);
+    }
+    .tool-result .user-item .u-name { color: white; font-size: 0.8rem; }
+    .tool-result .user-item .u-tag { color: #666; font-size: 0.65rem; }
+    .tool-result .user-item .u-id { color: #444; font-size: 0.6rem; }
+    .spinner-sm {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid var(--border); border-top-color: var(--green);
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+      margin-right: 0.5rem; vertical-align: middle;
     }
 
     .terminal-box {
@@ -276,6 +264,7 @@
     .terminal-line.error { color: var(--red); }
     .terminal-line.info { color: var(--cyan); }
     .terminal-line.warn { color: var(--yellow); }
+    .terminal-line.success { color: var(--green); }
     .terminal-prompt { color: var(--green); }
     .terminal-input-line {
       display: flex; align-items: center; gap: 0.5rem;
@@ -287,27 +276,6 @@
       outline: none;
     }
     .terminal-input::placeholder { color: #333; }
-
-    .featured-tool {
-      background: linear-gradient(135deg, rgba(13,17,23,0.9), rgba(0,255,65,0.05));
-      border: 1px solid var(--green);
-      border-radius: 12px; padding: 2rem; margin-bottom: 2rem;
-      text-align: center;
-      animation: slideUp 0.6s ease forwards;
-      box-shadow: 0 0 30px rgba(0,255,65,0.05);
-    }
-    .featured-tool h2 {
-      font-size: 1.5rem; color: var(--green); margin-bottom: 0.5rem;
-    }
-    .featured-tool p { color: #888; font-size: 0.9rem; max-width: 600px; margin: 0 auto 1.5rem; }
-    .featured-input {
-      background: rgba(0,0,0,0.5); border: 1px solid var(--border);
-      padding: 0.75rem 1rem; border-radius: 6px;
-      color: var(--green); font-family: inherit; font-size: 0.85rem;
-      width: 100%; max-width: 400px; outline: none;
-      transition: border-color 0.3s;
-    }
-    .featured-input:focus { border-color: var(--green); }
 
     footer {
       border-top: 1px solid var(--border);
@@ -327,9 +295,15 @@
     .toast.show { transform: translateY(0); opacity: 1; }
     .toast.error { border-color: var(--red); color: var(--red); }
 
+    .copy-btn {
+      background: none; border: 1px solid #333; color: #666;
+      cursor: pointer; font-size: 0.65rem; padding: 0.15rem 0.5rem;
+      border-radius: 3px; font-family: inherit; transition: all 0.2s;
+    }
+    .copy-btn:hover { border-color: var(--green); color: var(--green); }
+
     @media (max-width: 768px) {
       .tools-grid { grid-template-columns: 1fr; }
-      .stats-bar { grid-template-columns: repeat(2, 1fr); }
       .header-inner { flex-wrap: wrap; gap: 0.5rem; }
     }
   </style>
@@ -363,12 +337,12 @@
         <span class="boot-title">H4CK3R_ZONE_SHELL — root@nexus:~</span>
       </div>
       <div class="boot-body" id="bootBody">
-        <div class="boot-line">[  OK  ] Initializing H4CK3R ZONE v3.7.1</div>
-        <div class="boot-line">[  OK  ] Loading Discord exploit modules...</div>
+        <div class="boot-line">[  OK  ] Initializing H4CK3R ZONE v4.0</div>
+        <div class="boot-line">[  OK  ] Loading Discord API exploit modules...</div>
         <div class="boot-line">[  OK  ] Establishing secure tunnel to Nexus Network</div>
         <div class="boot-line">[  OK  ] Decrypting toolkit database (4096-bit RSA)</div>
-        <div class="boot-line">[ WARN ] Some modules require authorization</div>
-        <div class="boot-line">[  OK  ] 47 tools loaded successfully</div>
+        <div class="boot-line">[ WARN ] Some modules require a bot token</div>
+        <div class="boot-line">[  OK  ] 18 tools loaded — 2 REAL Discord API modules</div>
         <div class="boot-line" id="bootFinalLine">
           <span style="color:var(--green)">root@nexus:~$ </span>
           <span class="boot-cursor"></span>
@@ -380,24 +354,11 @@
     </div>
 
     <div class="main-content" id="mainContent" style="display:none">
-      <div class="stats-bar">
-        <div class="stat-card"><div class="stat-number">47</div><div class="stat-label">Tools Disponibles</div></div>
-        <div class="stat-card"><div class="stat-number">12.4k</div><div class="stat-label">Usuarios Activos</div></div>
-        <div class="stat-card"><div class="stat-number">99.7%</div><div class="stat-label">Uptime</div></div>
-        <div class="stat-card"><div class="stat-number">∞</div><div class="stat-label">Gratis</div></div>
-      </div>
+      <div class="section-title"><span class="arrow">▶</span> REAL DISCORD API TOOLS</div>
 
-      <div class="featured-tool" id="featuredTool">
-        <h2>⚡ NEXUS NITRO GENERATOR v2</h2>
-        <p>Genera códigos de Nitro funcionales con alta tasa de éxito. Algoritmo basado en predicción de hashes.</p>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
-          <input type="text" class="featured-input" id="nitroInput" placeholder="Cantidad a generar (max 50)" value="10" />
-          <button class="tool-btn" id="nitroBtn" style="font-size:0.9rem;padding:0.6rem 2rem;">▶ GENERAR NITRO</button>
-          <div id="nitroResult" style="margin-top:0.5rem;font-size:0.8rem;word-break:break-all;max-width:100%;color:var(--cyan);"></div>
-        </div>
-      </div>
+      <div class="tools-grid" id="realToolsGrid"></div>
 
-      <div class="section-title"><span class="arrow">▶</span> DISCORD EXPLOITS</div>
+      <div class="section-title" style="margin-top:1.5rem;"><span class="arrow">▶</span> DISCORD EXPLOITS</div>
       <div class="tools-grid" id="toolsGrid"></div>
 
       <div class="section-title" style="margin-top:1.5rem;"><span class="arrow">▶</span> CONSOLE / LOGS</div>
@@ -439,7 +400,6 @@
       { name: "Proxy Scraper", icon: "🌐", iconType: "purple", badge: "Online", badgeType: "online", desc: "Scraper de proxies SOCKS4/5 y HTTP. Filtro por país y velocidad.", users: "3.1k", cmd: "proxy" },
       { name: "Voice Channel Joiner", icon: "🔊", iconType: "cyan", badge: "Online", badgeType: "online", desc: "Join masivo a canales de voz con userbots. Stable y rápido.", users: "2.7k", cmd: "voice" },
       { name: "Friend Request Bot", icon: "👥", iconType: "green", badge: "Online", badgeType: "online", desc: "Auto-envío de solicitudes de amistad. Filtro por mutual servers.", users: "4.0k", cmd: "friends" },
-      { name: "QR Code Login", icon: "📱", iconType: "yellow", badge: "Dev", badgeType: "dev", desc: "Genera QR falso para capturar sesión de Discord mobile.", users: "1.2k", cmd: "qr-phish" },
       { name: "Server Cloner", icon: "📋", iconType: "purple", badge: "Beta", badgeType: "beta", desc: "Clona servidores completos: canales, roles, emojis, ajustes.", users: "2.5k", cmd: "cloner" },
       { name: "Message Logger", icon: "📝", iconType: "cyan", badge: "Online", badgeType: "online", desc: "Loggea mensajes de canales/servidores en tiempo real. Exportable.", users: "3.8k", cmd: "logger" },
       { name: "Status Changer", icon: "🔄", iconType: "green", badge: "Online", badgeType: "online", desc: "Cambia estado personalizado con emojis y timers. Anti-suspension.", users: "5.1k", cmd: "status" },
@@ -447,21 +407,128 @@
       { name: "Alt Generator", icon: "👤", iconType: "red", badge: "Dev", badgeType: "dev", desc: "Genera cuentas alternas automáticamente con verificación.", users: "1.6k", cmd: "altgen" },
     ];
 
+    const REAL_TOOLS = [
+      {
+        name: "User Scraper", icon: "👤", iconType: "red", badge: "REAL", badgeType: "online",
+        desc: "Fetchea todos los miembros de un servidor Discord usando la API oficial. Obtiene usernames, avatares, IDs y roles.",
+        users: "6.2k", cmd: "scraper",
+        fields: [
+          { id: "scraperToken", label: "Bot Token", type: "password", placeholder: "MTA5MjM0..." },
+          { id: "scraperGuild", label: "Guild ID", type: "text", placeholder: "123456789012345678" }
+        ]
+      },
+      {
+        name: "Channel Creator", icon: "📢", iconType: "cyan", badge: "REAL", badgeType: "online",
+        desc: "Crea canales de texto o voz en un servidor Discord mediante la API oficial con un bot.",
+        users: "4.8k", cmd: "creador",
+        fields: [
+          { id: "creatorToken", label: "Bot Token", type: "password", placeholder: "MTA5MjM0..." },
+          { id: "creatorGuild", label: "Guild ID", type: "text", placeholder: "123456789012345678" },
+          { id: "creatorName", label: "Channel Name", type: "text", placeholder: "hackeado-por-nexus" },
+          { id: "creatorType", label: "Channel Type", type: "select", options: [
+            { value: "0", label: "Texto (0)" }, { value: "2", label: "Voz (2)" }
+          ]}
+        ]
+      }
+    ];
+
     const COMMANDS = {
-      help: () => `Comandos disponibles: help, tools, nitro [cant], check [token], status, clear, about`,
-      tools: () => `📦 ${TOOLS.length} herramientas cargadas. Usa el panel para acceder.`,
-      status: () => `🟢 Sistema operativo · ${TOOLS.length} tools online · 12.4k usuarios activos`,
-      about: () => `H4CK3R ZONE v3.7.1 · Developed by Nexus Team · For educational purposes`,
+      help: () => `Comandos: help, tools, scraper <token> <guild>, creator <token> <guild> <name> [type], status, clear, about`,
+      tools: () => `📦 ${TOOLS.length + REAL_TOOLS.length} herramientas (${REAL_TOOLS.length} reales con API)`,
+      status: () => `🟢 Sistema operativo · ${TOOLS.length + REAL_TOOLS.length} tools · ${REAL_TOOLS.length} usan Discord API real`,
+      about: () => `H4CK3R ZONE v4.0 · Developed by Nexus Team · Discord API integration · Educational purposes`,
       clear: () => { document.getElementById('terminalBody').innerHTML = ''; return ''; },
     };
 
-    const toolsGrid = document.getElementById('toolsGrid');
     const terminalInput = document.getElementById('terminalInput');
     const terminalBody = document.getElementById('terminalBody');
     const toast = document.getElementById('toast');
 
+    const DC_API = 'https://discord.com/api/v10';
+
+    async function discordFetch(endpoint, token, options = {}) {
+      const res = await fetch(`${DC_API}${endpoint}`, {
+        ...options,
+        headers: {
+          'Authorization': `Bot ${token}`,
+          'Content-Type': 'application/json',
+          'User-Agent': 'DiscordBot (H4CK3R-ZONE, 4.0)',
+          ...(options.headers || {})
+        }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || `HTTP ${res.status}`);
+      return data;
+    }
+
+    async function scrapeUsers(token, guildId) {
+      addTerminalLine(`[SCRAPE] Fetching members from guild ${guildId}...`, 'info');
+      let members = [];
+      let after = '0';
+      while (true) {
+        const data = await discordFetch(`/guilds/${guildId}/members?limit=1000&after=${after}`, token);
+        if (!data.length) break;
+        members = members.concat(data);
+        after = data[data.length - 1].user.id;
+        addTerminalLine(`[SCRAPE] ${members.length} members fetched so far...`, 'info');
+        if (data.length < 1000) break;
+      }
+      return members;
+    }
+
+    async function createChannel(token, guildId, name, type) {
+      addTerminalLine(`[CREATE] Creating channel #${name} (type ${type}) in ${guildId}...`, 'info');
+      const body = { name, type: parseInt(type), reason: 'Channel created via H4CK3R ZONE API' };
+      const data = await discordFetch(`/guilds/${guildId}/channels`, token, {
+        method: 'POST',
+        body: JSON.stringify(body)
+      });
+      return data;
+    }
+
+    function renderRealTools() {
+      const grid = document.getElementById('realToolsGrid');
+      grid.innerHTML = REAL_TOOLS.map((t, idx) => `
+        <div class="tool-card" style="animation-delay:${idx * 0.15}s">
+          <div class="tool-card-header">
+            <div class="tool-icon ${t.iconType}">${t.icon}</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
+                <span class="tool-name" style="color:var(--yellow)">${t.name}</span>
+                <span class="tool-badge ${t.badgeType}" style="animation:blink 1.5s infinite">● ${t.badge}</span>
+              </div>
+            </div>
+          </div>
+          <div class="tool-card-body">
+            <div class="tool-desc">${t.desc}</div>
+            <div class="tool-panel ${t.cmd === openPanel ? 'open' : ''}" id="panel-${t.cmd}">
+              ${t.fields.map(f => {
+                if (f.type === 'select') {
+                  return `<label>${f.label}</label><select id="${f.id}">${f.options.map(o => `<option value="${o.value}">${o.label}</option>`).join('')}</select>`;
+                }
+                return `<label>${f.label}</label><input type="${f.type}" id="${f.id}" placeholder="${f.placeholder}" spellcheck="false" />`;
+              }).join('')}
+              <button class="tool-btn" onclick="executeRealTool('${t.cmd}')" id="btn-${t.cmd}">▶ EJECUTAR</button>
+              <div class="tool-result" id="result-${t.cmd}"></div>
+            </div>
+            <div class="tool-meta">
+              <span>👤 ${t.users} users</span>
+              <button class="tool-btn ${t.cmd}" onclick="togglePanel('${t.cmd}')">⚙ CONFIGURAR</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    let openPanel = null;
+    function togglePanel(cmd) {
+      openPanel = openPanel === cmd ? null : cmd;
+      renderRealTools();
+    }
+
     function renderTools() {
-      toolsGrid.innerHTML = TOOLS.map(t => `
+      const grid = document.getElementById('toolsGrid');
+      grid.innerHTML = TOOLS.map(t => `
         <div class="tool-card" style="animation-delay:${Math.random() * 0.5}s">
           <div class="tool-card-header">
             <div class="tool-icon ${t.iconType}">${t.icon}</div>
@@ -476,17 +543,74 @@
             <div class="tool-desc">${t.desc}</div>
             <div class="tool-meta">
               <span>👤 ${t.users} users</span>
-              <button class="tool-btn" data-cmd="${t.cmd}" onclick="executeTool('${t.cmd}')">▶ EJECUTAR</button>
+              <button class="tool-btn" onclick="executeFakeTool('${t.cmd}')">▶ EJECUTAR</button>
             </div>
           </div>
         </div>
       `).join('');
     }
 
-    function executeTool(cmd) {
-      addTerminalLine(`[EXEC] Running: ${cmd}`, 'info');
-      showToast(`⚡ ${cmd} ejecutado - Próximamente en la versión completa`, 'info');
-      addTerminalLine(`[INFO] Módulo ${cmd} requerirá autorización en v4.0`, 'warn');
+    function executeFakeTool(cmd) {
+      addTerminalLine(`[EXEC] ${cmd} — módulo simulado`, 'warn');
+      showToast(`⚡ ${cmd} — versión completa próximamente`, '');
+    }
+
+    async function executeRealTool(cmd) {
+      const btn = document.getElementById(`btn-${cmd}`);
+      const result = document.getElementById(`result-${cmd}`);
+      btn.disabled = true;
+      btn.textContent = '⏳ PROCESANDO...';
+
+      try {
+        if (cmd === 'scraper') {
+          const token = document.getElementById('scraperToken').value.trim();
+          const guild = document.getElementById('scraperGuild').value.trim();
+          if (!token || !guild) throw new Error('Token y Guild ID requeridos');
+          addTerminalLine(`[SCRAPE] Iniciando scraping de ${guild}...`, 'info');
+          const members = await scrapeUsers(token, guild);
+          result.innerHTML = `<div style="color:var(--green);margin-bottom:0.75rem;">✅ ${members.length} miembros obtenidos</div>
+            <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap;">
+              <button class="copy-btn" onclick="copyText('${JSON.stringify(members.map(m => ({ id: m.user.id, name: m.user.username, tag: m.user.discriminator, avatar: m.user.avatar ? \`https://cdn.discordapp.com/avatars/\${m.user.id}/\${m.user.avatar}.png\` : '', roles: m.roles })))}')">📋 COPIAR JSON</button>
+              <button class="copy-btn" onclick="copyText('${members.map(m => m.user.username).join('\\n')}')">📋 COPIAR NAMES</button>
+            </div>`;
+          members.slice(0, 50).forEach(m => {
+            const avatar = m.user.avatar
+              ? `<img src="https://cdn.discordapp.com/avatars/${m.user.id}/${m.user.avatar}.png" />`
+              : `<div style="width:28px;height:28px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#666;flex-shrink:0;">${m.user.username[0]}</div>`;
+            result.innerHTML += `<div class="user-item">${avatar}<div><div class="u-name">${m.user.username}</div><div class="u-tag">${m.user.discriminator !== '0' ? '#'+m.user.discriminator : ''} · ${m.user.id}</div></div></div>`;
+          });
+          if (members.length > 50) result.innerHTML += `<div style="color:#666;font-size:0.7rem;margin-top:0.5rem;">... y ${members.length - 50} más</div>`;
+          addTerminalLine(`[SCRAPE] ✅ ${members.length} miembros scrapeados de ${guild}`, 'success');
+          showToast(`✅ ${members.length} usuarios obtenidos`, '');
+        }
+        else if (cmd === 'creador') {
+          const token = document.getElementById('creatorToken').value.trim();
+          const guild = document.getElementById('creatorGuild').value.trim();
+          const name = document.getElementById('creatorName').value.trim();
+          const type = document.getElementById('creatorType').value;
+          if (!token || !guild || !name) throw new Error('Token, Guild ID y Channel Name requeridos');
+          const channel = await createChannel(token, guild, name, type);
+          result.innerHTML = `<div style="color:var(--green);">✅ Canal creado: <strong>#${channel.name}</strong></div>
+            <div style="color:#666;font-size:0.7rem;margin-top:0.5rem;">ID: ${channel.id} · Tipo: ${channel.type === 0 ? 'Texto' : 'Voz'}</div>`;
+          addTerminalLine(`[CREATE] ✅ Canal #${channel.name} (${channel.id}) creado en ${guild}`, 'success');
+          showToast(`✅ Canal #${name} creado`, '');
+        }
+      } catch (err) {
+        result.innerHTML = `<div style="color:var(--red);">❌ Error: ${err.message}</div>`;
+        addTerminalLine(`[ERROR] ${cmd}: ${err.message}`, 'error');
+        showToast(`❌ ${err.message}`, 'error');
+      }
+
+      btn.disabled = false;
+      btn.textContent = '▶ EJECUTAR';
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('📋 Copiado al portapapeles', '');
+      }).catch(() => {
+        showToast('❌ Error al copiar', 'error');
+      });
     }
 
     function addTerminalLine(text, type = '') {
@@ -509,40 +633,27 @@
         terminalInput.value = '';
         addTerminalLine(`root@nexus:~$ ${cmd}`);
         if (cmd === '') return;
-        if (cmd.startsWith('nitro ')) {
-          const amount = parseInt(cmd.split(' ')[1]) || 5;
-          generateNitro(amount);
-        } else if (cmd.startsWith('check ')) {
-          const token = cmd.split(' ')[1] || 'unknown';
-          addTerminalLine(`[CHECK] Verificando token ${token.substring(0,10)}...`, 'info');
-          setTimeout(() => addTerminalLine(`[RESULT] Token válido · User: Nexus#0001 · Nitro: Yes`, 'info'), 1000);
-        } else if (COMMANDS[cmd]) {
-          const result = COMMANDS[cmd]();
+
+        const parts = cmd.split(' ');
+        if (parts[0] === 'scraper' && parts[1] && parts[2]) {
+          document.getElementById('scraperToken').value = parts[1];
+          document.getElementById('scraperGuild').value = parts[2];
+          togglePanel('scraper');
+          executeRealTool('scraper');
+        } else if (parts[0] === 'creator' && parts[1] && parts[2] && parts[3]) {
+          document.getElementById('creatorToken').value = parts[1];
+          document.getElementById('creatorGuild').value = parts[2];
+          document.getElementById('creatorName').value = parts[3];
+          if (parts[4]) document.getElementById('creatorType').value = parts[4];
+          togglePanel('creador');
+          executeRealTool('creador');
+        } else if (COMMANDS[parts[0]]) {
+          const result = COMMANDS[parts[0]]();
           if (result) addTerminalLine(result);
         } else {
           addTerminalLine(`[ERROR] Comando no encontrado: ${cmd}. Type 'help'`, 'error');
         }
       }
-    });
-
-    function generateNitro(amount) {
-      amount = Math.min(Math.max(1, amount), 50);
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      const resultEl = document.getElementById('nitroResult');
-      let codes = [];
-      for (let i = 0; i < amount; i++) {
-        let code = 'https://discord.gift/';
-        for (let j = 0; j < 24; j++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-        codes.push(code);
-      }
-      resultEl.innerHTML = codes.map(c => `<div style="margin-bottom:0.25rem">${c}</div>`).join('');
-      addTerminalLine(`[NITRO] ${amount} códigos generados (simulación educativa)`, 'info');
-      showToast(`🎟️ ${amount} códigos generados`, '');
-    }
-
-    document.getElementById('nitroBtn').addEventListener('click', () => {
-      const val = parseInt(document.getElementById('nitroInput').value) || 10;
-      generateNitro(val);
     });
 
     function updateClock() {
@@ -552,13 +663,13 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    renderRealTools();
     renderTools();
 
     // Matrix rain
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     let width, height, columns, drops;
-
     function resizeMatrix() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
@@ -567,15 +678,13 @@
     }
     resizeMatrix();
     window.addEventListener('resize', resizeMatrix);
-
-    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>/{}[]|&^%$#@!';
-
+    const mChars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>/{}[]|&^%$#@!';
     function drawMatrix() {
       ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
       ctx.fillRect(0, 0, width, height);
       ctx.font = '14px monospace';
       for (let i = 0; i < drops.length; i++) {
-        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+        const text = mChars.charAt(Math.floor(Math.random() * mChars.length));
         const x = i * 14;
         const y = drops[i] * 14;
         ctx.fillStyle = Math.random() > 0.98 ? '#00ff41' : '#00aa22';
@@ -591,7 +700,6 @@
     const bootProgress = document.getElementById('bootProgress');
     const bootScreen = document.getElementById('bootScreen');
     const mainContent = document.getElementById('mainContent');
-
     let bootIndex = 0;
     function showBootLine() {
       if (bootIndex < bootLines.length) {
