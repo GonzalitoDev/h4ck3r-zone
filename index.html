@@ -669,32 +669,82 @@ function(){
 });
 
 // ============ TOOL: Keep Alive ============
-var keepAliveInterval = null;
+var keepAliveWs = null;
+var keepAliveHb = null;
 var keepAliveCount = 0;
-T('keepalive','Keep Alive','KA','green','user','Keep your account online. Pings Discord every 60s using your user token. Click start, runs forever.',[f_token('token','User Token','user'),f_text('interval','Interval (seconds)','60')],
+var keepAliveTimer = null;
+T('keepalive','Keep Alive','KA','green','user','Keep your Discord account ONLINE 24/7 via WebSocket. No proxy needed. Works with User Token.',[f_token('token','User Token','user')],
 function(f){
   var resEl = document.getElementById('res_keepalive');
-  if (keepAliveInterval) {
-    clearInterval(keepAliveInterval);
-    keepAliveInterval = null;
-    log('[!] Keep Alive stopped after ' + keepAliveCount + ' pings','warn');
-    return '<div style="color:var(--orange)">[STOPPED] ' + keepAliveCount + ' pings</div>';
+  if (keepAliveWs) {
+    try{keepAliveWs.close()}catch(e){}
+    keepAliveWs = null; keepAliveHb = null; keepAliveCount = 0;
+    if (keepAliveTimer) { clearInterval(keepAliveTimer); keepAliveTimer = null; }
+    log('[!] Keep Alive desconectado','warn');
+    return '<div style="color:var(--orange)">[DISCONNECTED]</div>';
   }
+  if(!f.token||f.token.length<10)return '<div style="color:var(--red)">[ERROR] Token inválido</div>';
+  if(f.token.startsWith('M'))return '<div style="color:var(--red)">[ERROR] Bot Token no funciona. Usá User Token (NDU...)</div>';
   keepAliveCount = 0;
-  var sec = Math.max(parseInt(f.interval) || 60, 10);
-  function ping() {
-    keepAliveCount++;
-    api('/users/@me', f.token).then(function(d) {
-      log('[OK] Keep Alive #' + keepAliveCount + ' - ' + d.username + ' online','success');
-      if (resEl) resEl.innerHTML = '<div style="color:var(--green)">[RUNNING] ' + keepAliveCount + ' pings - ' + d.username + ' online</div>';
-    }).catch(function(e) {
-      if (resEl) resEl.innerHTML = '<div style="color:var(--red)">[ERROR] ' + (e.message||'Failed') + ' - retrying...</div>';
-    });
+  try {
+    var ws = new WebSocket('wss://gateway.discord.gg/?v=10&encoding=json');
+    keepAliveWs = ws;
+    ws.onopen = function() {
+      log('[>] Gateway conectado, esperando heartbeat...','info');
+      if (resEl) resEl.innerHTML = '<div style="color:var(--yellow)">[CONNECTING] Conectando a Discord Gateway...</div>';
+    };
+    ws.onmessage = function(e) {
+      try {
+        var d = JSON.parse(e.data);
+        if (d.op === 10) {
+          var hb = d.d.heartbeat_interval;
+          keepAliveHb = setInterval(function() {
+            if (ws.readyState === 1) {
+              ws.send(JSON.stringify({op:1,d:null}));
+              keepAliveCount++;
+              log('[OK] Heartbeat #'+keepAliveCount+' enviado','success');
+              if (resEl) resEl.innerHTML = '<div style="color:var(--green)">[ONLINE] Heartbeats: '+keepAliveCount+'</div>';
+            }
+          }, hb);
+          ws.send(JSON.stringify({
+            op: 2,
+            d: {
+              token: f.token,
+              properties: {os:'Windows',browser:'Chrome',device:'PC'},
+              presence: {status:'online',afk:false}
+            }
+          }));
+          log('[>] Identify enviado, conectando...','info');
+          if (resEl) resEl.innerHTML = '<div style="color:var(--yellow)">[AUTH] Autenticando...</div>';
+        } else if (d.op === 0) {
+          if (d.t === 'READY') {
+            log('[OK] Conectado como '+d.d.user.username+'#'+d.d.user.discriminator,'success');
+            if (resEl) resEl.innerHTML = '<div style="color:var(--green);font-size:0.8rem">[ONLINE] '+d.d.user.username+'#'+d.d.user.discriminator+'<br><span style="font-size:0.6rem;color:#666">Status: online | Heartbeats: '+keepAliveCount+'</span></div>';
+          }
+        } else if (d.op === 9) {
+          log('[ERROR] Token inválido - '+(d.d&&d.d.message||'reconnect'),'error');
+          if (resEl) resEl.innerHTML = '<div style="color:var(--red)">[ERROR] Token inválido. Discord rechazó la conexión</div>';
+          try{ws.close()}catch(e){}
+          keepAliveWs = null;
+          if (keepAliveHb) { clearInterval(keepAliveHb); keepAliveHb = null; }
+        }
+      } catch(e) {}
+    };
+    ws.onerror = function() {
+      if (resEl) resEl.innerHTML = '<div style="color:var(--red)">[ERROR] No se pudo conectar al Gateway</div>';
+      log('[ERROR] WebSocket error','error');
+    };
+    ws.onclose = function() {
+      if (keepAliveHb) { clearInterval(keepAliveHb); keepAliveHb = null; }
+      log('[!] Gateway desconectado','warn');
+      if (resEl && keepAliveWs !== null) resEl.innerHTML = '<div style="color:var(--orange)">[DISCONNECTED]</div>';
+      keepAliveWs = null;
+    };
+    log('[>] Keep Alive iniciado vía WebSocket','info');
+    return '<div style="color:var(--cyan)">[CONECTANDO] Click EJECUTAR para desconectar</div>';
+  } catch(e) {
+    return '<div style="color:var(--red)">[ERROR] '+e.message+'</div>';
   }
-  ping();
-  keepAliveInterval = setInterval(ping, sec * 1000);
-  log('[>] Keep Alive started - pinging every ' + sec + 's','info');
-  return '<div style="color:var(--cyan)">[RUNNING] Pinging every ' + sec + 's... (click EJECUTAR again to stop)</div>';
 });
 
 // ============ TOOL: Message Sender ============
