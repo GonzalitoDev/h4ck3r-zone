@@ -151,9 +151,14 @@ var body=null;
 if(opts.body){body=opts.body}
 var method=opts.method||'GET';
 return fetch('/api/discord?path='+encodeURIComponent(endpoint.replace('/v10/',''))+'&method='+method,{method:'POST',headers:headers,body:body?body:null}).then(function(r){
-return r.json().then(function(d){
+return r.text().then(function(text){
+try{
+var d=JSON.parse(text);
 if(!r.ok)throw new Error(d&&d.error?d.error:'HTTP '+r.status);
 return d;
+}catch(e){
+throw new Error(text.substring(0,100)+'...');
+}
 });
 });
 }
@@ -254,7 +259,7 @@ function sendOne(){
 var body=JSON.stringify({content:f.msg,username:'H4CK3R BOT',avatar_url:'https://cdn.discordapp.com/embed/avatars/0.png'});
 return fetch('/api/discord?webhook=1&method=POST',{method:'POST',headers:{'Content-Type':'application/json','X-Webhook-URL':encodeURIComponent(url)},body:body}).then(function(r){
 if(r.ok)sent++;
-else return r.json().then(function(d){throw new Error(d.error||'Webhook error')});
+else return r.text().then(function(t){try{var d=JSON.parse(t);throw new Error(d.error||'Webhook error')}catch(e){throw new Error(t.substring(0,100))}});
 if(sent<count)return sendOne();
 });
 }
