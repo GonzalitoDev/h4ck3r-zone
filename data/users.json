@@ -9,14 +9,9 @@
     "role": "vip",
     "joined": "2026-07-19T20:35:16.865290"
   },
-  "test_persist": {
+  "trabuco": {
     "password": "1234",
     "role": "user",
-    "joined": "2026-07-19T20:36:38.788004"
-  },
-  "manuel": {
-    "password": "1234",
-    "role": "user",
-    "joined": "2026-07-22T07:54:06.964196"
+    "joined": "2026-07-22T07:54:59.235544"
   }
 }
