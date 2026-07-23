@@ -13,5 +13,10 @@
     "password": "1234",
     "role": "user",
     "joined": "2026-07-22T07:56:49.308503"
+  },
+  "juampi": {
+    "password": "1234",
+    "role": "user",
+    "joined": "2026-07-23T02:15:32.145693"
   }
 }
