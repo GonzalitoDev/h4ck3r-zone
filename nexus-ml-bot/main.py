@@ -2,9 +2,10 @@
 Nexus Machine Bot - Bot de Discord con Machine Learning
 Hosteado automaticamente en Render/Railway
 """
-import os, sys, json, time, random, re, asyncio, logging
+import os, sys, json, time, random, re, asyncio, logging, threading
 from collections import defaultdict
 from datetime import datetime, timedelta
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 import discord
 from discord.ext import commands
@@ -220,6 +221,21 @@ async def on_command_error(ctx, error):
         except:
             pass
 
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(json.dumps({"status": "ok", "uptime": analytics.get_uptime()}).encode())
+    def log_message(self, *a, **k): pass
+
+def start_health_server():
+    port = int(os.environ.get("PORT", 8080))
+    HTTPServer(("0.0.0.0", port), HealthHandler).serve_forever()
+
 if __name__ == "__main__":
     logger.info("Iniciando Nexus Machine Bot...")
+    h = threading.Thread(target=start_health_server, daemon=True)
+    h.start()
+    logger.info(f"Health check server started on port {os.environ.get('PORT', 8080)}")
     bot.run(TOKEN)
