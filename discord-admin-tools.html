@@ -161,7 +161,7 @@ footer a{color:var(--green);text-decoration:none}
 <div class="boot-line">[ OK ] Initializing NEXUS ADMIN v2.0</div>
 <div class="boot-line">[ OK ] Loading Discord API modules...</div>
 <div class="boot-line">[ OK ] Establishing secure connection to Discord Gateway</div>
-<div class="boot-line">[ OK ] 62 admin &amp; analysis tools loaded</div>
+<div class="boot-line">[ OK ] 70 admin &amp; analysis tools loaded</div>
 <div class="boot-line" id="bootFinalLine"><span style="color:var(--cyan)">admin@nexus:~$ </span><span class="boot-cursor"></span></div>
 <div class="boot-progress"><div class="boot-progress-bar" id="bootProgress"></div></div>
 </div>
@@ -171,7 +171,7 @@ footer a{color:var(--green);text-decoration:none}
 <h1>NEXUS ADMIN TOOLKIT</h1>
 <p>Herramientas legítimas de administración y análisis para Discord. Gestión de servidores, auditoría de seguridad, respaldos y estadísticas — todo lo que un administrador real necesita.</p>
 <div class="stats-bar">
-<div class="stat"><div class="num" id="statTools">62</div><div class="lbl">Herramientas</div></div>
+<div class="stat"><div class="num" id="statTools">70</div><div class="lbl">Herramientas</div></div>
 <div class="stat"><div class="num" id="statReal">100%</div><div class="lbl">Funcional</div></div>
 <div class="stat"><div class="num" id="statSafe">Safe</div><div class="lbl">Sin acciones destructivas</div></div>
 </div>
@@ -216,12 +216,12 @@ footer a{color:var(--green);text-decoration:none}
 <div class="section-title" style="margin-top:1rem"><span class="arrow">>></span> CONSOLE</div>
 <div class="terminal-box">
 <div class="terminal-box-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="terminal-box-title">admin@nexus:~ - activity.log</span></div>
-<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.4 READY</div><div class="terminal-line">[INFO] 62 tools loaded - all legitimate</div></div>
+<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.5 READY</div><div class="terminal-line">[INFO] 70 tools loaded - all legitimate</div></div>
 <div class="terminal-input-line"><span class="terminal-prompt">admin@nexus:~$</span><input type="text" class="terminal-input" id="terminalInput" placeholder="help / tools / toolname" spellcheck="false"/></div>
 </div>
 </div>
 </div>
-<footer><p>NEXUS ADMIN v2.4 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
+<footer><p>NEXUS ADMIN v2.5 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1516,6 +1516,192 @@ h+='<div style="text-align:center;background:rgba(0,0,0,0.3);border:1px solid va
 h+='</div>';
 h+='<div style="margin-top:0.6rem;font-size:0.6rem;color:#666">La más grande (4096px) es la foto ORIGINAL guardada por Discord.</div>';
 log('[OK] '+((ext==='gif')?'Avatar animado':'Avatares')+' listos','success');return h;
+});
+
+// ============ WEB SCRAPING HELPERS ============
+var CORS_PROXY='https://api.allorigins.win/raw?url=';
+function fetchPage(url){
+if(!/^https?:\/\//.test(url))url='https://'+url;
+return fetch(CORS_PROXY+encodeURIComponent(url)).then(function(r){
+if(!r.ok)throw new Error('No se pudo acceder a '+url+' (HTTP '+r.status+')');
+return r.text();
+});
+}
+
+// ============ TOOL 63: Web Page Scraper (web) ============
+T('webscrape','Web Page Scraper','W','none','none','Extrae título, descripción, links, imágenes, emails y teléfonos de cualquier web. Vía proxy CORS.',[f_text('url','URL','https://ejemplo.com')],
+function(f){
+log('[>] Scrapeando '+f.url+'...','info');
+return fetchPage(f.url).then(function(html){
+var doc=document.createElement('div');doc.innerHTML=html;
+var title=(doc.querySelector('title')||{}).textContent||'Sin título';
+var meta=doc.querySelector('meta[name=description]');
+var desc=meta?meta.getAttribute('content'):'';
+var links=[...new Set((html.match(/href=["']([^"']+)["']/g)||[]).map(function(m){return m.replace(/href=["']|["']/g,'')}).filter(function(l){return l.startsWith('http')}))];
+var imgs=[...new Set((html.match(/src=["']([^"']+\.(png|jpg|jpeg|gif|webp))["']/gi)||[]).map(function(m){return m.replace(/src=["']|["']/gi,'')}))];
+var emails=[...new Set(html.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g)||[])];
+var phones=[...new Set((html.match(/\+?[\d\s\-()]{7,18}\d/g)||[]).filter(function(p){return p.replace(/\D/g,'').length>=7}))];
+var h='<div style="color:var(--green);font-size:0.85rem">'+esc(title)+'</div>';
+h+='<div style="font-size:0.65rem;color:#666;margin:0.3rem 0">'+esc(desc||'Sin descripción')+'</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.4rem;font-size:0.65rem;margin-top:0.5rem">';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">LINKS</div><div style="color:var(--cyan)">'+links.length+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">IMÁGENES</div><div style="color:var(--green)">'+imgs.length+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">EMAILS</div><div style="color:var(--yellow)">'+emails.length+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">TELÉFONOS</div><div style="color:var(--orange)">'+phones.length+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">BYTES</div><div style="color:var(--purple)">'+(html.length/1024).toFixed(1)+' KB</div></div>';
+h+='</div>';
+if(links.length)h+='<div style="margin-top:0.6rem"><div style="font-size:0.6rem;color:#555;margin-bottom:0.2rem">PRIMEROS LINKS</div>'+links.slice(0,8).map(function(l){return '<div class="item"><div class="i-name" style="color:var(--cyan);word-break:break-all;font-size:0.65rem">'+esc(l.slice(0,70))+'</div></div>'}).join('')+'</div>';
+if(emails.length)h+='<div style="margin-top:0.4rem"><div style="font-size:0.6rem;color:#555;margin-bottom:0.2rem">EMAILS</div>'+emails.map(function(e){return '<div style="color:var(--yellow);font-size:0.65rem;padding:0.15rem 0">'+esc(e)+'</div>'}).join('')+'</div>';
+log('[OK] Scrapeado: '+title,'success');return h;
+});
+});
+
+// ============ TOOL 64: Meta Tags Extractor (web) ============
+T('metascrape','Meta Tags Extractor','M','none','none','Extrae los meta tags (OG, Twitter Card, favicon) de una web. Vía proxy CORS.',[f_text('url','URL','https://ejemplo.com')],
+function(f){
+log('[>] Extrayendo meta tags...','info');
+return fetchPage(f.url).then(function(html){
+var h='';
+var tags=[];
+var re=/(?:<meta\s+([^>]*name=["']([^"']+)["'][^>]*content=["']([^"']*)["'])|<meta\s+([^>]*property=["']([^"']+)["'][^>]*content=["']([^"']*)["']))/gi;
+var m;
+while((m=re.exec(html))!==null){
+var name=m[2]||m[5],content=m[3]||m[6];
+if(name)tags.push([name,content]);
+}
+var favicon=m;var fm=html.match(/rel=["']icon["'][^>]*href=["']([^"']+)/i);
+var title=(html.match(/<title>([^<]*)<\/title>/i)||[])[1]||'Sin título';
+h+='<div style="color:var(--green);font-size:0.85rem">Meta tags de la web</div>';
+h+='<div style="font-size:0.65rem;color:var(--cyan);margin:0.3rem 0">Título: '+esc(title)+'</div>';
+if(fm)h+='<div style="font-size:0.65rem;color:#666;margin:0.3rem 0">Favicon: '+esc(fm[1])+'</div>';
+tags.slice(0,25).forEach(function(t){
+h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.65rem"><span style="color:#555;flex-shrink:0;margin-right:0.5rem">'+esc(t[0])+'</span><span style="color:var(--green);text-align:right;word-break:break-all">'+esc(String(t[1]).slice(0,80))+'</span></div>';
+});
+if(!tags.length)h+='<div style="color:#666;font-size:0.65rem;margin-top:0.3rem">No se encontraron meta tags</div>';
+log('[OK] Meta tags extraídos','success');return h;
+});
+});
+
+// ============ TOOL 65: Email Scraper from URL (web) ============
+T('emailscrape','Email Scraper URL','E','none','none','Scrapea una web y extrae TODOS los emails encontrados. Vía proxy CORS.',[f_text('url','URL','https://ejemplo.com')],
+function(f){
+log('[>] Buscando emails en '+f.url+'...','info');
+return fetchPage(f.url).then(function(html){
+var emails=[...new Set(html.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g)||[])];
+var h='<div style="color:var(--green);font-size:0.85rem">'+emails.length+' emails encontrados:</div>';
+emails.forEach(function(e){
+h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:var(--yellow);font-size:0.7rem">'+esc(e)+'</span><button class="tool-btn" onclick="copySimple(\''+e+'\')">Copiar</button></div>';
+});
+if(!emails.length)h+='<div style="color:#666;font-size:0.65rem">No se encontraron emails en la página</div>';
+log('[OK] '+emails.length+' emails','success');return h;
+});
+});
+
+// ============ TOOL 66: Link Scraper (web) ============
+T('linkscrape','Link Scraper','L','none','none','Extrae todos los links de una web (útil para fuentes, páginas, sitemaps). Vía proxy CORS.',[f_text('url','URL','https://ejemplo.com')],
+function(f){
+log('[>] Extrayendo links...','info');
+return fetchPage(f.url).then(function(html){
+var links=[...new Set((html.match(/href=["']([^"']+)["']/g)||[]).map(function(m){return m.replace(/href=["']|["']/g,'')}))];
+links=links.filter(function(l){return l&&!l.startsWith('#')&&!l.startsWith('javascript:')});
+var externos=links.filter(function(l){return /^https?:\/\//.test(l)});
+var internos=links.filter(function(l){return !/^https?:\/\//.test(l)});
+var h='<div style="color:var(--green);font-size:0.85rem">'+links.length+' links ('+externos.length+' externos, '+internos.length+' internos):</div>';
+h+='<div style="margin-top:0.4rem;max-height:250px;overflow-y:auto">';
+links.slice(0,60).forEach(function(l){
+h+='<div class="item"><div class="i-name" style="word-break:break-all;font-size:0.65rem;color:'+(/^https?:\/\//.test(l)?'var(--cyan)':'var(--green)')+'">'+esc(l.slice(0,80))+'</div></div>';
+});
+if(links.length>60)h+='<div style="color:#666;font-size:0.6rem;margin-top:0.3rem">... +'+(links.length-60)+' más</div>';
+h+='</div>';
+log('[OK] '+links.length+' links','success');return h;
+});
+});
+
+// ============ TOOL 67: Discord Message Scraper (token) ============
+T('msgscrape','Message Scraper','M','user','user','Scrapea mensajes de un canal de Discord usando tu token. Obtiene contenido, autores, fechas.',[f_token('token','User Token','user'),f_channel(),f_text('limit','Limit (1-100)','50')],
+function(f){
+var limit=Math.min(Math.max(1,parseInt(f.limit)||50),100);
+log('[>] Scrapeando '+limit+' mensajes...','info');
+return api('/channels/'+f.channel+'/messages?limit='+limit,f.token).then(function(msgs){
+var h='<div style="color:var(--green);font-size:0.85rem">'+msgs.length+' mensajes:</div>';
+msgs.forEach(function(m){
+var date=new Date(Number(BigInt(m.id)>>22n)+1420070400000).toLocaleDateString();
+var content=(m.content||'').slice(0,80);
+h+='<div class="item"><div style="flex:1"><div class="i-name">'+esc(m.author.username)+' <span style="color:#666;font-size:0.55rem">'+date+'</span></div><div class="i-sub" style="word-break:break-all">'+(content?esc(content):(m.attachments&&m.attachments.length?'[📎 '+m.attachments.length+' adjuntos]':''))+((m.embeds&&m.embeds.length)?' [embed]':'')+'</div></div></div>';
+});
+log('[OK] Scrapeado '+msgs.length+' mensajes','success');return h;
+});
+});
+
+// ============ TOOL 68: Discord Channel Dump (token) ============
+T('channelfeed','Channel Feed Dump','C','user','user','Scrapea el feed completo de un canal y lo descarga como archivo de texto.',[f_token('token','User Token','user'),f_channel(),f_text('count','Cantidad de mensajes (múltiplos de 100)','200')],
+function(f){
+var total=Math.min(Math.max(100,parseInt(f.count)||200),1000);
+var all=[],before='';
+log('[>] Scrapeando feed (hasta '+total+')...','info');
+function page(){
+return api('/channels/'+f.channel+'/messages?limit=100'+(before?'&before='+before:''),f.token).then(function(msgs){
+if(!msgs||!msgs.length)return all;
+all=all.concat(msgs);before=msgs[msgs.length-1].id;
+return all.length>=total||msgs.length<100?all:page();
+});
+}
+return page().then(function(msgs){
+var lines=msgs.map(function(m){
+var date=new Date(Number(BigInt(m.id)>>22n)+1420070400000).toLocaleString();
+var atts=(m.attachments||[]).map(function(a){return '\n  [adjunto] '+a.url}).join('');
+var embeds=(m.embeds||[]).length?'\n  [embed]':'';
+return '['+date+'] '+m.author.username+': '+(m.content||'')+atts+embeds;
+});
+var blob=new Blob([lines.join('\n\n')],{type:'text/plain'});
+var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='channel_'+f.channel+'_'+Date.now()+'.txt';a.click();
+var h='<div style="color:var(--green);font-size:0.85rem">Feed descargado: '+msgs.length+' mensajes</div>';
+h+='<div style="font-size:0.65rem;color:#666;margin-top:0.3rem">Archivo: channel_'+f.channel+'_'+Date.now()+'.txt</div>';
+log('[OK] Feed de '+msgs.length+' mensajes','success');return h;
+});
+});
+
+// ============ TOOL 69: Discord Member Dump (token) ============
+T('memberdump','Member Dump','M','bot','bot','Scrapea TODOS los miembros de un servidor y los descarga en CSV.',[f_token(),f_guild()],
+function(f){
+log('[>] Scrapeando miembros...','info');
+var all=[],after='0';
+function nxt(){
+return api('/guilds/'+f.guild+'/members?limit=1000&after='+after,f.token).then(function(d){
+if(!d||!d.length)return all;
+all=all.concat(d);after=d[d.length-1].user.id;
+return d.length<1000?all:nxt();
+});
+}
+return nxt().then(function(m){
+var csv='username,id,discriminator,bot,roles,joined\n';
+m.forEach(function(x){
+csv+=esc(x.user.username)+','+x.user.id+','+(x.user.discriminator||'0')+','+(x.user.bot?'bot':'human')+',"'+(x.roles||[]).join(';')+'","'+(x.joined_at||'')+'"\n';
+});
+var blob=new Blob([csv],{type:'text/csv'});
+var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='members_'+f.guild+'_'+Date.now()+'.csv';a.click();
+var h='<div style="color:var(--green);font-size:0.85rem">Miembros descargados: '+m.length+'</div>';
+h+='<div style="font-size:0.65rem;color:#666;margin-top:0.3rem">CSV con username, ID, bot/human, roles y fecha de ingreso.</div>';
+log('[OK] '+m.length+' miembros','success');return h;
+});
+});
+
+// ============ TOOL 70: Server Icon Scraper (token) ============
+T('iconlist','Server Icon Scraper','S','bot','bot','Scrapea los iconos y emojis de un servidor y los descarga en ZIP (o individual).',[f_token(),f_guild()],
+function(f){
+log('[>] Scrapeando emojis...','info');
+return api('/guilds/'+f.guild+'/emojis',f.token).then(function(emojis){
+if(!emojis||!emojis.length)return '<div style="color:#666">Sin emojis personalizados</div>';
+var h='<div style="color:var(--green);font-size:0.85rem">'+emojis.length+' emojis — descargá cada uno:</div>';
+h+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0.5rem;margin-top:0.6rem">';
+emojis.forEach(function(e){
+var ext=e.animated?'gif':'png';
+var url='https://cdn.discordapp.com/emojis/'+e.id+'.'+ext;
+h+='<div style="text-align:center"><img src="'+url+'?size=128" style="width:40px;height:40px" crossorigin="anonymous"/><div style="font-size:0.5rem;color:#555;word-break:break-all">:'+esc(e.name)+':</div><button class="tool-btn" style="width:100%;margin-top:0.2rem;font-size:0.55rem" onclick="dl(\''+url+'?size=128\',\''+e.name+'.'+ext+'\')">Descargar</button></div>';
+});
+h+='</div>';
+log('[OK] '+emojis.length+' emojis','success');return h;
+});
 });
 
 // ============ RENDER ============
