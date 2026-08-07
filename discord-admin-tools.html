@@ -91,6 +91,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.95);border-b
 .tool-result .item img{width:24px;height:24px;border-radius:50%;border:1px solid var(--border)}
 .tool-result .item .i-name{color:white;font-size:0.75rem}
 .tool-result .item .i-sub{color:#666;font-size:0.6rem}
+.connection-box{background:rgba(13,17,23,0.8);border:1px solid var(--border);border-radius:8px;padding:0.8rem;margin-bottom:1rem}
 .terminal-box{background:var(--terminal);border:1px solid var(--border);border-radius:6px;margin-bottom:1.5rem}
 .terminal-box-header{background:var(--border);padding:0.4rem 0.75rem;display:flex;align-items:center;gap:0.5rem;border-radius:6px 6px 0 0;font-size:0.75rem}
 .terminal-box-title{color:#666}
@@ -163,6 +164,16 @@ footer a{color:var(--green);text-decoration:none}
 <span class="bot">[BOT] Bot Token (MTA...)</span>
 <span class="user">[USER] User Token (NDU...)</span>
 <span class="none">[NONE] Sin token</span>
+</div>
+<div class="connection-box">
+<div style="font-size:0.7rem;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem">🔌 Estado de conexión</div>
+<div style="display:flex;gap:0.4rem;flex-wrap:wrap;align-items:center">
+<input id="savedToken" type="password" value="" style="flex:1;min-width:200px;background:rgba(0,0,0,0.5);border:1px solid var(--border);padding:0.6rem;border-radius:6px;color:var(--green);font-family:inherit;font-size:0.75rem;outline:none" placeholder="Pegá tu token acá (se guarda automáticamente)"/>
+<button onclick="testConn()" class="tool-btn" style="padding:0.6rem 1rem">Probar conexión</button>
+<button onclick="document.getElementById('savedToken').value='';localStorage.removeItem('nexus_token');toast('Token borrado')" class="tool-btn" style="border-color:var(--red);color:var(--red);padding:0.6rem 1rem">Borrar</button>
+</div>
+<div id="connStatus" style="font-size:0.7rem;margin-top:0.5rem;color:#666">No probado. Hacé clic en "Probar conexión" para verificar tu token.</div>
+<div style="font-size:0.6rem;color:#555;margin-top:0.3rem">El token se guarda en tu navegador (localStorage) y se autocompleta en todas las herramientas. Solo funciona para vos.</div>
 </div>
 <div class="section-title"><span class="arrow">>></span> ADMIN TOOLS <span style="font-size:0.6rem;color:#666;letter-spacing:0">(Solo lectura y administración — nada destructivo)</span></div>
 <div class="tools-grid" id="toolContainer"></div>
@@ -250,6 +261,31 @@ localStorage.setItem('nexus_proxy',v);
 document.getElementById('proxyBar').style.display='none';
 log('[SYSTEM] Proxy configurado: '+v,'success');
 toast('Proxy actualizado: '+v);
+}
+function testConn(){
+var tok=document.getElementById('savedToken').value.trim();
+if(!tok){document.getElementById('connStatus').innerHTML='<span style="color:var(--red)">[ERROR] Ingresá un token primero.</span>';return}
+localStorage.setItem('nexus_token',tok);
+document.getElementById('connStatus').innerHTML='<span style="color:var(--cyan)">Probando conexión...</span>';
+var isBot=tok.startsWith('M');
+var headers={'Content-Type':'application/json','Authorization':isBot?'Bot '+tok:tok};
+var direct=PROXY==='none';
+var url=direct?'https://discord.com/api/v10/users/@me':PROXY+encodeURIComponent('https://discord.com/api/v10/users/@me');
+fetch(url,{headers:headers}).then(function(r){
+return r.text().then(function(t){
+if(!r.ok){
+var d;try{d=JSON.parse(t)}catch(e){}
+var msg=d&&d.message?d.message:'HTTP '+r.status;
+document.getElementById('connStatus').innerHTML='<span style="color:var(--red)">[ERROR] '+msg+'</span>'+(direct?' <span style="color:var(--yellow)">— Probá cambiar el proxy o usar bot token</span>':'');
+return;
+}
+var u;
+try{u=JSON.parse(t)}catch(e){u={}}
+var name=u.username||'?';
+document.getElementById('connStatus').innerHTML='<span style="color:var(--green)">[OK] Conexión funcionando como <strong>'+name+'</strong> '+(isBot?'(BOT)':'')+' — Modo: '+(direct?'DIRECTO':'PROXY')+'</span>';
+log('[OK] Conexión verificada: '+name,'success');
+});
+});
 }
 
 // ============ TOOLS ============
@@ -902,6 +938,27 @@ log('[ERROR] '+e.message,'error');
 });
 }
 window.togglePanel=togglePanel;window.runTool=runTool;
+
+// ============ TOKEN AUTOFILL ============
+var savedToken=localStorage.getItem('nexus_token')||'';
+if(savedToken){
+document.getElementById('savedToken').value=savedToken;
+log('[SYSTEM] Token guardado cargado. Autocompletado listo.','info');
+setTimeout(function(){
+document.getElementById('savedToken').addEventListener('input',function(){
+localStorage.setItem('nexus_token',this.value.trim());
+});
+// autocompletar en campos token vacíos
+TOOLS.forEach(function(t){
+t.fields.forEach(function(f){
+if(f.id==='token'){
+var el=document.getElementById('f_'+t.cmd+'_token');
+if(el&&!el.value){el.value=savedToken}
+}
+});
+});
+},100);
+}
 
 // ============ CONSOLE ============
 var inputEl=document.getElementById('terminalInput');
