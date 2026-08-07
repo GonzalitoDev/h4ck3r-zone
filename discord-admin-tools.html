@@ -179,7 +179,15 @@ footer a{color:var(--green);text-decoration:none}
 
 <script>
 // ============ API ============
-var PROXY=localStorage.getItem('nexus_proxy')||'https://discord-proxy-mu.vercel.app/api/proxy?url=';
+var PROXY_LIST=[
+'https://discord-proxy-mu.vercel.app/api/proxy?url=',
+'https://discordapi.vercel.app/api/proxy?url=',
+'https://discord-proxy-service.vercel.app/api/proxy?url=',
+'https://api-dc-proxy.vercel.app/api/proxy?url=',
+'none'
+];
+var PROXY=localStorage.getItem('nexus_proxy')||PROXY_LIST[0];
+var _proxyIdx=Math.max(0,PROXY_LIST.indexOf(PROXY));
 function api(endpoint,token,opts){
 opts=opts||{};
 var headers={'Content-Type':'application/json'};
@@ -188,30 +196,51 @@ if(token)headers['Authorization']=isBot?'Bot '+token:token;
 var body=null;
 if(opts.body){body=opts.body}
 var method=opts.method||'GET';
-var useProxy=PROXY&&PROXY!=='none';
-var url=useProxy?PROXY+encodeURIComponent('https://discord.com/api/v10'+endpoint):('https://discord.com/api/v10'+endpoint);
+var base='https://discord.com/api/v10'+endpoint;
+return tryFetch(PROXY,0).then(function(d){return d}).catch(function(e){
+if(e.__blocked){
+// intentar siguiente proxy
+if(_proxyIdx<PROXY_LIST.length-1){
+_proxyIdx++;PROXY=PROXY_LIST[_proxyIdx];localStorage.setItem('nexus_proxy',PROXY);
+log('[PROXY] Cambiando a: '+PROXY,'warn');
+return tryFetch(PROXY,1);
+}
+throw new Error('Discord bloquea este token/IP en todos los proxies. Abrí la página LOCALMENTE (descargá el HTML) y usá un BOT TOKEN, o configurá tu propio proxy en el botón "Proxy".');
+}
+throw e;
+});
+function tryFetch(proxy,attempt){
+var useProxy=proxy&&proxy!=='none';
+var url=useProxy?proxy+encodeURIComponent(base):base;
 return fetch(url,{method:method,headers:headers,body:body||null}).then(function(r){
 return r.text().then(function(text){
 try{
 var d=JSON.parse(text);
 if(!r.ok&&d){
-if(d.code===40333||d.message==='internal network error')throw new Error('Discord bloquea este token/IP. Probá con: 1) Bot token 2) Un proxy propio 3) Abrir la página localmente');
+if(d.code===40333||d.message==='internal network error'){
+var err=new Error('Bloqueado: '+proxy);
+err.__blocked=true;throw err;
+}
 throw new Error(d.message||d.error||'HTTP '+r.status);
 }
 if(!r.ok)throw new Error('HTTP '+r.status);
 return d;
 }catch(e){
+if(e.__blocked)throw e;
 if(e.message&&!e.message.includes('Unexpected token'))throw e;
 throw new Error('API error - check your token and IDs');
 }
 });
 });
 }
+}
 function log(t,type){var el=document.getElementById('terminalBody'),l=document.createElement('div');l.className='terminal-line '+(type||'');l.textContent=t;el.appendChild(l);el.scrollTop=el.scrollHeight}
 function toast(m,t){var el=document.getElementById('toast');el.textContent=m;el.className='toast '+(t||'')+' show';setTimeout(function(){el.classList.remove('show')},3000)}
 function saveProxy(){
 var v=document.getElementById('proxyInput').value.trim();
 if(!v){v='none'}
+if(PROXY_LIST.indexOf(v)===-1)PROXY_LIST.push(v);
+_proxyIdx=PROXY_LIST.indexOf(v);
 PROXY=v;
 localStorage.setItem('nexus_proxy',v);
 document.getElementById('proxyBar').style.display='none';
