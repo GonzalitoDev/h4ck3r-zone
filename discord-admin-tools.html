@@ -150,7 +150,7 @@ footer a{color:var(--green);text-decoration:none}
 <div class="boot-line">[ OK ] Initializing NEXUS ADMIN v2.0</div>
 <div class="boot-line">[ OK ] Loading Discord API modules...</div>
 <div class="boot-line">[ OK ] Establishing secure connection to Discord Gateway</div>
-<div class="boot-line">[ OK ] 50 admin &amp; analysis tools loaded</div>
+<div class="boot-line">[ OK ] 58 admin &amp; analysis tools loaded</div>
 <div class="boot-line" id="bootFinalLine"><span style="color:var(--cyan)">admin@nexus:~$ </span><span class="boot-cursor"></span></div>
 <div class="boot-progress"><div class="boot-progress-bar" id="bootProgress"></div></div>
 </div>
@@ -160,7 +160,7 @@ footer a{color:var(--green);text-decoration:none}
 <h1>NEXUS ADMIN TOOLKIT</h1>
 <p>Herramientas legítimas de administración y análisis para Discord. Gestión de servidores, auditoría de seguridad, respaldos y estadísticas — todo lo que un administrador real necesita.</p>
 <div class="stats-bar">
-<div class="stat"><div class="num" id="statTools">50</div><div class="lbl">Herramientas</div></div>
+<div class="stat"><div class="num" id="statTools">58</div><div class="lbl">Herramientas</div></div>
 <div class="stat"><div class="num" id="statReal">100%</div><div class="lbl">Funcional</div></div>
 <div class="stat"><div class="num" id="statSafe">Safe</div><div class="lbl">Sin acciones destructivas</div></div>
 </div>
@@ -186,12 +186,12 @@ footer a{color:var(--green);text-decoration:none}
 <div class="section-title" style="margin-top:1rem"><span class="arrow">>></span> CONSOLE</div>
 <div class="terminal-box">
 <div class="terminal-box-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="terminal-box-title">admin@nexus:~ - activity.log</span></div>
-<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.2 READY</div><div class="terminal-line">[INFO] 50 tools loaded - all legitimate</div></div>
+<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.3 READY</div><div class="terminal-line">[INFO] 58 tools loaded - all legitimate</div></div>
 <div class="terminal-input-line"><span class="terminal-prompt">admin@nexus:~$</span><input type="text" class="terminal-input" id="terminalInput" placeholder="help / tools / toolname" spellcheck="false"/></div>
 </div>
 </div>
 </div>
-<footer><p>NEXUS ADMIN v2.2 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
+<footer><p>NEXUS ADMIN v2.3 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1268,6 +1268,153 @@ log('[OK] IP: '+d.ip,'success');return h;
 }).catch(function(){throw new Error('No se pudo obtener la IP (offline)')});
 });
 
+// ============ TOOL 51: Invite Lookup (sin token) ============
+T('inviteinfo','Invite Lookup','I','none','none','Obtiene info pública de un invite (server, miembros, canal) SIN token.',[f_text('code','Código de invite','discord.gg/abc123 o abc123')],
+function(f){
+var code=f.code.trim().replace(/^https?:\/\/(discord\.gg|discord\.com\/invite)\//,'');
+log('[>] Consultando invite: '+code,'info');
+var base='https://discord.com/api/v10/invites/'+encodeURIComponent(code)+'?with_counts=true&with_expiration=true';
+return fetch(base).then(function(r){return r.text().then(function(t){
+if(!r.ok){var d;try{d=JSON.parse(t)}catch(e){}throw new Error((d&&d.message)||'Invite inválido o expirado')}
+var d=JSON.parse(t);
+var h='<div style="color:var(--green);font-size:0.85rem">'+esc(d.guild.name)+'</div>';
+h+='<div style="font-size:0.65rem;color:#666;margin:0.3rem 0">'+esc(d.guild.description||'Sin descripción')+'</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;font-size:0.65rem">';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">SERVER ID</div><div style="color:var(--cyan)">'+d.guild.id+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">MIEMBROS</div><div style="color:var(--green)">'+(d.approximate_member_count||'?')+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">ONLINE</div><div style="color:var(--yellow)">'+(d.approximate_presence_count||'?')+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">CANAL</div><div style="color:var(--purple)">'+(d.channel?esc(d.channel.name):'?')+'</div></div>';
+if(d.guild.icon)h+='<div style="grid-column:1/-1;text-align:center;margin-top:0.2rem"><img src="https://cdn.discordapp.com/icons/'+d.guild.id+'/'+d.guild.icon+'.png?size=128" style="width:64px;height:64px;border-radius:50%;border:2px solid var(--green)"/></div>';
+h+='</div>';
+if(d.expires_at)h+='<div style="font-size:0.6rem;color:#666;margin-top:0.3rem">Expira: '+new Date(d.expires_at).toLocaleString()+'</div>';
+log('[OK] Invite: '+d.guild.name,'success');return h;
+})});
+});
+
+// ============ TOOL 52: Webhook Info (sin token) ============
+T('webhookinfo','Webhook Info','W','none','none','Obtiene info pública de un webhook por ID+token. SIN token.',[f_text('id','Webhook ID','123456789012345678'),f_text('token','Webhook Token','abcXYZ...')],
+function(f){
+log('[>] Consultando webhook...','info');
+var base='https://discord.com/api/v10/webhooks/'+encodeURIComponent(f.id)+'/'+encodeURIComponent(f.token);
+return fetch(base).then(function(r){return r.text().then(function(t){
+if(!r.ok){var d;try{d=JSON.parse(t)}catch(e){}throw new Error((d&&d.message)||'Webhook inválido')}
+var d=JSON.parse(t);
+var h='<div style="color:var(--green);font-size:0.85rem">'+esc(d.name||'Webhook')+'</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.5rem;font-size:0.65rem">';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">ID</div><div style="color:var(--cyan)">'+d.id+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">TYPE</div><div style="color:var(--yellow)">'+(d.type===1?'Guild':'?')+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">CANAL</div><div style="color:var(--green)">'+(d.channel_id||'?')+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">GUILD</div><div style="color:var(--purple)">'+(d.guild_id||'?')+'</div></div>';
+h+='</div>';
+if(d.avatar)h+='<div style="margin-top:0.5rem;text-align:center"><img src="https://cdn.discordapp.com/avatars/'+d.id+'/'+d.avatar+'.png?size=128" style="width:64px;height:64px;border-radius:50%;border:2px solid var(--cyan)"/></div>';
+log('[OK] Webhook: '+(d.name||'?'),'success');return h;
+})});
+});
+
+// ============ TOOL 53: Avatar URL Builder (sin token) ============
+T('avatarbuild','Avatar URL Builder','A','none','none','Construí la URL del avatar de un usuario si conocés su ID y hash. SIN token.',[f_text('user','User ID','302050872383242240'),f_text('hash','Avatar Hash','a_abc123def456...')],
+function(f){
+if(!/^\d{15,20}$/.test(f.user))throw new Error('User ID inválido');
+var hash=f.hash.trim();
+if(!hash)throw new Error('Ingresá el hash del avatar');
+var ext=hash.startsWith('a_')?'gif':'png';
+var url='https://cdn.discordapp.com/avatars/'+f.user+'/'+hash+'.'+ext+'?size=1024';
+var h='<div style="color:var(--green);font-size:0.85rem">URL del avatar:</div>';
+h+='<div style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;color:var(--cyan);font-size:0.7rem;word-break:break-all">'+url+'</div>';
+h+='<div style="margin-top:0.6rem;text-align:center"><img src="'+url+'" style="width:96px;height:96px;border-radius:50%;border:2px solid var(--green)" crossorigin="anonymous" onerror="this.style.display=\'none\'"/></div>';
+h+='<div style="margin-top:0.5rem;display:flex;gap:0.4rem;flex-wrap:wrap">';
+[16,32,64,128,256,512,1024,2048].forEach(function(s){
+h+='<button class="tool-btn" onclick="copySimple(\'https://cdn.discordapp.com/avatars/'+f.user+'/'+hash+'.'+ext+'?size='+s+'\')">'+s+'px</button>';
+});
+h+='</div>';
+log('[OK] URL construida','success');return h;
+});
+
+// ============ TOOL 54: Emoji URL Builder (sin token) ============
+T('emojibuild','Emoji URL Builder','E','none','none','Construí la URL de un emoji por su ID. SIN token.',[f_text('id','Emoji ID','123456789012345678'),f_text('name','Nombre (opcional)','mi_emoji')],
+function(f){
+if(!/^\d{15,20}$/.test(f.id))throw new Error('Emoji ID inválido');
+var png='https://cdn.discordapp.com/emojis/'+f.id+'.png?size=128';
+var gif='https://cdn.discordapp.com/emojis/'+f.id+'.gif?size=128';
+var h='<div style="color:var(--green);font-size:0.85rem">Emoji <span style="color:var(--cyan)">:'+esc(f.name||'emoji')+':</span></div>';
+h+='<div style="display:flex;gap:1rem;align-items:center;margin-top:0.6rem">';
+h+='<div style="text-align:center"><img src="'+png+'" style="width:48px;height:48px" crossorigin="anonymous"/><div style="font-size:0.55rem;color:#666">PNG</div></div>';
+h+='<div style="text-align:center"><img src="'+gif+'" style="width:48px;height:48px" crossorigin="anonymous" onerror="this.style.display=\'none\'"/><div style="font-size:0.55rem;color:#666">GIF (si es animado)</div></div>';
+h+='</div>';
+h+='<div style="margin-top:0.6rem;display:flex;gap:0.4rem;flex-wrap:wrap">';
+h+='<button class="tool-btn" onclick="copySimple(\''+png+'\')">Copiar PNG</button>';
+h+='<button class="tool-btn" onclick="copySimple(\''+gif+'\')">Copiar GIF</button>';
+h+='</div>';
+log('[OK] Emoji URL construida','success');return h;
+});
+
+// ============ TOOL 55: Message Link Decoder (sin token) ============
+T('msglink','Message Link Decoder','M','none','none','Decodifica un link de mensaje de Discord en sus IDs. SIN token.',[f_text('link','Link de mensaje','https://discord.com/channels/guild/canal/123456789012345678')],
+function(f){
+var m=f.link.trim().match(/\/channels\/(\d+)\/(\d+)\/(\d+)/);
+if(!m)throw new Error('Link de mensaje inválido. Formato: /channels/GUILD/CANAL/MENSAJE');
+function dateOf(id){var ms=(BigInt(id)>>22n)+1420070400000n;return new Date(Number(ms)).toLocaleString()}
+var h='<div style="color:var(--green);font-size:0.85rem">Link decodificado</div>';
+var rows=[['GUILD ID',m[1],'var(--cyan)'],['CANAL ID',m[2],'var(--green)'],['MENSAJE ID',m[3],'var(--yellow)']];
+rows.forEach(function(r){
+h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="font-size:0.6rem;color:#555">'+r[0]+'</span><span style="color:'+r[2]+';font-size:0.7rem;font-family:monospace">'+r[1]+'</span></div>';
+});
+h+='<div style="margin-top:0.5rem;font-size:0.6rem;color:#666">Creación del mensaje: '+dateOf(m[3])+'</div>';
+log('[OK] Link decodificado','success');return h;
+});
+
+// ============ TOOL 56: User ID Validator (sin token) ============
+T('idvalidate','ID Validator','V','none','none','Valida un ID de Discord y muestra su fecha de creación. SIN token.',[f_text('id','ID / Snowflake','81384788765712384')],
+function(f){
+if(!/^\d{15,20}$/.test(f.id))throw new Error('ID inválido — debe tener 15-20 dígitos');
+var n=BigInt(f.id),ms=(n>>22n)+1420070400000n;
+var d=new Date(Number(ms));
+var epoch=1420070400000;
+var valid=d.getTime()>epoch&&d.getTime()<=Date.now();
+var h='<div style="color:'+(valid?'var(--green)':'var(--red)')+';font-size:0.85rem">'+(valid?'ID VÁLIDO ✓':'ID sospechoso')+'</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.5rem;font-size:0.65rem">';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">CREADO</div><div style="color:var(--green)">'+d.toLocaleDateString()+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">EDAD</div><div style="color:var(--cyan)">'+Math.floor((Date.now()-d.getTime())/86400000)+' días</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">WORKER</div><div style="color:var(--yellow)">'+Number((n>>17n)&0x1Fn)+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">PROCESS</div><div style="color:var(--purple)">'+Number((n>>12n)&0x1Fn)+'</div></div>';
+h+='</div>';
+log('[OK] ID validado','success');return h;
+});
+
+// ============ TOOL 57: Default Avatar (sin token) ============
+T('defaultavatar','Default Avatar','D','none','none','Muestra los avatares por defecto de Discord y genera el de un ID. SIN token.',[f_text('user','User ID (opcional)','')],
+function(f){
+var h='<div style="color:var(--green);font-size:0.85rem">Avatares por defecto (basados en el ID):</div>';
+var numbers=f.user&&/^\d+$/.test(f.user)?[parseInt(f.user)%5] :[0,1,2,3,4];
+numbers.forEach(function(num){
+var url='https://cdn.discordapp.com/embed/avatars/'+num+'.png';
+h+='<div style="display:inline-block;text-align:center;margin:0.4rem"><img src="'+url+'" style="width:48px;height:48px;border-radius:50%;border:2px solid var(--border)"/><div style="font-size:0.55rem;color:#666">#'+num+'</div></div>';
+});
+if(f.user&&/^\d+$/.test(f.user)){
+var n=parseInt(f.user)%5;
+var url='https://cdn.discordapp.com/embed/avatars/'+n+'.png';
+h+='<div style="margin-top:0.5rem;padding:0.5rem;background:rgba(0,0,0,0.3);border-radius:6px;font-size:0.65rem">Para el ID <span style="color:var(--cyan)">'+esc(f.user)+'</span> → avatar <span style="color:var(--yellow)">#'+n+'</span>: <a href="'+url+'" target="_blank" style="color:var(--green)">'+url+'</a></div>';
+}
+log('[OK] Avatares por defecto','success');return h;
+});
+
+// ============ TOOL 58: CDN URL Constructor (sin token) ============
+T('cdnbuilder','CDN URL Builder','C','none','none','Construye URLs de la CDN de Discord para cualquier recurso. SIN token.',[f_select('type','Tipo de recurso',[{v:'avatar',l:'Avatar'},{v:'banner',l:'Banner'},{v:'icon',l:'Icono servidor'},{v:'emoji',l:'Emoji'},{v:'splash',l:'Splash'},{v:'webhook_avatar',l:'Avatar webhook'}]),f_text('id','ID','81384788765712384'),f_text('hash','Hash','abc123'),f_text('size','Tamaño (16-4096)','256')],
+function(f){
+var size=Math.min(Math.max(16,parseInt(f.size)||256),4096);
+var type=f.type;
+var paths={avatar:'/avatars/',banner:'/banners/',icon:'/icons/',emoji:'/emojis/',splash:'/splashes/',webhook_avatar:'/avatars/'};
+var ext=type==='emoji'?'png':'png';
+if((type==='avatar'||type==='banner'||type==='webhook_avatar')&&f.hash.startsWith('a_'))ext='gif';
+var url='https://cdn.discordapp.com'+paths[type]+f.id+'/'+f.hash+(type==='emoji'?'.png':'')+'?size='+size;
+if(type==='emoji')url='https://cdn.discordapp.com/emojis/'+f.id+'.png?size='+size;
+var h='<div style="color:var(--green);font-size:0.85rem">URL generada ('+type+'):</div>';
+h+='<div style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;color:var(--cyan);font-size:0.7rem;word-break:break-all">'+url+'</div>';
+if(type!=='splash'&&type!=='emoji'&&type!=='webhook_avatar')h+='<div style="margin-top:0.5rem;text-align:center"><img src="'+url+'" style="max-width:120px;max-height:120px;border-radius:'+(type==='avatar'?'50%':'8px')+';border:2px solid var(--green)" crossorigin="anonymous" onerror="this.style.display=\'none\'"/></div>';
+h+='<div style="margin-top:0.5rem"><button class="tool-btn" onclick="copySimple(\''+url+'\')">Copiar URL</button></div>';
+log('[OK] URL CDN generada','success');return h;
+});
+
 // ============ RENDER ============
 var container=document.getElementById('toolContainer');
 TOOLS.forEach(function(t,idx){
@@ -1309,6 +1456,12 @@ var txt=el.innerText.replace('⧉ Copiar','').trim();
 navigator.clipboard.writeText(txt).then(function(){
 toast('Resultado copiado');
 log('[OK] Resultado copiado al portapapeles','success');
+}).catch(function(){});
+}
+function copySimple(text){
+navigator.clipboard.writeText(text).then(function(){
+toast('Copiado: '+text.slice(0,30)+'...');
+log('[OK] Copiado','success');
 }).catch(function(){});
 }
 window.copyRes=copyRes;
