@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="WebSecurity Scanner Pro - Advanced web vulnerability scanner. 23 modules. Reconnaissance, security headers, TLS, SQLi, XSS, CORS, DNS, ports, and more.">
+<title>WebSecurity Scanner Pro — Download</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#05050a;--bg2:#0a0a14;--bg3:#111122;--border:#1a1a3a;
+  --accent:#00d4aa;--accent2:#1a8066;--red:#ff1744;--green:#00e676;
+  --text:#d0d0d0;--dim:#666688;--white:#ffffff;
+}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;line-height:1.6}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.06}
+.container{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:100;background:rgba(5,5,10,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#000;font-weight:bold}
+.logo-text{font-size:18px;font-weight:700;color:var(--accent);letter-spacing:-0.5px}
+.logo-text span{color:var(--text)}
+.nav-btn{padding:8px 20px;background:var(--accent);color:#000;border-radius:6px;font-weight:700;font-size:14px;text-decoration:none;transition:all 0.2s}
+.nav-btn:hover{box-shadow:0 0 20px rgba(0,212,170,0.4);transform:translateY(-1px)}
+
+/* Hero */
+.hero{padding:80px 0 60px;text-align:center}
+.hero h1{font-size:42px;font-weight:800;color:var(--white);line-height:1.2;margin-bottom:16px;letter-spacing:-1px}
+.hero h1 b{color:var(--accent)}
+.hero p{font-size:18px;color:var(--dim);max-width:650px;margin:0 auto 32px}
+.hero-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-primary{padding:14px 36px;background:var(--accent);color:#000;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary:hover{box-shadow:0 0 30px rgba(0,212,170,0.5);transform:translateY(-2px)}
+.btn-secondary{padding:14px 28px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:14px;cursor:pointer;text-decoration:none;transition:all 0.2s}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.version{font-size:13px;color:var(--dim);margin-top:12px}
+
+/* Features */
+.features{padding:60px 0}
+.section-title{text-align:center;font-size:28px;font-weight:700;color:var(--white);margin-bottom:8px}
+.section-subtitle{text-align:center;color:var(--dim);margin-bottom:48px;font-size:15px}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px;transition:all 0.3s}
+.feature-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,212,170,0.08)}
+.feature-icon{font-size:28px;margin-bottom:12px}
+.feature-card h3{font-size:16px;color:var(--white);margin-bottom:8px}
+.feature-card p{font-size:13px;color:var(--dim);line-height:1.6}
+
+/* Modules list */
+.modules{padding:60px 0}
+.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
+.module-item{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:12px 16px;font-size:13px;display:flex;align-items:center;gap:10px}
+.module-item .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot.recon{background:var(--accent)}.dot.security{background:var(--red)}.dot.info{background:#448aff}.dot.network{background:#ff9100}
+.module-name{color:var(--text)}.module-cat{color:var(--dim);font-size:11px;margin-left:auto}
+
+/* Stats */
+.stats{padding:60px 0;text-align:center}
+.stat-grid{display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-size:40px;font-weight:800;color:var(--accent)}
+.stat-label{font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+
+/* CTA */
+.cta{padding:80px 0;text-align:center}
+.cta h2{font-size:32px;color:var(--white);margin-bottom:12px}
+.cta p{color:var(--dim);margin-bottom:32px;font-size:16px}
+.download-card{display:inline-block;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:32px 48px;text-align:center}
+.download-card .dl-icon{font-size:48px;margin-bottom:12px}
+.download-card .dl-name{font-size:20px;font-weight:700;color:var(--white);margin-bottom:4px}
+.download-card .dl-info{font-size:13px;color:var(--dim);margin-bottom:16px}
+.download-card .dl-btn{padding:16px 48px;background:var(--accent);color:#000;border-radius:8px;font-size:18px;font-weight:700;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all 0.3s}
+.dl-btn:hover{box-shadow:0 0 35px rgba(0,212,170,0.6);transform:scale(1.03)}
+.checksum{font-size:11px;color:var(--dim);margin-top:16px;word-break:break-all}
+
+/* Safety notice */
+.safety{background:rgba(255,23,68,0.05);border:1px solid rgba(255,23,68,0.15);border-radius:8px;padding:20px 28px;margin:40px 0}
+.safety h4{color:var(--red);font-size:14px;margin-bottom:8px}
+.safety p{color:var(--dim);font-size:13px;line-height:1.6}
+
+/* Footer */
+footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:13px;color:var(--dim)}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero h1{font-size:28px}
+  .feature-grid{grid-template-columns:1fr}
+  .module-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-icon">&#9888;</div>
+      <div class="logo-text">WebSecurity<span>Scanner</span></div>
+    </a>
+    <a href="#download" class="nav-btn">Download</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h1>WebSecurity <b>Scanner Pro</b></h1>
+    <p>Advanced web vulnerability scanner. 23 real scanning modules. Passive and active reconnaissance. Professional security reports.</p>
+    <div class="hero-buttons">
+      <a href="#download" class="btn-primary">&#128229; Download v1.0</a>
+      <a href="#features" class="btn-secondary">View Features</a>
+    </div>
+    <div class="version">Windows 10/11 &bull; 12 MB &bull; Free</div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="container">
+    <div class="stat-grid">
+      <div class="stat-item"><div class="stat-num">23</div><div class="stat-label">Scan Modules</div></div>
+      <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">Scan Modes</div></div>
+      <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">CVEs in DB</div></div>
+      <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Real HTTP</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-title">Features</div>
+    <div class="section-subtitle">Everything you need for external security auditing</div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">&#128270;</div>
+        <h3>Passive Reconnaissance</h3>
+        <p>Subdomain discovery via crt.sh, AlienVault OTX, DNS brute force. AXFR zone transfer check. Reverse DNS. SSL certificate SAN analysis.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128274;</div>
+        <h3>TLS/SSL Analysis</h3>
+        <p>Certificate expiry, weak ciphers, TLS version check, hostname mismatch, self-signed detection, OCSP stapling.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128220;</div>
+        <h3>Security Headers</h3>
+        <p>CSP, HSTS, X-Frame-Options, CORS, cookies (Secure/HttpOnly/SameSite), COOP, COEP, NEL, Report-To, and more.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128225;</div>
+        <h3>Email Security</h3>
+        <p>SPF syntax analysis, DMARC policy check, MX records, MTA-STS detection. Detects email spoofing risks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128187;</div>
+        <h3>Info Disclosure</h3>
+        <p>Exposed debug endpoints, server banners, version disclosure, sensitive HTML comments, stack traces.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128202;</div>
+        <h3>Professional Reports</h3>
+        <p>HTML, JSON, and PDF reports with risk score (0-100), severity chart, CVE correlation, and actionable fixes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section class="modules">
+  <div class="container">
+    <div class="section-title">23 Scan Modules</div>
+    <div class="section-subtitle">All modules use real HTTP requests. No simulation.</div>
+    <div class="module-grid">
+      <div class="module-item"><span class="dot recon"></span><span class="module-name">Reconnaissance Engine</span><span class="module-cat">recon</span></div>
+      <div class="module-item"><span class="dot recon"></span><span class="module-name">Wayback Machine Discovery</span><span class="module-cat">osint</span></div>
+      <div class="module-item"><span class="dot security"></span><span class="module-name">TLS/SSL Analyzer</span><span class="module-cat">security</span></div>
+      <div class="module-item"><span class="dot security"></span><span class="module-name">Security Headers (9 checks)</span><span class="module-cat">security</span></div>
+      <div class="module-item"><span class="dot security"></span><span class="module-name">CSP Configuration Analyzer</span><span class="module-cat">security</span></div>
+      <div class="module-item"><span class="dot security"></span><span class="module-name">Cookie Security</span><span class="module-cat">security</span></div>
+      <div class="module-item"><span class="dot security"></span><span class="module-name">CORS Misconfiguration</span><span class="module-cat">security</span></div>
+      <div class="module-item"><span class="dot network"></span><span class="module-name">DNS Records (A,AAAA,MX,TXT)</span><span class="module-cat">dns</span></div>
+      <div class="module-item"><span class="dot network"></span><span class="module-name">DNSSEC Validation</span><span class="module-cat">dns</span></div>
+      <div class="module-item"><span class="dot network"></span><span class="module-name">CAA Records Check</span><span class="module-cat">dns</span></div>
+      <div class="module-item"><span class="dot network"></span><span class="module-name">Email Security (SPF/DMARC)</span><span class="module-cat">email</span></div>
+      <div class="module-item"><span class="dot network"></span><span class="module-name">Port Scanner (TCP)</span><span class="module-cat">network</span></div>
+      <div class="module-item"><span class="dot network"></span><span class="module-name">HTTP/2 & HTTP/3 Detection</span><span class="module-cat">network</span></div>
+      <div class="module-item"><span class="dot security"></span><span class="module-name">Information Disclosure</span><span class="module-cat">security</span></div>
+      <div class="module-item"><span class="dot info"></span><span class="module-name">Technology Detection (35+)</span><span class="module-cat">info</span></div>
+      <div class="module-item"><span class="dot network"></span><span class="module-name">Network Protocols (NEL/COOP)</span><span class="module-cat">network</span></div>
+      <div class="module-item"><span class="dot security"></span><span class="module-name">Subresource Integrity (SRI)</span><span class="module-cat">security</span></div>
+      <div class="module-item"><span class="dot info"></span><span class="module-name">WHOIS Domain Lookup</span><span class="module-cat">info</span></div>
+      <div class="module-item"><span class="dot security"></span><span class="module-name">Form Analysis (CSRF)</span><span class="module-cat">security</span></div>
+      <div class="module-item"><span class="dot security"></span><span class="module-name">Exposed Files Detection</span><span class="module-cat">security</span></div>
+      <div class="module-item"><span class="dot security"></span><span class="module-name">CVE Correlation (50+ CVEs)</span><span class="module-cat">security</span></div>
+      <div class="module-item"><span class="dot network"></span><span class="module-name">Redirect Analysis</span><span class="module-cat">security</span></div>
+      <div class="module-item"><span class="dot info"></span><span class="module-name">Web Crawler</span><span class="module-cat">info</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SAFETY -->
+<div class="container">
+  <div class="safety">
+    <h4>&#9888; Important Safety Notice</h4>
+    <p>WebSecurity Scanner Pro performs real HTTP requests to the target URL. Only scan websites you own or have explicit authorization to test. This tool does NOT perform destructive actions, brute force attacks, credential theft, or data modification. All checks are defensive and read-only. Results are security indicators — they do not guarantee the presence or absence of vulnerabilities. No tool can detect 100% of vulnerabilities.</p>
+  </div>
+</div>
+
+<!-- CTA / DOWNLOAD -->
+<section class="cta" id="download">
+  <h2>Ready to scan?</h2>
+  <p>Download the installer for Windows 10/11</p>
+  <div class="download-card">
+    <div class="dl-icon">&#128190;</div>
+    <div class="dl-name">WebSecurityScanner-Pro-Setup.exe</div>
+    <div class="dl-info">v1.0 &bull; Windows 10/11 &bull; 12 MB</div>
+    <a href="WebSecurityScanner-Pro-Setup.exe" class="dl-btn" download>&#128229; Download Installer</a>
+    <div class="checksum">SHA-256 will be shown after download &bull; Scan with your antivirus</div>
+  </div>
+</section>
+
+<!-- INSTALL INSTRUCTIONS -->
+<section style="padding:40px 0 60px">
+  <div class="container">
+    <div class="section-title">How to Install</div>
+    <div class="section-subtitle">Quick setup guide</div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">1&#65039;&#8419;</div>
+        <h3>Download</h3>
+        <p>Click the download button above. If Windows SmartScreen appears, click "More info" → "Run anyway".</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">2&#65039;&#8419;</div>
+        <h3>Install</h3>
+        <p>Run the installer as Administrator. It will install to Program Files and create desktop shortcuts.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">3&#65039;&#8419;</div>
+        <h3>Launch</h3>
+        <p>Open from Desktop or Start Menu. Enter a URL, select scan mode (recon/quick/full), and click SCAN.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>WebSecurity Scanner Pro v1.0 &bull; For authorized security testing only &bull; <a href="https://github.com/GonzalitoDev/h4ck3r-zone" style="color:var(--accent);text-decoration:none">GitHub</a></p>
+</footer>
+
+<script>
+// Background animation
+const c=document.getElementById('bg'),ctx=c.getContext('2d');
+function r(){c.width=window.innerWidth;c.height=window.innerHeight}
+r();window.addEventListener('resize',r);
+let particles=[];
+for(let i=0;i<60;i++)particles.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2+1,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3});
+function draw(){
+  ctx.fillStyle='rgba(5,5,10,0.15)';ctx.fillRect(0,0,c.width,c.height);
+  particles.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=c.width;if(p.x>c.width)p.x=0;
+    if(p.y<0)p.y=c.height;if(p.y>c.height)p.y=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,212,170,0.4)';ctx.fill();
+  });
+  // Draw connections
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<120){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(0,212,170,${0.06*(1-dist/120)})`;ctx.stroke()}
+    }
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>
