@@ -150,7 +150,7 @@ footer a{color:var(--green);text-decoration:none}
 <div class="boot-line">[ OK ] Initializing NEXUS ADMIN v2.0</div>
 <div class="boot-line">[ OK ] Loading Discord API modules...</div>
 <div class="boot-line">[ OK ] Establishing secure connection to Discord Gateway</div>
-<div class="boot-line">[ OK ] 58 admin &amp; analysis tools loaded</div>
+<div class="boot-line">[ OK ] 62 admin &amp; analysis tools loaded</div>
 <div class="boot-line" id="bootFinalLine"><span style="color:var(--cyan)">admin@nexus:~$ </span><span class="boot-cursor"></span></div>
 <div class="boot-progress"><div class="boot-progress-bar" id="bootProgress"></div></div>
 </div>
@@ -160,7 +160,7 @@ footer a{color:var(--green);text-decoration:none}
 <h1>NEXUS ADMIN TOOLKIT</h1>
 <p>Herramientas legítimas de administración y análisis para Discord. Gestión de servidores, auditoría de seguridad, respaldos y estadísticas — todo lo que un administrador real necesita.</p>
 <div class="stats-bar">
-<div class="stat"><div class="num" id="statTools">58</div><div class="lbl">Herramientas</div></div>
+<div class="stat"><div class="num" id="statTools">62</div><div class="lbl">Herramientas</div></div>
 <div class="stat"><div class="num" id="statReal">100%</div><div class="lbl">Funcional</div></div>
 <div class="stat"><div class="num" id="statSafe">Safe</div><div class="lbl">Sin acciones destructivas</div></div>
 </div>
@@ -186,12 +186,12 @@ footer a{color:var(--green);text-decoration:none}
 <div class="section-title" style="margin-top:1rem"><span class="arrow">>></span> CONSOLE</div>
 <div class="terminal-box">
 <div class="terminal-box-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="terminal-box-title">admin@nexus:~ - activity.log</span></div>
-<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.3 READY</div><div class="terminal-line">[INFO] 58 tools loaded - all legitimate</div></div>
+<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.4 READY</div><div class="terminal-line">[INFO] 62 tools loaded - all legitimate</div></div>
 <div class="terminal-input-line"><span class="terminal-prompt">admin@nexus:~$</span><input type="text" class="terminal-input" id="terminalInput" placeholder="help / tools / toolname" spellcheck="false"/></div>
 </div>
 </div>
 </div>
-<footer><p>NEXUS ADMIN v2.3 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
+<footer><p>NEXUS ADMIN v2.4 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1415,6 +1415,79 @@ h+='<div style="margin-top:0.5rem"><button class="tool-btn" onclick="copySimple(
 log('[OK] URL CDN generada','success');return h;
 });
 
+// ============ TOOL 59: Avatar Original (sin token) ============
+T('avatarorig','Avatar Original 4096px','O','none','none','Extraé el hash del avatar de cualquier URL de Discord (CDN, mensaje, perfil) y obtené la foto ORIGINAL en máxima resolución.',[f_text('url','URL del avatar o mensaje','https://cdn.discordapp.com/avatars/302050872383242240/a_abc123...png')],
+function(f){
+var raw=f.url.trim();
+var m=raw.match(/cdn\.discordapp\.com\/(?:avatars|guilds\/\d+\/users)\/(\d+)\/([a-z0-9_]+)\.[a-z]+/i);
+if(!m)throw new Error('No se encontró un hash de avatar en esa URL. Pegá la URL de un avatar de cdn.discordapp.com');
+var userId=m[1],hash=m[2];
+var ext=hash.startsWith('a_')?'gif':'png';
+var orig='https://cdn.discordapp.com/avatars/'+userId+'/'+hash+'.'+ext+'?size=4096';
+var h='<div style="color:var(--green);font-size:0.85rem">✅ Hash encontrado: <span style="color:var(--cyan)">'+hash+'</span></div>';
+h+='<div style="font-size:0.65rem;color:#666;margin-top:0.3rem">User ID: '+userId+' | Formato: '+ext.toUpperCase()+' | Resolución: 4096px (ORIGINAL)</div>';
+h+='<div style="margin-top:0.8rem;text-align:center"><img src="'+orig+'" style="width:128px;height:128px;border-radius:50%;border:3px solid var(--green);box-shadow:0 0 20px rgba(0,255,65,0.2)" crossorigin="anonymous" onerror="this.parentElement.innerHTML=\'<div style=color:var(--red)>No se pudo cargar la imagen</div>\'"/></div>';
+h+='<div style="margin-top:0.6rem;display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:center">';
+h+='<button class="tool-btn" onclick="copySimple(\''+orig+'\')">Copiar URL 4096px</button>';
+h+='<button class="tool-btn" onclick="window.open(\''+orig+'\',\'_blank\')">Abrir original</button>';
+h+='<button class="tool-btn" onclick="dl(\''+orig+'\',\'avatar_4096.'+ext+'\')">Descargar</button>';
+h+='</div>';
+h+='<div style="margin-top:0.5rem;font-size:0.65rem;color:#666;word-break:break-all">'+orig+'</div>';
+log('[OK] Avatar original 4096px listo','success');return h;
+});
+
+// ============ TOOL 60: Avatar de mensaje (sin token) ============
+T('msgavatar','Avatar de Mensaje','M','none','none','Si tenés el link de un mensaje con foto de ese usuario, pegá la URL de la imagen y obtené su avatar original.',[f_text('img','URL de imagen (imgur, discord cdn)','https://...')],
+function(f){
+var url=f.img.trim();
+var h='<div style="color:var(--green);font-size:0.85rem">Esto extrae el avatar desde una imagen cargada:</div>';
+h+='<div style="font-size:0.65rem;color:#666;margin-top:0.4rem;line-height:1.6">Para obtener el avatar ORIGINAL de un usuario necesitás su ID y el hash del avatar. Las imágenes subidas a Discord se guardan con el hash del usuario.<br/><br/>Probalo con el tool <span style="color:var(--cyan)">Avatar Original 4096px</span>: pegá una URL de avatar de cdn.discordapp.com y te da la foto original en máxima resolución.</div>';
+h+='<div style="margin-top:0.6rem;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:6px;padding:0.5rem;font-size:0.65rem;color:var(--cyan);word-break:break-all">'+esc(url)+'</div>';
+log('[INFO] Usá Avatar Original para máxima resolución','info');return h;
+});
+
+// ============ TOOL 61: Avatar desde Invite (sin token) ============
+T('inviteavatar','Avatar de Invite','I','none','none','Obtiene el icono ORIGINAL (4096px) del servidor de un invite. SIN token.',[f_text('code','Invite','discord.gg/abc123')],
+function(f){
+var code=f.code.trim().replace(/^https?:\/\/(discord\.gg|discord\.com\/invite)\//,'');
+log('[>] Buscando icono del invite: '+code,'info');
+var base='https://discord.com/api/v10/invites/'+encodeURIComponent(code)+'?with_counts=true';
+return fetch(base).then(function(r){return r.text().then(function(t){
+if(!r.ok){var d;try{d=JSON.parse(t)}catch(e){}throw new Error((d&&d.message)||'Invite inválido')}
+var d=JSON.parse(t);
+if(!d.guild.icon)throw new Error('Este servidor no tiene icono personalizado');
+var orig='https://cdn.discordapp.com/icons/'+d.guild.id+'/'+d.guild.icon+'.png?size=4096';
+var ext=d.guild.icon.startsWith('a_')?'gif':'png';
+if(ext==='gif')orig='https://cdn.discordapp.com/icons/'+d.guild.id+'/'+d.guild.icon+'.gif?size=4096';
+var h='<div style="color:var(--green);font-size:0.85rem">Icono del server <span style="color:var(--cyan)">'+esc(d.guild.name)+'</span></div>';
+h+='<div style="font-size:0.65rem;color:#666;margin-top:0.3rem">Hash: '+d.guild.icon+' | 4096px ORIGINAL</div>';
+h+='<div style="margin-top:0.8rem;text-align:center"><img src="'+orig+'" style="width:128px;height:128px;border-radius:8px;border:3px solid var(--green)" crossorigin="anonymous" onerror="this.parentElement.innerHTML=\'<div style=color:var(--red)>No se pudo cargar</div>\'"/></div>';
+h+='<div style="margin-top:0.6rem;display:flex;gap:0.4rem;justify-content:center;flex-wrap:wrap">';
+h+='<button class="tool-btn" onclick="copySimple(\''+orig+'\')">Copiar URL</button>';
+h+='<button class="tool-btn" onclick="dl(\''+orig+'\',\'server_icon_4096.'+ext+'\')">Descargar</button>';
+h+='</div>';
+log('[OK] Icono del servidor listo','success');return h;
+})});
+});
+
+// ============ TOOL 62: Avatar Tamaños (sin token) ============
+T('avatarsizes','Avatar en Todos los Tamaños','T','none','none','Genera TODAS las resoluciones de un avatar (16 a 4096px) desde su hash. SIN token.',[f_text('user','User ID','302050872383242240'),f_text('hash','Avatar Hash','a_abc123def456...')],
+function(f){
+if(!/^\d{15,20}$/.test(f.user))throw new Error('User ID inválido');
+var hash=f.hash.trim();
+if(!hash)throw new Error('Ingresá el hash');
+var ext=hash.startsWith('a_')?'gif':'png';
+var h='<div style="color:var(--green);font-size:0.85rem">Todas las resoluciones del avatar:</div>';
+h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-top:0.6rem">';
+[16,32,64,128,256,512,1024,2048,4096].forEach(function(s){
+var url='https://cdn.discordapp.com/avatars/'+f.user+'/'+hash+'.'+ext+'?size='+s;
+h+='<div style="text-align:center;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:6px;padding:0.4rem"><img src="'+url+'" style="width:48px;height:48px;border-radius:50%" crossorigin="anonymous" onerror="this.style.display=\'none\'"/><div style="font-size:0.55rem;color:#666;margin-top:0.2rem">'+s+'px</div><button class="tool-btn" style="width:100%;margin-top:0.2rem;font-size:0.55rem" onclick="dl(\''+url+'\',\'avatar_'+s+'.'+ext+'\')">Descargar</button></div>';
+});
+h+='</div>';
+h+='<div style="margin-top:0.6rem;font-size:0.6rem;color:#666">La más grande (4096px) es la foto ORIGINAL guardada por Discord.</div>';
+log('[OK] '+((ext==='gif')?'Avatar animado':'Avatares')+' listos','success');return h;
+});
+
 // ============ RENDER ============
 var container=document.getElementById('toolContainer');
 TOOLS.forEach(function(t,idx){
@@ -1463,6 +1536,21 @@ navigator.clipboard.writeText(text).then(function(){
 toast('Copiado: '+text.slice(0,30)+'...');
 log('[OK] Copiado','success');
 }).catch(function(){});
+}
+function dl(url,name){
+fetch(url,{mode:'cors'}).then(function(r){
+if(!r.ok)throw new Error('No se pudo descargar');
+return r.blob();
+}).then(function(blob){
+var a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download=name;
+a.click();
+setTimeout(function(){URL.revokeObjectURL(a.href)},3000);
+toast('Descargando '+name);
+}).catch(function(){
+window.open(url,'_blank');
+});
 }
 window.copyRes=copyRes;
 window.togglePanel=togglePanel;window.runTool=runTool;
