@@ -150,7 +150,7 @@ footer a{color:var(--green);text-decoration:none}
 <div class="boot-line">[ OK ] Initializing NEXUS ADMIN v2.0</div>
 <div class="boot-line">[ OK ] Loading Discord API modules...</div>
 <div class="boot-line">[ OK ] Establishing secure connection to Discord Gateway</div>
-<div class="boot-line">[ OK ] 36 admin &amp; analysis tools loaded</div>
+<div class="boot-line">[ OK ] 50 admin &amp; analysis tools loaded</div>
 <div class="boot-line" id="bootFinalLine"><span style="color:var(--cyan)">admin@nexus:~$ </span><span class="boot-cursor"></span></div>
 <div class="boot-progress"><div class="boot-progress-bar" id="bootProgress"></div></div>
 </div>
@@ -160,7 +160,7 @@ footer a{color:var(--green);text-decoration:none}
 <h1>NEXUS ADMIN TOOLKIT</h1>
 <p>Herramientas legítimas de administración y análisis para Discord. Gestión de servidores, auditoría de seguridad, respaldos y estadísticas — todo lo que un administrador real necesita.</p>
 <div class="stats-bar">
-<div class="stat"><div class="num" id="statTools">36</div><div class="lbl">Herramientas</div></div>
+<div class="stat"><div class="num" id="statTools">50</div><div class="lbl">Herramientas</div></div>
 <div class="stat"><div class="num" id="statReal">100%</div><div class="lbl">Funcional</div></div>
 <div class="stat"><div class="num" id="statSafe">Safe</div><div class="lbl">Sin acciones destructivas</div></div>
 </div>
@@ -186,12 +186,12 @@ footer a{color:var(--green);text-decoration:none}
 <div class="section-title" style="margin-top:1rem"><span class="arrow">>></span> CONSOLE</div>
 <div class="terminal-box">
 <div class="terminal-box-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="terminal-box-title">admin@nexus:~ - activity.log</span></div>
-<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.1 READY</div><div class="terminal-line">[INFO] 36 tools loaded - all legitimate</div></div>
+<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.2 READY</div><div class="terminal-line">[INFO] 50 tools loaded - all legitimate</div></div>
 <div class="terminal-input-line"><span class="terminal-prompt">admin@nexus:~$</span><input type="text" class="terminal-input" id="terminalInput" placeholder="help / tools / toolname" spellcheck="false"/></div>
 </div>
 </div>
 </div>
-<footer><p>NEXUS ADMIN v2.1 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
+<footer><p>NEXUS ADMIN v2.2 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1012,6 +1012,260 @@ h+='<div class="item"><div style="flex:1"><div class="i-name" style="color:var(-
 });
 log('[OK] Templates','success');return h;
 });
+});
+
+// ============ TOOL 37: Password Generator (universal) ============
+T('passgen','Password Generator','P','none','none','Genera contraseñas seguras de la longitud que elijas. Sin API.',[f_text('len','Longitud (8-64)','20'),f_text('count','Cantidad (1-10)','3')],
+function(f){
+var len=Math.min(Math.max(8,parseInt(f.len)||20),64);
+var count=Math.min(Math.max(1,parseInt(f.count)||3),10);
+var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{};:,.<>?';
+var h='<div style="color:var(--green);font-size:0.85rem">'+count+' contraseñas ('+len+' caracteres):</div>';
+for(var c=0;c<count;c++){
+var pw='';
+var pool=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ',...'abcdefghijklmnopqrstuvwxyz',...'0123456789',...'!@#$%^&*'];
+for(var i=0;i<len;i++)pw+=pool[Math.floor(Math.random()*pool.length)];
+h+='<div style="display:flex;align-items:center;gap:0.4rem;margin-top:0.4rem"><code style="background:rgba(0,0,0,0.5);padding:0.3rem 0.6rem;border-radius:4px;color:var(--yellow);font-size:0.75rem;flex:1;word-break:break-all">'+esc(pw)+'</code><button class="tool-btn" onclick="navigator.clipboard.writeText(\''+pw+'\');toast(\'Copiada\')">Copiar</button></div>';
+}
+log('[OK] '+count+' contraseñas generadas','success');return h;
+});
+
+// ============ TOOL 38: Hash Generator (universal) ============
+T('hashgen','Hash Generator','H','none','none','Genera MD5, SHA1, SHA256, SHA512 de cualquier texto. Sin API.',[f_text('text','Texto','Hola mundo')],
+function(f){
+var txt=f.text;
+async function sha1(m){const b=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(m));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function sha256(m){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(m));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function sha512(m){const b=await crypto.subtle.digest('SHA-512',new TextEncoder().encode(m));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function md5(input){
+function r(i,c){return(i<<c)|(i>>>(32-c))}
+function k(i){return((i>>>16)|(i<<16))}
+var s=[],a=1732584193,b=-271733879,c2=-1732584194,d=271733878,bytes=[];
+for(var i=0;i<input.length;i++)bytes.push(input.charCodeAt(i));
+var len=bytes.length,extra=len%64,bitLen=(len*8).toString(2);
+bytes.push(0x80);
+while(bytes.length%64!==56)bytes.push(0);
+var bits=bitLen.padStart(64,'0');
+for(var i=0;i<64;i++)bytes.push(parseInt(bits[i]==='0'?'0':'1',2));
+for(var i=0;i<bytes.length;i+=64){
+var M=[];
+for(var j=0;j<16;j++){var val=0;for(var x=3;x>=0;x--)val=(val<<8)|bytes[i+j*4+x];M.push(val)}
+var A=a,B=b,C=c2,D=d;
+for(var t=0;t<64;t++){
+var F,g;
+if(t<16){F=(B&C)|(~B&D);g=t}
+else if(t<32){F=(D&B)|(~D&C);g=(5*t+1)%16}
+else if(t<48){F=B^C^D;g=(3*t+5)%16}
+else{F=C^(B|~D);g=(7*t)%16}
+var newA=D;
+D=C;C=B;
+var sum=A+F+M[g]+[0xd76aa478,0xe8c7b756,0x242070db,0xc1bdceee,0xf57c0faf,0x4787c62a,0xa8304613,0xfd469501,0x698098d8,0x8b44f7af,0xffff5bb1,0x895cd7be,0x6b901122,0xfd987193,0xa679438e,0x49b40821,0xf61e2562,0xc040b340,0x265e5a51,0xe9b6c7aa,0xd62f105d,0x02441453,0xd8a1e681,0xe7d3fbc8,0x21e1cde6,0xc33707d6,0xf4d50d87,0x455a14ed,0xa9e3e905,0xfcefa3f8,0x676f02d9,0x8d2a4c8a,0xfffa3942,0x8771f681,0x6d9d6122,0xfde5380c,0xa4beea44,0x4bdecfa9,0xf6bb4b60,0xbebfbc70,0x289b7ec6,0xeaa127fa,0xd4ef3085,0x04881d05,0xd9d4d039,0xe6db99e5,0x1fa27cf8,0xc4ac5665,0xf4292244,0x432aff97,0xab9423a7,0xfc93a039,0x655b59c3,0x8f0ccc92,0xffeff47d,0x85845dd1,0x6fa87e4f,0xfe2ce6e0,0xa3014314,0x4e0811a1,0xf7537e82,0xbd3af235,0x2ad7d2bb,0xeb86d391][t]>>>0;
+var sVal=[7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21][t];
+B=r(B+r(A+(sum>>>0),sVal),sVal)&0xffffffff;
+B=(B>>>0)+(F>>>0)+(C>>>0);
+A=newA;
+}
+a=(a+A)>>>0;b=(b+B)>>>0;c2=(c2+C)>>>0;d=(d+D)>>>0;
+}
+function toHex(n){var h=n.toString(16);return h.length<8?'0'.repeat(8-h.length)+h:h}
+var parts=[toHex(a),toHex(b),toHex(c2),toHex(d)];
+function swapEnd(n){return n.match(/../g).reverse().join('')}
+return parts.map(swapEnd).join('');
+}
+return Promise.all([sha1(txt),sha256(txt),sha512(txt)]).then(function(res){
+var h='<div style="color:var(--green);font-size:0.85rem">Hashes de: <span style="color:var(--cyan)">'+esc(txt)+'</span></div>';
+var rows=[['MD5',md5(txt),'var(--yellow)'],['SHA1',res[0],'var(--cyan)'],['SHA256',res[1],'var(--green)'],['SHA512',res[2],'var(--purple)']];
+rows.forEach(function(r){
+h+='<div style="margin-top:0.4rem"><div style="font-size:0.6rem;color:#555">'+r[0]+'</div><code style="display:block;background:rgba(0,0,0,0.5);padding:0.3rem 0.5rem;border-radius:4px;color:'+r[2]+';font-size:0.65rem;word-break:break-all;margin-top:0.15rem">'+r[1]+'</code></div>';
+});
+log('[OK] Hashes generados','success');return h;
+});
+});
+
+// ============ TOOL 39: Base64 Encoder/Decoder (universal) ============
+T('base64','Base64 Encode/Decode','B','none','none','Codifica o decodifica texto en Base64. Sin API.',[f_text('text','Texto','Hola mundo'),f_select('mode','Modo',[{v:'encode',l:'Codificar'},{v:'decode',l:'Decodificar'}])],
+function(f){
+var out;
+try{
+out=f.mode==='encode'?btoa(unescape(encodeURIComponent(f.text))):decodeURIComponent(escape(atob(f.text.trim())));
+}catch(e){throw new Error('Base64 inválido para decodificar')}
+var h='<div style="color:var(--green);font-size:0.85rem">'+(f.mode==='encode'?'Base64 codificado:':'Texto decodificado:')+'</div>';
+h+='<div style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;color:var(--cyan);font-size:0.7rem;word-break:break-all">'+esc(out)+'</div>';
+log('[OK] Base64 '+(f.mode==='encode'?'codificado':'decodificado'),'success');return h;
+});
+
+// ============ TOOL 40: URL Encode/Decode (universal) ============
+T('urlcode','URL Encode/Decode','U','none','none','Codifica o decodifica una URL/string. Sin API.',[f_text('text','Texto','https://ejemplo.com/?q=hola mundo'),f_select('mode','Modo',[{v:'encode',l:'Codificar'},{v:'decode',l:'Decodificar'}])],
+function(f){
+var out;
+try{
+out=f.mode==='encode'?encodeURIComponent(f.text):decodeURIComponent(f.text);
+}catch(e){throw new Error('URL inválida para decodificar')}
+var h='<div style="color:var(--green);font-size:0.85rem">'+(f.mode==='encode'?'Codificada:':'Decodificada:')+'</div>';
+h+='<div style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;color:var(--yellow);font-size:0.7rem;word-break:break-all">'+esc(out)+'</div>';
+log('[OK] URL '+(f.mode==='encode'?'codificada':'decodificada'),'success');return h;
+});
+
+// ============ TOOL 41: Text Analyzer (universal) ============
+T('textanalyze','Text Analyzer','T','none','none','Analiza un texto: caracteres, palabras, oraciones, palabras únicas, frecuencia. Sin API.',[f_text('text','Texto','Escribí tu texto acá para analizarlo')],
+function(f){
+var t=f.text;
+var chars=t.length;
+var charsNoSpace=t.replace(/\s/g,'').length;
+var words=t.trim()?t.trim().split(/\s+/).length:0;
+var sentences=(t.match(/[.!?]+/g)||[]).length;
+var unique=new Set(t.toLowerCase().match(/[a-záéíóúñ0-9]+/g)||[]).size;
+var freq={};
+(t.toLowerCase().match(/[a-záéíóúñ]+/g)||[]).forEach(function(w){freq[w]=(freq[w]||0)+1});
+var top=Object.entries(freq).sort(function(a,b){return b[1]-a[1]}).slice(0,5);
+var h='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.4rem;font-size:0.65rem">';
+var items=[['CARACTERES',chars,'var(--cyan)'],['SIN ESPACIOS',charsNoSpace,'var(--green)'],['PALABRAS',words,'var(--yellow)'],['ORACIONES',sentences,'var(--purple)'],['ÚNICAS',unique,'var(--pink)'],['LECTURA',Math.max(1,Math.round(words/200))+' min','var(--orange)']];
+items.forEach(function(it){h+='<div style="background:rgba(0,0,0,0.3);padding:0.5rem;border-radius:4px"><div style="color:#555;font-size:0.55rem">'+it[0]+'</div><div style="color:'+it[2]+';font-size:0.85rem">'+it[1]+'</div></div>'});
+h+='</div>';
+h+='<div style="margin-top:0.6rem;font-size:0.65rem"><div style="color:#555;margin-bottom:0.2rem">PALABRAS MÁS FRECUENTES</div>';
+top.forEach(function(p){h+='<div class="item"><div class="i-name">'+esc(p[0])+'</div><div style="margin-left:auto;color:var(--cyan)">'+p[1]+'x</div></div>'});
+h+='</div>';
+log('[OK] Texto analizado','success');return h;
+});
+
+// ============ TOOL 42: Data Extractor (universal) ============
+T('extractor','Data Extractor','E','none','none','Extrae emails, teléfonos, URLs y hashtags de cualquier texto. Sin API.',[f_text('text','Texto','Contacto: user@mail.com o +54 11 1234-5678 web: https://ejemplo.com #hola #mundo')],
+function(f){
+var t=f.text;
+var emails=t.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g)||[];
+var phones=t.match(/\+?\d[\d\s\-()]{7,18}\d/g)||[];
+var urls=t.match(/https?:\/\/[^\s]+/g)||[];
+var hashtags=t.match(/#[a-zA-Z0-9_]+/g)||[];
+var ips=t.match(/\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g)||[];
+var sections=[['EMAILS',emails,'var(--green)'],['TELÉFONOS',phones,'var(--cyan)'],['URLS',urls,'var(--yellow)'],['HASHTAGS',hashtags,'var(--purple)'],['IPS',ips,'var(--orange)']];
+var h='';
+sections.forEach(function(s){
+h+='<div style="margin-bottom:0.5rem"><div style="font-size:0.6rem;color:#555">'+s[0]+' ('+s[1].length+')</div>';
+if(s[1].length)h+=s[1].map(function(v){return '<div style="background:rgba(0,0,0,0.3);padding:0.2rem 0.4rem;border-radius:3px;font-size:0.65rem;color:'+s[2]+';margin-top:0.15rem;word-break:break-all">'+esc(v)+'</div>'}).join('');
+else h+='<div style="color:#444;font-size:0.6rem;margin-top:0.1rem">Ninguno</div>';
+h+='</div>';
+});
+log('[OK] Datos extraídos','success');return h;
+});
+
+// ============ TOOL 43: Number Converter (universal) ============
+T('numconvert','Number Converter','N','none','none','Convierte números entre binario, octal, decimal y hexadecimal. Sin API.',[f_text('num','Número','255'),f_select('from','De',[{v:'dec',l:'Decimal'},{v:'bin',l:'Binario'},{v:'hex',l:'Hex'},{v:'oct',l:'Octal'}])],
+function(f){
+var n;
+try{
+n=f.from==='dec'?BigInt(parseInt(f.num)||0):f.from==='bin'?BigInt('0b'+f.num):f.from==='hex'?BigInt('0x'+f.num):BigInt('0o'+f.num);
+}catch(e){throw new Error('Número inválido en esa base')}
+var h='<div style="color:var(--green);font-size:0.85rem">Conversión de: <span style="color:var(--cyan)">'+esc(f.num)+'</span></div>';
+var rows=[['DECIMAL',n.toString(10),'var(--green)'],['BINARIO',n.toString(2),'var(--cyan)'],['HEX',n.toString(16).toUpperCase(),'var(--yellow)'],['OCTAL',n.toString(8),'var(--purple)']];
+rows.forEach(function(r){
+h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="font-size:0.6rem;color:#555">'+r[0]+'</span><span style="color:'+r[2]+';font-size:0.75rem;font-family:monospace;word-break:break-all;margin-left:0.5rem;text-align:right">'+r[1]+'</span></div>';
+});
+log('[OK] Número convertido','success');return h;
+});
+
+// ============ TOOL 44: JSON Formatter (universal) ============
+T('jsonfmt','JSON Formatter','J','none','none','Valida y formatea JSON con indentación. Sin API.',[f_text('json','JSON','{"nombre":"test","valor":123,"lista":[1,2,3]}')],
+function(f){
+var out;
+try{out=JSON.stringify(JSON.parse(f.json),null,2)}catch(e){throw new Error('JSON inválido: '+e.message)}
+var h='<div style="color:var(--green);font-size:0.85rem">JSON válido ✓</div>';
+h+='<pre style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;font-size:0.65rem;color:var(--cyan);overflow-x:auto;max-height:250px;white-space:pre-wrap;word-break:break-all">'+esc(out)+'</pre>';
+log('[OK] JSON formateado','success');return h;
+});
+
+// ============ TOOL 45: UUID & IDs Generator (universal) ============
+T('uuid','UUID Generator','U','none','none','Genera UUIDs v4, tokens y números aleatorios. Sin API.',[f_text('count','Cantidad (1-10)','3')],
+function(f){
+var count=Math.min(Math.max(1,parseInt(f.count)||3),10);
+function uuid(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);return v.toString(16)})}
+function token(){var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';var t='';for(var i=0;i<24;i++)t+=chars[Math.floor(Math.random()*chars.length)];return t}
+var h='<div style="color:var(--green);font-size:0.85rem">'+count+' UUIDs:</div>';
+for(var i=0;i<count;i++)h+='<div style="background:rgba(0,0,0,0.3);padding:0.3rem 0.5rem;border-radius:4px;font-size:0.7rem;color:var(--cyan);margin-top:0.25rem;font-family:monospace;word-break:break-all">'+uuid()+'</div>';
+h+='<div style="color:var(--green);font-size:0.85rem;margin-top:0.8rem">Token aleatorio:</div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.3rem 0.5rem;border-radius:4px;font-size:0.7rem;color:var(--yellow);margin-top:0.25rem;font-family:monospace;word-break:break-all">'+token()+'</div>';
+log('[OK] UUIDs generados','success');return h;
+});
+
+// ============ TOOL 46: Case Converter (universal) ============
+T('caseconv','Case Converter','C','none','none','Convierte texto a mayúsculas, minúsculas, título, camelCase, snake_case. Sin API.',[f_text('text','Texto','hola mundo desde nexus'),f_select('mode','Modo',[{v:'upper',l:'MAYÚSCULAS'},{v:'lower',l:'minúsculas'},{v:'title',l:'Title Case'},{v:'camel',l:'camelCase'},{v:'snake',l:'snake_case'},{v:'kebab',l:'kebab-case'}])],
+function(f){
+var t=f.text.trim();
+var out;
+if(f.mode==='upper')out=t.toUpperCase();
+else if(f.mode==='lower')out=t.toLowerCase();
+else if(f.mode==='title')out=t.replace(/\w\S*/g,function(w){return w[0].toUpperCase()+w.slice(1).toLowerCase()});
+else if(f.mode==='camel')out=t.toLowerCase().replace(/[\s_-]+(\w)/g,function(_,c){return c.toUpperCase()}).replace(/[\s_-]+/g,'');
+else if(f.mode==='snake')out=t.trim().toLowerCase().replace(/[\s-]+/g,'_');
+else out=t.trim().toLowerCase().replace(/[\s_]+/g,'-');
+var h='<div style="color:var(--green);font-size:0.85rem">Resultado:</div>';
+h+='<div style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;color:var(--cyan);font-size:0.75rem;word-break:break-all">'+esc(out)+'</div>';
+log('[OK] Convertido a '+(f.mode||''),'success');return h;
+});
+
+// ============ TOOL 47: Random Number (universal) ============
+T('randomnum','Random Number','R','none','none','Genera números aleatorios entre un rango. Sin API.',[f_text('min','Mínimo','1'),f_text('max','Máximo','100'),f_text('count','Cantidad (1-20)','5')],
+function(f){
+var min=parseInt(f.min)||0,max=parseInt(f.max)||100,count=Math.min(Math.max(1,parseInt(f.count)||5),20);
+if(max<min){var tmp=max;max=min;min=tmp}
+var nums=[];
+for(var i=0;i<count;i++)nums.push(Math.floor(Math.random()*(max-min+1))+min);
+var h='<div style="color:var(--green);font-size:0.85rem">'+count+' números entre '+min+' y '+max+':</div>';
+h+='<div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem">';
+nums.forEach(function(n){h+='<span style="background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.7rem;color:var(--cyan);font-size:0.85rem;font-family:monospace">'+n+'</span>'});
+h+='</div>';
+log('[OK] Números generados','success');return h;
+});
+
+// ============ TOOL 48: Password Strength (universal) ============
+T('passcheck','Password Strength','S','none','none','Analiza la fortaleza de una contraseña. Sin API, todo local.',[f_text('password','Contraseña','')],
+function(f){
+var p=f.password||'';
+var score=0;
+if(p.length>=8)score++;
+if(p.length>=12)score++;
+if(/[A-Z]/.test(p))score++;
+if(/[a-z]/.test(p))score++;
+if(/\d/.test(p))score++;
+if(/[^A-Za-z0-9]/.test(p))score++;
+if(p.length>=16&&/[A-Z]/.test(p)&&/[a-z]/.test(p)&&/\d/.test(p)&&/[^A-Za-z0-9]/.test(p))score++;
+var max=7;
+var pct=Math.round(score/max*100);
+var label=pct<40?'MUY DÉBIL':pct<60?'DÉBIL':pct<80?'MEDIA':'FUERTE';
+var color=pct<40?'var(--red)':pct<60?'var(--orange)':pct<80?'var(--yellow)':'var(--green)';
+var h='<div style="text-align:center;padding:0.5rem">';
+h+='<div style="font-size:2rem;font-weight:700;color:'+color+'">'+pct+'%</div>';
+h+='<div style="font-size:0.8rem;color:'+color+';font-weight:700;margin-top:0.2rem">'+label+'</div>';
+h+='<div style="height:10px;background:var(--border);border-radius:5px;margin-top:0.5rem;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+color+';transition:width 0.3s"></div></div>';
+h+='</div>';
+var checks=[['8+ caracteres',p.length>=8],['12+ caracteres',p.length>=12],['Mayúsculas',/[A-Z]/.test(p)],['Minúsculas',/[a-z]/.test(p)],['Números',/\d/.test(p)],['Símbolos',/[^A-Za-z0-9]/.test(p)]];
+checks.forEach(function(c){
+h+='<div style="display:flex;align-items:center;gap:0.4rem;font-size:0.65rem;padding:0.2rem 0;color:'+(c[1]?'var(--green)':'#555')+'">'+(c[1]?'✓':'✗')+' '+c[0]+'</div>';
+});
+log('[OK] Contraseña analizada: '+pct+'%','success');return h;
+});
+
+// ============ TOOL 49: Lorem Ipsum (universal) ============
+T('lorem','Lorem Ipsum Generator','L','none','none','Genera texto de relleno para diseños y pruebas. Sin API.',[f_text('paras','Párrafos (1-5)','2')],
+function(f){
+var n=Math.min(Math.max(1,parseInt(f.paras)||2),5);
+var words='lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum'.split(' ');
+function para(){var nw=Math.floor(Math.random()*30)+40;var p=[];for(var i=0;i<nw;i++)p.push(words[Math.floor(Math.random()*words.length)]);var s=p.join(' ');return s.charAt(0).toUpperCase()+s.slice(1)+'.'}
+var h='';
+for(var i=0;i<n;i++)h+='<div style="margin-bottom:0.6rem;font-size:0.7rem;color:var(--text);line-height:1.6">'+esc(para())+'</div>';
+log('[OK] Lorem ipsum generado','success');return h;
+});
+
+// ============ TOOL 50: IP Info (universal) ============
+T('ipinfo','My IP Info','I','none','none','Muestra tu IP pública, proveedor y ubicación aproximada. Sin token.',[],
+function(f){
+return fetch('https://ipapi.co/json/').then(function(r){return r.json()}).then(function(d){
+var h='<div style="color:var(--green);font-size:0.85rem">Tu información de IP:</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.5rem;font-size:0.65rem">';
+var items=[['IP',d.ip,'var(--cyan)'],['CIUDAD',d.city||'-','var(--green)'],['REGIÓN',d.region||'-','var(--yellow)'],['PAÍS',d.country_name||'-','var(--purple)'],['PROVEEDOR',d.org||'-','var(--orange)'],['CÓD. PAÍS',d.country_code||'-','var(--pink)']];
+items.forEach(function(it){h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555;font-size:0.55rem">'+it[0]+'</div><div style="color:'+it[2]+';word-break:break-all">'+it[1]+'</div></div>'});
+h+='</div>';
+log('[OK] IP: '+d.ip,'success');return h;
+}).catch(function(){throw new Error('No se pudo obtener la IP (offline)')});
 });
 
 // ============ RENDER ============
