@@ -125,9 +125,18 @@ footer a{color:var(--green);text-decoration:none}
 <header>
 <div class="header-inner">
 <a href="#" class="logo"><div class="logo-icon">N</div><span>NEXUS<span>ADMIN</span></span></a>
-<div class="status"><span class="status-dot"></span><span id="statusText">ONLINE</span><span style="color:#333">|</span><span style="color:#666;font-size:0.7rem" id="clock"></span></div>
+<div class="status"><span class="status-dot"></span><span id="statusText">ONLINE</span><span style="color:#333">|</span><span style="color:#666;font-size:0.7rem" id="clock"></span><span style="color:#333">|</span><button onclick="document.getElementById('proxyBar').style.display='block';document.getElementById('proxyInput').value=PROXY==='none'?'none':PROXY" class="tool-btn">Proxy</button></div>
 </div>
 </header>
+<div id="proxyBar" style="display:none;position:fixed;top:50px;left:50%;transform:translateX(-50%);z-index:200;background:var(--terminal);border:1px solid var(--cyan);border-radius:8px;padding:0.8rem;max-width:90vw;width:520px">
+<div style="font-size:0.7rem;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem">API Proxy Configuration</div>
+<div style="display:flex;gap:0.4rem;align-items:center">
+<input id="proxyInput" type="text" value="" style="flex:1;background:rgba(0,0,0,0.5);border:1px solid var(--border);padding:0.5rem;border-radius:4px;color:var(--green);font-family:inherit;font-size:0.7rem;outline:none" placeholder="https://tu-proxy.com/api/proxy?url=  (o 'none' para directo)"/>
+<button onclick="saveProxy()" class="tool-btn">Guardar</button>
+<button onclick="document.getElementById('proxyBar').style.display='none'" class="tool-btn" style="border-color:var(--red);color:var(--red)">X</button>
+</div>
+<div style="font-size:0.6rem;color:#666;margin-top:0.4rem">Si Discord te da "internal network error", el proxy actual está bloqueado. Pegá acá la URL de otro proxy que funcione, o escribí <span style="color:var(--cyan)">none</span> para probar conexión directa.</div>
+</div>
 <div class="container">
 <div class="boot-screen" id="bootScreen">
 <div class="boot-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="boot-title">NEXUS_ADMIN_SHELL - admin@nexus:~</span></div>
@@ -170,7 +179,7 @@ footer a{color:var(--green);text-decoration:none}
 
 <script>
 // ============ API ============
-var PROXY='https://discord-proxy-mu.vercel.app/api/proxy?url=';
+var PROXY=localStorage.getItem('nexus_proxy')||'https://discord-proxy-mu.vercel.app/api/proxy?url=';
 function api(endpoint,token,opts){
 opts=opts||{};
 var headers={'Content-Type':'application/json'};
@@ -179,12 +188,16 @@ if(token)headers['Authorization']=isBot?'Bot '+token:token;
 var body=null;
 if(opts.body){body=opts.body}
 var method=opts.method||'GET';
-var url=PROXY+encodeURIComponent('https://discord.com/api/v10'+endpoint);
+var useProxy=PROXY&&PROXY!=='none';
+var url=useProxy?PROXY+encodeURIComponent('https://discord.com/api/v10'+endpoint):('https://discord.com/api/v10'+endpoint);
 return fetch(url,{method:method,headers:headers,body:body||null}).then(function(r){
 return r.text().then(function(text){
 try{
 var d=JSON.parse(text);
-if(!r.ok&&d)throw new Error(d.message||d.error||'HTTP '+r.status);
+if(!r.ok&&d){
+if(d.code===40333||d.message==='internal network error')throw new Error('Discord bloquea este token/IP. Probá con: 1) Bot token 2) Un proxy propio 3) Abrir la página localmente');
+throw new Error(d.message||d.error||'HTTP '+r.status);
+}
 if(!r.ok)throw new Error('HTTP '+r.status);
 return d;
 }catch(e){
@@ -196,6 +209,15 @@ throw new Error('API error - check your token and IDs');
 }
 function log(t,type){var el=document.getElementById('terminalBody'),l=document.createElement('div');l.className='terminal-line '+(type||'');l.textContent=t;el.appendChild(l);el.scrollTop=el.scrollHeight}
 function toast(m,t){var el=document.getElementById('toast');el.textContent=m;el.className='toast '+(t||'')+' show';setTimeout(function(){el.classList.remove('show')},3000)}
+function saveProxy(){
+var v=document.getElementById('proxyInput').value.trim();
+if(!v){v='none'}
+PROXY=v;
+localStorage.setItem('nexus_proxy',v);
+document.getElementById('proxyBar').style.display='none';
+log('[SYSTEM] Proxy configurado: '+v,'success');
+toast('Proxy actualizado: '+v);
+}
 
 // ============ TOOLS ============
 var TOOLS=[];
