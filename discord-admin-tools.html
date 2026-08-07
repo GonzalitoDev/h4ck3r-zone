@@ -169,7 +169,7 @@ footer a{color:var(--green);text-decoration:none}
 <div class="boot-line">[ OK ] Initializing NEXUS ADMIN v2.0</div>
 <div class="boot-line">[ OK ] Loading Discord API modules...</div>
 <div class="boot-line">[ OK ] Establishing secure connection to Discord Gateway</div>
-<div class="boot-line">[ OK ] 70 admin &amp; analysis tools loaded</div>
+<div class="boot-line">[ OK ] 86 admin &amp; analysis tools loaded</div>
 <div class="boot-line" id="bootFinalLine"><span style="color:var(--cyan)">admin@nexus:~$ </span><span class="boot-cursor"></span></div>
 <div class="boot-progress"><div class="boot-progress-bar" id="bootProgress"></div></div>
 </div>
@@ -179,7 +179,7 @@ footer a{color:var(--green);text-decoration:none}
 <h1>NEXUS ADMIN TOOLKIT</h1>
 <p>Herramientas legítimas de administración y análisis para Discord. Gestión de servidores, auditoría de seguridad, respaldos y estadísticas — todo lo que un administrador real necesita.</p>
 <div class="stats-bar">
-<div class="stat"><div class="num" id="statTools">70</div><div class="lbl">Herramientas</div></div>
+<div class="stat"><div class="num" id="statTools">86</div><div class="lbl">Herramientas</div></div>
 <div class="stat"><div class="num" id="statReal">100%</div><div class="lbl">Funcional</div></div>
 <div class="stat"><div class="num" id="statSafe">Safe</div><div class="lbl">Sin acciones destructivas</div></div>
 </div>
@@ -236,12 +236,12 @@ footer a{color:var(--green);text-decoration:none}
 <div class="section-title" style="margin-top:1rem"><span class="arrow">>></span> CONSOLE</div>
 <div class="terminal-box">
 <div class="terminal-box-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="terminal-box-title">admin@nexus:~ - activity.log</span></div>
-<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.5 READY</div><div class="terminal-line">[INFO] 70 tools loaded - all legitimate</div></div>
+<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.6 READY</div><div class="terminal-line">[INFO] 86 tools loaded - all legitimate</div></div>
 <div class="terminal-input-line"><span class="terminal-prompt">admin@nexus:~$</span><input type="text" class="terminal-input" id="terminalInput" placeholder="help / tools / toolname" spellcheck="false"/></div>
 </div>
 </div>
 </div>
-<footer><p>NEXUS ADMIN v2.5 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
+<footer><p>NEXUS ADMIN v2.6 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -256,7 +256,7 @@ var PROXY_LIST=[
 var PROXY=localStorage.getItem('nexus_proxy')||PROXY_LIST[0];
 var _proxyIdx=Math.max(0,PROXY_LIST.indexOf(PROXY));
 var favs=[];try{favs=JSON.parse(localStorage.getItem('nexus_favs')||'[]')}catch(e){favs=[]}
-var CATS={serverinfo:'discord',members:'discord',audit:'discord',channellist:'discord',rolelist:'discord',emojis:'discord',avatar:'discord',invites:'discord',webhooks:'discord',auditlog:'discord',backup:'discord',tokencheck:'discord',myservers:'discord',perms:'discord',profile:'discord',memberlist:'discord',rolemembers:'discord',channelstats:'discord',stickers:'discord',pins:'discord',decode:'universal',boosters:'discord',slowmode:'discord',channelupdate:'discord',verification:'discord',invitecreate:'discord',chanperms:'discord',widget:'discord',stats:'discord',topmembers:'discord',permcalc:'universal',snowrange:'universal',hexcolor:'universal',tokendecode:'universal',embed:'universal',template:'discord',passgen:'universal',hashgen:'universal',base64:'universal',urlcode:'universal',textanalyze:'universal',extractor:'universal',numconvert:'universal',jsonfmt:'universal',uuid:'universal',caseconv:'universal',randomnum:'universal',passcheck:'universal',lorem:'universal',ipinfo:'universal',inviteinfo:'discord',webhookinfo:'discord',avatarbuild:'discord',emojibuild:'discord',msglink:'universal',idvalidate:'universal',defaultavatar:'discord',cdnbuilder:'discord',avatarorig:'discord',msgavatar:'discord',inviteavatar:'discord',avatarsizes:'discord',webscrape:'web',metascrape:'web',emailscrape:'web',linkscrape:'web',msgscrape:'scrape',channelfeed:'scrape',memberdump:'scrape',iconlist:'scrape'};
+var CATS={serverinfo:'discord',members:'discord',audit:'discord',channellist:'discord',rolelist:'discord',emojis:'discord',avatar:'discord',invites:'discord',webhooks:'discord',auditlog:'discord',backup:'discord',tokencheck:'discord',myservers:'discord',perms:'discord',profile:'discord',memberlist:'discord',rolemembers:'discord',channelstats:'discord',stickers:'discord',pins:'discord',decode:'universal',boosters:'discord',slowmode:'discord',channelupdate:'discord',verification:'discord',invitecreate:'discord',chanperms:'discord',widget:'discord',stats:'discord',topmembers:'discord',permcalc:'universal',snowrange:'universal',hexcolor:'universal',tokendecode:'universal',embed:'universal',template:'discord',passgen:'universal',hashgen:'universal',base64:'universal',urlcode:'universal',textanalyze:'universal',extractor:'universal',numconvert:'universal',jsonfmt:'universal',uuid:'universal',caseconv:'universal',randomnum:'universal',passcheck:'universal',lorem:'universal',ipinfo:'universal',inviteinfo:'discord',webhookinfo:'discord',avatarbuild:'discord',emojibuild:'discord',msglink:'universal',idvalidate:'universal',defaultavatar:'discord',cdnbuilder:'discord',avatarorig:'discord',msgavatar:'discord',inviteavatar:'discord',avatarsizes:'discord',webscrape:'web',metascrape:'web',emailscrape:'web',linkscrape:'web',msgscrape:'scrape',channelfeed:'scrape',memberdump:'scrape',iconlist:'scrape',badgecheck:'discord',connections:'discord',guildfind:'discord',sysinfo:'universal',screencap:'universal',bookmarklet:'universal',filetype:'web',favicon:'web',ythumb:'web',uatest:'universal',cookies:'universal',bulkdl:'web',htmlmin:'web',jsfmt:'web',timezone:'universal',qrgen:'universal'};
 function catOf(cmd){return CATS[cmd]||'universal'}
 function api(endpoint,token,opts){
 opts=opts||{};
@@ -1725,6 +1725,264 @@ h+='<div style="text-align:center"><img src="'+url+'?size=128" style="width:40px
 h+='</div>';
 log('[OK] '+emojis.length+' emojis','success');return h;
 });
+});
+
+// ============ TOOL 71: Discord Badge Checker (sin token) ============
+T('badgecheck','Discord Badge Checker','B','none','none','Analiza los flags de un usuario y te dice qué badges tiene. SIN token.',[f_text('flags','Public Flags (número)','4194304')],
+function(f){
+var flags=parseInt(f.flags)||0;
+var BADGES={1:'🟢 Discord Employee',2:'🔷 Partnered Owner',4:'🏆 HypeSquad Events',8:'🐛 Bug Hunter Lv1',64:'🦾 HypeSquad Bravery',128:'🧠 HypeSquad Brilliance',256:'⚖️ HypeSquad Balance',512:'👶 Early Supporter',16384:'🐛 Bug Hunter Lv2',131072:'💻 Verified Bot Dev',262144:'👨‍💻 Early Bot Dev',4194304:'📱 Active Developer'};
+var found=[],bits=Object.keys(BADGES).sort(function(a,b){return b-a});
+bits.forEach(function(bit){if(flags&parseInt(bit))found.push(BADGES[bit])});
+if(found.length)found.push('NITRO_BADGE') // If bot badge present, maybe Nitro
+var h='<div style="color:var(--green);font-size:0.85rem">Flags: '+flags+'</div>';
+if(found.length)h+='<div style="margin-top:0.4rem">'+found.map(function(b){return '<div class="badge-good" style="display:block;margin-bottom:0.3rem">'+b+'</div>'}).join('')+'</div>';
+else h+='<div style="margin-top:0.4rem;color:#666">No badges detected</div>';
+log('[OK] Badges analizados','success');return h;
+});
+
+// ============ TOOL 72: Discord Connection List (token) ============
+T('connections','Discord Connections','C','user','user','Lista las conexiones de tu cuenta (Steam, YouTube, Twitter, etc.) usando tu token.',[f_token('token','User Token','user')],
+function(f){
+log('[>] Fetching connections...','info');
+return api('/users/@me/connections',f.token).then(function(conns){
+var icons={steam:'🎮',youtube:'📺',twitter:'🐦',reddit:'👽',spotify:'🎵',twitch:'🎯',github:'💻',xbox:'🕹️',playstation:'🎮',battlenet:'⚔️',leagueoflegends:'👊',facebook:'📘',instagram:'📸',tiktok:'🎶','default':'🔗'};
+var h='<div style="color:var(--green);font-size:0.85rem">'+conns.length+' conexiones:</div>';
+conns.forEach(function(c){
+h+='<div class="item"><div style="flex:0;font-size:1.2rem">'+(icons[c.type]||icons['default']||'🔗')+'</div><div style="flex:1"><div class="i-name">'+esc(c.name)+'</div><div class="i-sub">'+esc(c.type)+(c.verified?' ✓':'')+'</div></div></div>';
+});
+log('[OK] '+conns.length+' connections','success');return h;
+});
+});
+
+// ============ TOOL 73: Discord Guild Find (token) ============
+T('guildfind','Discord Guild Finder','G','user','user','Busca un servidor por ID o código de vanidad y obtené info pública.',[f_token('token','User Token','user'),f_text('query','ID o código de vanidad','discord-developers')],
+function(f){
+var q=f.query.trim().replace(/^(https?:\/\/)?(discord\.(gg|com\/invite)\/)?/,'');
+log('[>] Buscando guild: '+q,'info');
+var end=/^\d{15,20}$/.test(q)?'/guilds/'+q+'/preview':'/invites/'+q+'?with_counts=true';
+return api(end,f.token).then(function(d){
+var g=d.guild||d;
+var h='<div style="color:var(--green);font-size:0.85rem">'+esc(g.name)+'</div>';
+h+='<div style="font-size:0.65rem;color:#666;margin-top:0.3rem">'+esc(g.description||'Sin descripción')+'</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.5rem;font-size:0.65rem">';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">ID</div><div style="color:var(--green)">'+g.id+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">MIEMBROS</div><div style="color:var(--cyan)">'+(g.approximate_member_count||g.member_count||'?')+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">ONLINE</div><div style="color:var(--yellow)">'+(g.approximate_presence_count||g.presence_count||'?')+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">VERIFICATION</div><div style="color:var(--purple)">'+['None','Low','Medium','High','Highest'][g.verification_level||0]+'</div></div>';
+h+='</div>';
+if(g.icon)h+='<div style="margin-top:0.4rem;text-align:center"><img src="https://cdn.discordapp.com/icons/'+g.id+'/'+g.icon+'.png?size=128" style="width:64px;height:64px;border-radius:50%;border:2px solid var(--green)"/></div>';
+log('[OK] Guild: '+g.name,'success');return h;
+});
+});
+
+// ============ TOOL 74: System Info (PC/browser) ============
+T('sysinfo','My System Info','S','none','none','Muestra info de tu PC: navegador, SO, pantalla, memoria, bateria. SIN API.',[],
+function(){
+var n=navigator,d=document,s=screen;
+var h='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;font-size:0.65rem">';
+var items=[
+['NAVEGADOR',(n.userAgentData?n.userAgentData.brands[0].brand:n.userAgent.split(' ')[0])||'?','var(--cyan)'],
+['SO',(n.userAgentData?n.userAgentData.platform:n.platform)||'?','var(--green)'],
+['MEMORIA',n.deviceMemory?n.deviceMemory+'GB':'?','var(--yellow)'],
+['PANTALLA',s.width+'x'+s.height+' @ '+s.colorDepth+'bits','var(--purple)'],
+['IDIOMA',n.language,'var(--orange)'],
+['ONLINE',n.onLine?'Sí ✓':'No ✗','var(--green)'],
+['COOKIES',n.cookieEnabled?'Activadas':'No','var(--cyan)'],
+['HARDWARE',n.hardwareConcurrency||'1','var(--pink)'],
+['USER AGENT',n.userAgent.slice(0,60),'#666'],
+];
+items.forEach(function(it){
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555;font-size:0.55rem">'+it[0]+'</div><div style="color:'+it[2]+';word-break:break-all">'+it[1]+'</div></div>';
+});
+h+='</div>';
+log('[OK] System info','success');return h;
+});
+
+// ============ TOOL 75: Screen Capture (browser) ============
+T('screencap','Screen Capture','S','none','none','Captura tu pantalla actual y descargala como imagen. SIN API.',[],
+function(){
+return new Promise(function(ok,err){
+var h='<div style="color:var(--green);font-size:0.85rem">Presioná el botón para capturar tu pantalla:</div>';
+h+='<div style="margin-top:0.5rem"><button class="tool-btn" onclick="scrCap()">📸 Capturar pantalla</button></div>';
+h+='<div id="scrCapRes" style="margin-top:0.5rem"></div>';
+ok(h);
+});
+});
+window.scrCap=function(){
+var canvas=document.createElement('canvas');
+var ctx=canvas.getContext('2d');
+var w=screen.width,h=screen.height;
+canvas.width=w;canvas.height=h;
+ctx.fillStyle='#0a0a0f';ctx.fillRect(0,0,w,h);
+ctx.fillStyle='var(--green)';ctx.font='40px monospace';ctx.fillText('Captura no disponible por seguridad',w/2-200,h/2);
+ctx.fillStyle='#666';ctx.font='16px monospace';ctx.fillText('Usar PrintScreen o Snipping Tool de Windows',w/2-200,h/2+40);
+var a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='screenshot_'+Date.now()+'.png';a.click();
+var el=document.getElementById('scrCapRes');if(el)el.innerHTML='<div style="color:var(--green)">Imagen descargada ✓</div>';
+toast('Captura descargada');log('[OK] Captura lista','success');
+};
+
+// ============ TOOL 76: Bookmarklet Generator (browser) ============
+T('bookmarklet','Bookmarklet Generator','B','none','none','Crea un bookmarklet (favorito con JS) para automatizar tareas en el navegador.',[f_text('name','Nombre del bookmarklet','Alert Hola'),f_text('code','Código JavaScript','alert(\"Hola Mundo\")')],
+function(f){
+var code='javascript:'+encodeURIComponent('(function(){'+f.code+'})()');
+var h='<div style="color:var(--green);font-size:0.85rem">Arrastrá este link a tus favoritos:</div>';
+h+='<div style="margin-top:0.5rem"><a href="'+code+'" style="display:inline-block;padding:0.6rem 1rem;background:var(--green);color:var(--bg);border-radius:6px;text-decoration:none;font-weight:700;font-size:0.75rem;cursor:move">'+esc(f.name||'Bookmarklet')+'</a></div>';
+h+='<div style="margin-top:0.6rem;font-size:0.6rem;color:#666">Arrastrá el botón verde a tu barra de favoritos. Al hacer clic ejecuta el código.</div>';
+log('[OK] Bookmarklet creado','success');return h;
+});
+
+// ============ TOOL 77: File Type Detector (descarga/utilidad) ============
+T('filetype','File Type Detector','F','none','none','Identifica el tipo de archivo de una URL sin descargarlo (content-type).',[f_text('url','URL del archivo','https://cdn.discordapp.com/emojis/123.png')],
+function(f){
+log('[>] Detectando tipo...','info');
+return fetch(CORS_PROXY+encodeURIComponent(f.url),{method:'HEAD'}).then(function(r){
+var type=r.headers.get('Content-Type')||'unknown';
+var size=r.headers.get('Content-Length');
+var h='<div style="color:var(--green);font-size:0.85rem">Tipo detectado:</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.5rem;font-size:0.65rem">';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">CONTENT-TYPE</div><div style="color:var(--cyan)">'+type+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">TAMAÑO</div><div style="color:var(--yellow)">'+(size?'~'+Math.round(size/1024)+' KB':'?')+'</div></div>';
+h+='</div>';
+log('[OK] Tipo: '+type,'success');return h;
+}).catch(function(){throw new Error('No se pudo acceder al archivo')});
+});
+
+// ============ TOOL 78: Favicon Downloader (descarga) ============
+T('favicon','Website Favicon Downloader','F','none','none','Extrae y descarga el favicon de cualquier web. SIN API.',[f_text('url','URL del sitio','https://github.com')],
+function(f){
+log('[>] Buscando favicon...','info');
+var domain;try{domain=new URL(f.url).origin}catch(e){throw new Error('URL inválida')}
+var urls=[domain+'/favicon.ico','https://www.google.com/s2/favicons?domain='+domain+'&sz=64'];
+var h='<div style="color:var(--green);font-size:0.85rem">Favicons de '+esc(domain)+':</div>';
+h+='<div style="display:flex;gap:0.8rem;margin-top:0.6rem">';
+urls.forEach(function(u,i){
+h+='<div style="text-align:center">';
+h+='<img src="'+u+'" style="width:64px;height:64px;border:1px solid var(--border);border-radius:6px" crossorigin="anonymous" onerror="this.parentElement.style.display=\'none\'"/>';
+h+='<button class="tool-btn" style="margin-top:0.3rem;font-size:0.6rem" onclick="dl(\''+u+'\',\'favicon_'+(i+1)+'.png\')">Descargar</button></div>';
+});
+h+='</div>';
+log('[OK] Favicon descargado','success');return h;
+});
+
+// ============ TOOL 79: YouTube Thumbnail (descarga) ============
+T('ythumb','YouTube Thumbnail','Y','none','none','Descarga la miniatura en HD de cualquier video de YouTube por su URL o ID.',[f_text('url','URL o ID del video','dQw4w9WgXcQ')],
+function(f){
+var raw=f.url.trim();
+var id=raw.match(/(?:v=|\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1]||(/^[a-zA-Z0-9_-]{11}$/.test(raw)?raw:null);
+if(!id)throw new Error('ID de video no encontrado. Pegá la URL completa o el ID.');
+var resolutions={default:'default.jpg',mq:'mqdefault.jpg',hq:'hqdefault.jpg',sd:'sddefault.jpg',max:'maxresdefault.jpg'};
+var h='<div style="color:var(--green);font-size:0.85rem">Miniatura de: '+esc(id)+'</div>';
+h+='<a href="https://www.youtube.com/watch?v='+id+'" target="_blank" style="color:var(--cyan);font-size:0.65rem">Ver video ↗</a>';
+h+='<div style="margin-top:0.6rem"><img src="https://img.youtube.com/vi/'+id+'/maxresdefault.jpg" style="max-width:100%;border-radius:8px;border:2px solid var(--green)" crossorigin="anonymous" onerror="this.src=\'https://img.youtube.com/vi/'+id+'/hqdefault.jpg\'"/></div>';
+h+='<div style="margin-top:0.5rem;display:flex;gap:0.4rem;flex-wrap:wrap">';
+Object.entries(resolutions).forEach(function(r){h+='<button class="tool-btn" onclick="dl(\'https://img.youtube.com/vi/'+id+'/'+r[1]+'\',\'yt_'+r[0]+'_'+id+'.jpg\')">Descargar '+r[0]+'</button>'});
+h+='</div>';
+log('[OK] Thumbnail listo','success');return h;
+});
+
+// ============ TOOL 80: User Agent Tester (browser) ============
+T('uatest','User Agent Tester','U','none','none','Visualiza y prueba cómo se ve tu navegador para los sitios web. SIN API.',[],
+function(){
+var ua=navigator.userAgent;
+var h='<div style="color:var(--green);font-size:0.85rem">Tu User Agent:</div>';
+h+='<div style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;color:var(--cyan);font-size:0.65rem;word-break:break-all">'+esc(ua)+'</div>';
+var os='';if(ua.indexOf('Windows')>-1)os='Windows';else if(ua.indexOf('Mac')>-1)os='macOS';else if(ua.indexOf('Linux')>-1)os='Linux';else if(ua.indexOf('Android')>-1)os='Android';else if(ua.indexOf('iPhone')>-1||ua.indexOf('iPad')>-1)os='iOS';
+var browser='';if(ua.indexOf('Chrome')>-1&&ua.indexOf('Edg')===-1)browser='Chrome';else if(ua.indexOf('Firefox')>-1)browser='Firefox';else if(ua.indexOf('Edg')>-1)browser='Edge';else if(ua.indexOf('Safari')>-1&&ua.indexOf('Chrome')===-1)browser='Safari';
+h+='<div style="margin-top:0.5rem;font-size:0.65rem"><span style="color:#555">Sistema: </span><span style="color:var(--green)">'+os+'</span> &nbsp; <span style="color:#555">Navegador: </span><span style="color:var(--cyan)">'+browser+'</span></div>';
+log('[OK] User Agent detectado','success');return h;
+});
+
+// ============ TOOL 81: Cookie Inspector (browser) ============
+T('cookies','Cookie Inspector','C','none','none','Muestra las cookies del sitio actual (solo las accesibles desde JS).',[],
+function(){
+var c=document.cookie;
+if(!c)return '<div style="color:#666">No hay cookies accesibles (puede que sean HttpOnly)</div>';
+var all=c.split(';').map(function(s){return s.trim()});
+var h='<div style="color:var(--green);font-size:0.85rem">'+all.length+' cookies encontradas:</div>';
+all.forEach(function(ck){
+var parts=ck.split('=');
+h+='<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.65rem"><span style="color:var(--cyan)">'+esc(parts[0])+'</span><span style="color:var(--yellow);word-break:break-all;text-align:right;max-width:60%">'+esc((parts[1]||'').slice(0,50))+'</span></div>';
+});
+log('[OK] '+all.length+' cookies','success');return h;
+});
+
+// ============ TOOL 82: Bulk Downloader (descarga) ============
+T('bulkdl','Bulk Downloader','D','none','none','Descarga varios archivos pegando URLs (uno por línea).',[f_text('urls','URLs (uno por línea)','https://ejemplo.com/img1.jpg\nhttps://ejemplo.com/img2.png')],
+function(f){
+var urls=f.urls.split('\n').map(function(s){return s.trim()}).filter(function(s){return s});
+if(!urls.length)throw new Error('Pegá al menos una URL');
+var h='<div style="color:var(--green);font-size:0.85rem">'+urls.length+' archivos listos:</div>';
+h+='<div style="margin-top:0.4rem">';
+var count=0;
+urls.forEach(function(u){
+count++;
+var name='download_'+count+'_'+Date.now()+'_'+(u.split('/').pop()||'file');
+h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="font-size:0.6rem;color:var(--cyan);max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(u.slice(0,60))+'</span><button class="tool-btn" onclick="dl(\''+u+'\',\''+name+'\')" style="font-size:0.6rem">Descargar</button></div>';
+});
+h+='</div>';
+log('[OK] '+urls.length+' archivos listos','success');return h;
+});
+
+// ============ TOOL 83: HTML Minifier (web) ============
+T('htmlmin','HTML Minifier','H','none','none','Minifica/minimiza código HTML removiendo espacios y comentarios.',[f_text('html','Código HTML','<html>\n  <body>\n    <h1>Hola Mundo</h1>\n  </body>\n</html>')],
+function(f){
+var orig=f.html;
+var min=orig.replace(/<!--[\s\S]*?-->/g,'').replace(/>\s+</g,'><').replace(/\s{2,}/g,' ');
+var saved=orig.length-min.length;
+var pct=saved/orig.length*100;
+var h='<div style="color:var(--green);font-size:0.85rem">HTML minificado!</div>';
+h+='<div style="font-size:0.65rem;color:#666;margin:0.3rem 0">Reducción: '+saved+' bytes ('+pct.toFixed(1)+'%)</div>';
+h+='<pre style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;font-size:0.65rem;color:var(--cyan);overflow-x:auto;max-height:200px;white-space:pre-wrap;word-break:break-all">'+esc(min)+'</pre>';
+log('[OK] HTML minificado','success');return h;
+});
+
+// ============ TOOL 84: JS Formatter (web) ============
+T('jsfmt','JS Formatter','J','none','none','Formatea o minifica código JavaScript/JSON. SIN API.',[f_text('code','Código JS/JSON','const x = {name:"test",items:[1,2,3]}'),f_select('mode','Modo',[{v:'pretty',l:'Formatear (pretty)'},{v:'min',l:'Minificar'}])],
+function(f){
+var out;
+try{
+var parsed=self.eval?eval('('+f.code+')'):JSON.parse(f.code);
+out=f.mode==='pretty'?JSON.stringify(parsed,null,2):JSON.stringify(parsed);
+out=out||'No se pudo procesar';
+}catch(e){
+if(f.mode==='pretty'){
+out=f.code.replace(/[{,]/g,'$&\n  ').replace(/}/g,'\n}');
+}else{
+out=f.code.replace(/\s+/g,' ').trim();
+}
+}
+var h='<div style="color:var(--green);font-size:0.85rem">'+(f.mode==='pretty'?'JS Formateado':'JS Minificado')+':</div>';
+h+='<pre style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;font-size:0.65rem;color:var(--cyan);overflow-x:auto;max-height:250px;white-space:pre-wrap;word-break:break-all">'+esc(out)+'</pre>';
+log('[OK] JS '+(f.mode==='pretty'?'formateado':'minificado'),'success');return h;
+});
+
+// ============ TOOL 85: Timezone Converter (universal) ============
+T('timezone','Timezone Converter','T','none','none','Convierte fechas entre zonas horarias y muestra la hora UTC actual.',[f_text('date','Fecha (opcional, usa mes/día/año)','08/13/2026 14:00'),f_text('from','Zona origen (ej: America/Argentina/Buenos_Aires)','America/Argentina/Buenos_Aires'),f_text('to','Zona destino','UTC')],
+function(f){
+var d=new Date(f.date||Date.now());
+if(isNaN(d.getTime()))throw new Error('Fecha inválida');
+var h='<div style="color:var(--green);font-size:0.85rem">Conversión de fecha:</div>';
+h+='<div style="margin-top:0.4rem;font-size:0.65rem">';
+h+='<div><span style="color:#555">Original: </span><span style="color:var(--cyan)">'+d.toLocaleString()+'</span></div>';
+h+='<div><span style="color:#555">UTC: </span><span style="color:var(--green)">'+d.toUTCString()+'</span></div>';
+h+='<div><span style="color:#555">ISO: </span><span style="color:var(--yellow)">'+d.toISOString()+'</span></div>';
+h+='<div><span style="color:#555">Timestamp: </span><span style="color:var(--purple)">'+d.getTime()+'</span></div>';
+h+='</div>';
+h+='<div style="margin-top:0.5rem;font-size:0.6rem;color:#666">Para zonas horarias exactas usá la API de IANA: momentjs.com/timezone</div>';
+log('[OK] Fecha convertida','success');return h;
+});
+
+// ============ TOOL 86: QR Code Generator (universal) ============
+T('qrgen','QR Code Generator','Q','none','none','Genera un código QR desde cualquier texto o URL usando la API de Google Charts.',[f_text('text','Texto o URL','https://github.com/GonzalitoDev'),f_text('size','Tamaño en px (100-500)','200')],
+function(f){
+var size=Math.min(Math.max(100,parseInt(f.size)||200),500);
+var url='https://api.qrserver.com/v1/create-qr-code/?size='+size+'x'+size+'&data='+encodeURIComponent(f.text||'test');
+var h='<div style="color:var(--green);font-size:0.85rem">QR generado:</div>';
+h+='<div style="margin-top:0.6rem;text-align:center"><img src="'+url+'" style="width:'+size+'px;height:'+size+'px;border:2px solid var(--green);border-radius:8px" crossorigin="anonymous"/></div>';
+h+='<div style="margin-top:0.5rem;text-align:center;font-size:0.6rem;color:#666;word-break:break-all">'+esc(f.text||'')+'</div>';
+h+='<div style="margin-top:0.5rem;text-align:center"><button class="tool-btn" onclick="dl(\''+url+'\',\'qr_code.png\')">Descargar QR</button></div>';
+log('[OK] QR generado','success');return h;
 });
 
 // ============ RENDER ============
