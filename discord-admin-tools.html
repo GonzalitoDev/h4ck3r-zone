@@ -236,6 +236,7 @@ function f_guild(id,label){return {id:id||'guild',label:label||'Guild ID',type:'
 function f_user(id,label){return {id:id||'user',label:label||'User ID',type:'text',ph:'876543210987654321'}}
 function f_channel(id,label){return {id:id||'channel',label:label||'Channel ID',type:'text',ph:'123456789012345678'}}
 function f_text(id,label,ph){return {id:id,label:label,type:'text',ph:ph}}
+function f_select(id,label,opts){return {id:id,label:label,type:'select',opts:opts}}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 // ============ TOOL 1: Server Overview ============
