@@ -92,6 +92,14 @@ header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.95);border-b
 .search-box input{width:100%;background:rgba(13,17,23,0.8);border:1px solid var(--border);padding:0.6rem 0.8rem;border-radius:8px;color:var(--green);font-family:inherit;font-size:0.75rem;outline:none}
 .search-box input:focus{border-color:var(--cyan)}
 .tool-card.hidden{display:none}
+.cat-tabs{display:flex;gap:0.4rem;margin-bottom:0.75rem;flex-wrap:wrap;align-items:center}
+.cat-tab{padding:0.4rem 0.8rem;background:rgba(13,17,23,0.8);border:1px solid var(--border);color:#888;border-radius:6px;cursor:pointer;font-size:0.7rem;font-family:inherit;transition:all 0.2s}
+.cat-tab:hover{border-color:var(--cyan);color:var(--cyan)}
+.cat-tab.active{background:rgba(0,255,65,0.12);border-color:var(--green);color:var(--green);font-weight:700}
+.tool-star{position:absolute;top:0.5rem;right:0.6rem;background:none;border:none;color:#444;cursor:pointer;font-size:0.9rem;z-index:2}
+.tool-star.on{color:var(--yellow)}
+.tool-card{position:relative}
+
 .tool-result .item{display:flex;align-items:center;gap:0.5rem;padding:0.25rem 0;border-bottom:1px solid rgba(255,255,255,0.02)}
 .tool-result .item img{width:24px;height:24px;border-radius:50%;border:1px solid var(--border)}
 .tool-result .item .i-name{color:white;font-size:0.75rem}
@@ -211,6 +219,18 @@ footer a{color:var(--green);text-decoration:none}
 </div>
 </div>
 <div class="section-title"><span class="arrow">>></span> ADMIN TOOLS <span style="font-size:0.6rem;color:#666;letter-spacing:0">(Solo lectura y administración — nada destructivo)</span></div>
+<div class="cat-tabs" id="catTabs">
+<button class="cat-tab active" data-cat="all" onclick="filterCat('all')">🗂️ Todos</button>
+<button class="cat-tab" data-cat="fav" onclick="filterCat('fav')">⭐ Favoritos</button>
+<button class="cat-tab" data-cat="discord" onclick="filterCat('discord')">🤖 Discord</button>
+<button class="cat-tab" data-cat="web" onclick="filterCat('web')">🌐 Web</button>
+<button class="cat-tab" data-cat="scrape" onclick="filterCat('scrape')">📊 Scraping</button>
+<button class="cat-tab" data-cat="universal" onclick="filterCat('universal')">🧰 Universal</button>
+<div style="margin-left:auto;display:flex;gap:0.3rem">
+<button class="cat-tab" onclick="expandAll()" title="Expandir todos">⬇ Expandir</button>
+<button class="cat-tab" onclick="collapseAll()" title="Colapsar todos">⬆ Colapsar</button>
+</div>
+</div>
 <div class="search-box"><input type="text" id="toolSearch" placeholder="🔍 Buscar herramienta... (ej: avatar, permiso, canal, rol)" oninput="filterTools(this.value)"/><div style="font-size:0.6rem;color:#555;margin-top:0.3rem" id="searchCount"></div></div>
 <div class="tools-grid" id="toolContainer"></div>
 <div class="section-title" style="margin-top:1rem"><span class="arrow">>></span> CONSOLE</div>
@@ -1720,10 +1740,12 @@ fieldsHTML+='<label>'+label+'</label>'+input;
 });
 var authClass=t.auth==='bot'?'bot':t.auth==='user'?'user':'none';
 var authLabel=t.auth==='bot'?'BOT':t.auth==='user'?'USER':'NONE';
-card.innerHTML='<div class="tool-card-header"><div class="tool-icon '+t.iconType+'">'+t.icon+'</div><div class="tool-name">'+t.name+'</div><span class="tool-badge real" style="margin-left:auto">REAL</span></div><div class="tool-card-body"><div class="tool-desc">'+t.desc+'</div><span class="tool-type '+authClass+'">'+authLabel+'</span></div><div class="tool-panel" id="panel_'+t.cmd+'">'+fieldsHTML+'<button class="tool-btn" style="width:100%;margin-top:0.3rem" onclick="runTool(\''+t.cmd+'\')">▶ EJECUTAR</button><div class="tool-result" id="res_'+t.cmd+'"></div></div><div class="tool-meta"><span>'+t.cmd+'</span><button class="tool-btn" onclick="togglePanel(\''+t.cmd+'\')">Configurar</button></div>';
+var isFav=favs.indexOf(t.cmd)>-1;
+card.innerHTML='<button class="tool-star '+(isFav?'on':'')+'" onclick="toggleFav(\''+t.cmd+'\',this)" title="Favorito">'+(isFav?'★':'☆')+'</button><div class="tool-card-header"><div class="tool-icon '+t.iconType+'">'+t.icon+'</div><div class="tool-name">'+t.name+'</div><span class="tool-badge real" style="margin-left:auto">REAL</span></div><div class="tool-card-body"><div class="tool-desc">'+t.desc+'</div><span class="tool-type '+authClass+'">'+authLabel+'</span></div><div class="tool-panel" id="panel_'+t.cmd+'">'+fieldsHTML+'<button class="tool-btn" style="width:100%;margin-top:0.3rem" onclick="runTool(\''+t.cmd+'\')">▶ EJECUTAR</button><div class="tool-result" id="res_'+t.cmd+'"></div></div><div class="tool-meta"><span>'+t.cmd+'</span><button class="tool-btn" onclick="togglePanel(\''+t.cmd+'\')">Configurar</button></div>';
 container.appendChild(card);
 });
 document.getElementById('statTools').textContent=TOOLS.length;
+applyFilter();
 function togglePanel(cmd){var p=document.getElementById('panel_'+cmd);p.classList.toggle('open')}
 function runTool(cmd){
 var t=TOOLS.find(function(x){return x.cmd===cmd});
@@ -1771,20 +1793,57 @@ window.open(url,'_blank');
 window.copyRes=copyRes;
 window.togglePanel=togglePanel;window.runTool=runTool;
 
-// ============ SEARCH FILTER ============
+// ============ CATEGORIES & FAVORITES ============
+var favs=[];
+try{favs=JSON.parse(localStorage.getItem('nexus_favs')||'[]')}catch(e){favs=[]}
+var currentCat='all';
+var CATS={
+serverinfo:'discord',members:'discord',audit:'discord',channellist:'discord',rolelist:'discord',emojis:'discord',
+avatar:'discord',invites:'discord',webhooks:'discord',auditlog:'discord',backup:'discord',tokencheck:'discord',
+myservers:'discord',perms:'discord',profile:'discord',memberlist:'discord',rolemembers:'discord',channelstats:'discord',
+stickers:'discord',pins:'discord',decode:'universal',boosters:'discord',slowmode:'discord',channelupdate:'discord',
+verification:'discord',invitecreate:'discord',chanperms:'discord',widget:'discord',stats:'discord',topmembers:'discord',
+permcalc:'universal',snowrange:'universal',hexcolor:'universal',tokendecode:'universal',embed:'universal',template:'discord',
+passgen:'universal',hashgen:'universal',base64:'universal',urlcode:'universal',textanalyze:'universal',extractor:'universal',
+numconvert:'universal',jsonfmt:'universal',uuid:'universal',caseconv:'universal',randomnum:'universal',passcheck:'universal',
+lorem:'universal',ipinfo:'universal',inviteinfo:'discord',webhookinfo:'discord',avatarbuild:'discord',emojibuild:'discord',
+msglink:'universal',idvalidate:'universal',defaultavatar:'discord',cdnbuilder:'discord',avatarorig:'discord',msgavatar:'discord',
+inviteavatar:'discord',avatarsizes:'discord',webscrape:'web',metascrape:'web',emailscrape:'web',linkscrape:'web',
+msgscrape:'scrape',channelfeed:'scrape',memberdump:'scrape',iconlist:'scrape'
+};
+function catOf(cmd){return CATS[cmd]||'universal'}
+function filterCat(cat){
+currentCat=cat;
+document.querySelectorAll('.cat-tab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-cat')===cat)});
+applyFilter();
+}
 function filterTools(q){
-q=(q||'').toLowerCase();
+var input=document.getElementById('toolSearch');if(input&&input.value!==q)input.value=q;
+applyFilter();
+}
+function applyFilter(){
+var q=(document.getElementById('toolSearch').value||'').toLowerCase();
 var cards=document.querySelectorAll('.tool-card');
 var count=0;
 cards.forEach(function(card,idx){
 var t=TOOLS[idx];
-var match=!q||(t.name+' '+t.cmd+' '+t.desc+' '+(t.auth||'')).toLowerCase().indexOf(q)>-1;
-card.classList.toggle('hidden',!match);
-if(match)count++;
+var inCat=currentCat==='all'||(currentCat==='fav'?favs.indexOf(t.cmd)>-1:catOf(t.cmd)===currentCat);
+var match=!q||(t.name+' '+t.cmd+' '+t.desc+' '+(t.auth||'')+' '+catOf(t.cmd)).toLowerCase().indexOf(q)>-1;
+card.classList.toggle('hidden',!(inCat&&match));
+if(inCat&&match)count++;
 });
-document.getElementById('searchCount').textContent=count;
+var el=document.getElementById('searchCount');if(el)el.textContent=count+' de '+TOOLS.length+' herramientas';
 }
-window.filterTools=filterTools;
+function toggleFav(cmd,el){
+var i=favs.indexOf(cmd);
+if(i>-1){favs.splice(i,1);el.textContent='☆';el.classList.remove('on');}
+else{favs.push(cmd);el.textContent='★';el.classList.add('on');}
+localStorage.setItem('nexus_favs',JSON.stringify(favs));
+if(currentCat==='fav')applyFilter();
+}
+function expandAll(){document.querySelectorAll('.tool-panel').forEach(function(p){p.classList.add('open')});}
+function collapseAll(){document.querySelectorAll('.tool-panel').forEach(function(p){p.classList.remove('open')});}
+window.filterTools=filterTools;window.filterCat=filterCat;window.toggleFav=toggleFav;window.expandAll=expandAll;window.collapseAll=collapseAll;
 
 // ============ TOKEN AUTOFILL ============
 var savedToken=localStorage.getItem('nexus_token')||'';
