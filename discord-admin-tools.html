@@ -135,7 +135,7 @@ footer a{color:var(--green);text-decoration:none}
 <div class="boot-line">[ OK ] Initializing NEXUS ADMIN v2.0</div>
 <div class="boot-line">[ OK ] Loading Discord API modules...</div>
 <div class="boot-line">[ OK ] Establishing secure connection to Discord Gateway</div>
-<div class="boot-line">[ OK ] 14 admin &amp; analysis tools loaded</div>
+<div class="boot-line">[ OK ] 30 admin &amp; analysis tools loaded</div>
 <div class="boot-line" id="bootFinalLine"><span style="color:var(--cyan)">admin@nexus:~$ </span><span class="boot-cursor"></span></div>
 <div class="boot-progress"><div class="boot-progress-bar" id="bootProgress"></div></div>
 </div>
@@ -145,7 +145,7 @@ footer a{color:var(--green);text-decoration:none}
 <h1>NEXUS ADMIN TOOLKIT</h1>
 <p>Herramientas legítimas de administración y análisis para Discord. Gestión de servidores, auditoría de seguridad, respaldos y estadísticas — todo lo que un administrador real necesita.</p>
 <div class="stats-bar">
-<div class="stat"><div class="num" id="statTools">14</div><div class="lbl">Herramientas</div></div>
+<div class="stat"><div class="num" id="statTools">30</div><div class="lbl">Herramientas</div></div>
 <div class="stat"><div class="num" id="statReal">100%</div><div class="lbl">Funcional</div></div>
 <div class="stat"><div class="num" id="statSafe">Safe</div><div class="lbl">Sin acciones destructivas</div></div>
 </div>
@@ -160,7 +160,7 @@ footer a{color:var(--green);text-decoration:none}
 <div class="section-title" style="margin-top:1rem"><span class="arrow">>></span> CONSOLE</div>
 <div class="terminal-box">
 <div class="terminal-box-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="terminal-box-title">admin@nexus:~ - activity.log</span></div>
-<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.0 READY</div><div class="terminal-line">[INFO] 14 tools loaded - all legitimate</div></div>
+<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.0 READY</div><div class="terminal-line">[INFO] 30 tools loaded - all legitimate</div></div>
 <div class="terminal-input-line"><span class="terminal-prompt">admin@nexus:~$</span><input type="text" class="terminal-input" id="terminalInput" placeholder="help / tools / toolname" spellcheck="false"/></div>
 </div>
 </div>
@@ -498,6 +498,316 @@ if(p&parseInt(bit))perms.push(PERMS[bit]);
 h+='<div style="margin-bottom:0.5rem"><div style="color:var(--yellow);font-size:0.7rem">@'+esc(role.name)+'</div><div style="display:flex;flex-wrap:wrap;gap:0.2rem;margin-top:0.2rem">'+(perms.length?perms.slice(0,8).map(function(pr){return '<span class="badge-good">'+pr+'</span>'}).join(''):'<span class="badge-warn">Sin permisos clave</span>')+(perms.length>8?' <span class="badge-warn">+'+(perms.length-8)+'</span>':'')+'</div></div>';
 });
 log('[OK] Permissions analyzed','success');return h;
+});
+});
+
+// ============ TOOL 15: User Profile ============
+T('profile','User Profile','U','cyan','bot','Perfil completo de cualquier usuario: badges, flags, fechas, roles.',[f_token(),f_user()],
+function(f){
+log('[>] Fetching user profile...','info');
+return api('/users/'+f.user,f.token).then(function(u){
+var h='<div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.6rem">';
+if(u.avatar)h+='<img src="https://cdn.discordapp.com/avatars/'+u.id+'/'+u.avatar+'.png?size=128" style="width:48px;height:48px;border-radius:50%;border:2px solid var(--cyan)"/>';
+h+='<div><div style="color:var(--green);font-size:0.9rem">'+esc(u.username)+'#'+(u.discriminator&&u.discriminator!=='0'?u.discriminator:'0000')+'</div><div style="font-size:0.6rem;color:#666">ID: '+u.id+(u.bot?' | BOT':'')+'</div></div></div>';
+var flags=u.public_flags||0;
+var badgeMap={1:'Empleado',2:'Partner',4:'HypeSquad',8:'Bug Hunter',64:'Bravery',128:'Brilliance',256:'Balance',512:'Early Supporter',16384:'Bug Hunter 2',131072:'Bot Dev',4194304:'Active Dev'};
+var badges=[];
+Object.keys(badgeMap).forEach(function(bit){if(flags&parseInt(bit))badges.push(badgeMap[bit])});
+h+='<div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.5rem">'+(badges.length?badges.map(function(b){return '<span class="badge-good">'+b+'</span>'}).join(''):'<span class="badge-warn">Sin badges</span>')+'</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;font-size:0.65rem">';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">MFA</div><div style="color:var(--green)">'+(u.mfa_enabled?'Activado':'No')+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">NITRO</div><div style="color:var(--pink)">'+(u.premium_type>0?'Tier '+u.premium_type:'No')+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">EMAIL</div><div style="color:var(--yellow)">'+(u.email?'Confirmado':'Oculto')+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">ACCENT</div><div style="color:'+(u.accent_color?'#'+u.accent_color.toString(16).padStart(6,'0'):'#666')+'">'+(u.accent_color?'# '+u.accent_color.toString(16).padStart(6,'0'):'No')+'</div></div>';
+h+='</div>';
+log('[OK] Profile: '+u.username,'success');return h;
+});
+});
+
+// ============ TOOL 16: Member List ============
+T('memberlist','Member List','M','green','bot','Lista paginada de miembros con avatar, ID y roles.',[f_token(),f_guild(),f_text('limit','Limit (1-100)','30')],
+function(f){
+var limit=Math.min(Math.max(1,parseInt(f.limit)||30),100);
+log('[>] Fetching members...','info');
+return api('/guilds/'+f.guild+'/members?limit='+limit,f.token).then(function(d){
+var h='<div style="color:var(--green);font-size:0.85rem">'+d.length+' miembros</div>';
+d.forEach(function(m){
+var av=m.user.avatar?'<img src="https://cdn.discordapp.com/avatars/'+m.user.id+'/'+m.user.avatar+'.png?size=64"/>':'<div style="width:24px;height:24px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#666;flex-shrink:0">'+esc((m.user.username||'?')[0])+'</div>';
+h+='<div class="item">'+av+'<div style="flex:1"><div class="i-name">'+esc(m.user.username)+(m.user.bot?' <span class="badge-warn">BOT</span>':'')+'</div><div class="i-sub">'+m.user.id+' | roles: '+(m.roles?m.roles.length:0)+' | nick: '+(m.nick?esc(m.nick):'-')+'</div></div></div>';
+});
+log('[OK] '+d.length+' members','success');return h;
+});
+});
+
+// ============ TOOL 17: Role Members ============
+T('rolemembers','Role Members','R','purple','bot','Lista los miembros que tienen un rol específico.',[f_token(),f_guild(),f_text('role','Role ID','123456789012345678')],
+function(f){
+log('[>] Fetching role members...','info');
+var all=[],after='0';
+function nxt(){
+return api('/guilds/'+f.guild+'/members?limit=1000&after='+after,f.token).then(function(d){
+if(!d||!d.length)return all;
+all=all.concat(d);after=d[d.length-1].user.id;
+return d.length<1000?all:nxt();
+});
+}
+return nxt().then(function(m){
+var withRole=m.filter(function(x){return x.roles&&x.roles.indexOf(f.role)>-1});
+var h='<div style="color:var(--green);font-size:0.85rem">'+withRole.length+' miembros con ese rol</div>';
+withRole.slice(0,40).forEach(function(m){
+h+='<div class="item"><div style="flex:1"><div class="i-name">'+esc(m.user.username)+'</div><div class="i-sub">'+m.user.id+'</div></div></div>';
+});
+if(withRole.length>40)h+='<div style="color:#666">... +'+(withRole.length-40)+' más</div>';
+log('[OK] '+withRole.length+' members','success');return h;
+});
+});
+
+// ============ TOOL 18: Channel Stats ============
+T('channelstats','Channel Stats','S','cyan','bot','Analiza un canal: últimas 100 mensajes, autores más activos, adjuntos.',[f_token(),f_channel(),f_text('limit','Limit (1-100)','50')],
+function(f){
+var limit=Math.min(Math.max(1,parseInt(f.limit)||50),100);
+log('[>] Analyzing channel...','info');
+return api('/channels/'+f.channel+'/messages?limit='+limit,f.token).then(function(msgs){
+var authors={},att=0,links=0,emotes=0;
+msgs.forEach(function(m){
+authors[m.author.username]=(authors[m.author.username]||0)+1;
+if(m.attachments&&m.attachments.length)att+=m.attachments.length;
+if(m.content&&m.content.indexOf('http')>-1)links++;
+if(m.mentions&&m.mentions.length)emotes+=m.mentions.length;
+});
+var top=Object.keys(authors).sort(function(a,b){return authors[b]-authors[a]}).slice(0,5);
+var h='<div style="color:var(--green);font-size:0.85rem">'+msgs.length+' mensajes analizados</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.5rem">';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">ADJUNTOS</div><div style="color:var(--orange)">'+att+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">LINKS</div><div style="color:var(--cyan)">'+links+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">AUTORES</div><div style="color:var(--green)">'+Object.keys(authors).length+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">MENCIÓNES</div><div style="color:var(--pink)">'+emotes+'</div></div>';
+h+='</div>';
+h+='<div style="margin-top:0.5rem;font-size:0.65rem"><div style="color:#666;margin-bottom:0.2rem">TOP AUTORES</div>';
+top.forEach(function(u){h+='<div class="item"><div class="i-name">'+esc(u)+'</div><div style="margin-left:auto;color:var(--cyan)">'+authors[u]+' msgs</div></div>'});
+h+='</div>';
+log('[OK] Channel analyzed','success');return h;
+});
+});
+
+// ============ TOOL 19: Sticker List ============
+T('stickers','Sticker List','S','orange','bot','Lista los stickers del servidor con sus IDs.',[f_token(),f_guild()],
+function(f){
+log('[>] Fetching stickers...','info');
+return api('/guilds/'+f.guild+'/stickers',f.token).then(function(st){
+if(!st||!st.length)return '<div style="color:#666">No hay stickers en este servidor</div>';
+var h='<div style="color:var(--green);font-size:0.85rem">'+st.length+' stickers</div>';
+st.forEach(function(s){
+var fmt={1:'PNG',2:'APNG',3:'LOTTIE',4:'GIF'}[s.format_type]||'?';
+h+='<div class="item"><div style="flex:1"><div class="i-name">:'+esc(s.name)+':</div><div class="i-sub">'+s.id+' | '+fmt+' | '+(s.available?'disponible':'unavailable')+'</div></div></div>';
+});
+log('[OK] '+st.length+' stickers','success');return h;
+});
+});
+
+// ============ TOOL 20: Pinned Messages ============
+T('pins','Pinned Messages','P','yellow','bot','Lista los mensajes fijados de un canal.',[f_token(),f_channel()],
+function(f){
+log('[>] Fetching pins...','info');
+return api('/channels/'+f.channel+'/pins',f.token).then(function(pins){
+if(!pins||!pins.length)return '<div style="color:#666">No hay mensajes fijados</div>';
+var h='<div style="color:var(--green);font-size:0.85rem">'+pins.length+' fijados</div>';
+pins.forEach(function(p){
+var date=new Date(Number(BigInt(p.id)>>22n)+1420070400000).toLocaleDateString();
+h+='<div class="item"><div style="flex:1"><div class="i-name">'+esc(p.author.username)+'</div><div class="i-sub" style="word-break:break-all">'+(p.content?esc(p.content.slice(0,80)):'[adjunto]')+' | '+date+'</div></div></div>';
+});
+log('[OK] '+pins.length+' pins','success');return h;
+});
+});
+
+// ============ TOOL 21: Message Decoder ============
+T('decode','Message Decoder','D','none','none','Decodifica un snowflake (ID de Discord) a fecha/hora exacta. Sin token.',[f_text('id','ID / Snowflake','100123456789012345')],
+function(f){
+if(!/^\d{15,20}$/.test(f.id))throw new Error('ID inválido');
+var n=BigInt(f.id);
+var epoch=BigInt(1420070400000);
+var ms=(n>>22n)+epoch;
+var d=new Date(Number(ms));
+var h='<div style="color:var(--green);font-size:0.85rem">Snowflake decodificado</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.5rem;font-size:0.65rem">';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">FECHA UTC</div><div style="color:var(--green)">'+d.toUTCString()+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">EDAD</div><div style="color:var(--cyan)">'+Math.floor((Date.now()-d)/86400000)+' días</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">WORKER</div><div style="color:var(--yellow)">'+Number((n>>17n)&0x1Fn)+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">PROCESS</div><div style="color:var(--pink)">'+Number((n>>12n)&0x1Fn)+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">INCREMENT</div><div style="color:var(--purple)">'+Number(n&0xFFFn)+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">BINARIO</div><div style="color:#666;word-break:break-all">'+n.toString(2).slice(0,40)+'...</div></div>';
+h+='</div>';
+log('[OK] Decoded snowflake','success');return h;
+});
+
+// ============ TOOL 22: Boosters ============
+T('boosters','Boosters List','B','pink','bot','Lista los miembros con boost de Nitro (requiere GUILD_PRESENCES + member list).',[f_token(),f_guild()],
+function(f){
+log('[>] Fetching boosters...','info');
+var all=[],after='0';
+function nxt(){
+return api('/guilds/'+f.guild+'/members?limit=1000&after='+after,f.token).then(function(d){
+if(!d||!d.length)return all;
+all=all.concat(d);after=d[d.length-1].user.id;
+return d.length<1000?all:nxt();
+});
+}
+return nxt().then(function(m){
+var boosters=m.filter(function(x){return x.premium_since});
+boosters.sort(function(a,b){return new Date(a.premium_since)-new Date(b.premium_since)});
+var h='<div style="color:var(--green);font-size:0.85rem">'+boosters.length+' boosters</div>';
+boosters.slice(0,40).forEach(function(b){
+var since=new Date(b.premium_since).toLocaleDateString();
+h+='<div class="item"><div style="color:var(--pink)">✨</div><div style="flex:1"><div class="i-name">'+esc(b.user.username)+'</div><div class="i-sub">boosting desde '+since+'</div></div></div>';
+});
+if(boosters.length>40)h+='<div style="color:#666">... +'+(boosters.length-40)+' más</div>';
+log('[OK] '+boosters.length+' boosters','success');return h;
+});
+});
+
+// ============ TOOL 23: Slowmode Setter ============
+T('slowmode','Slowmode Setter','S','cyan','bot','Configura el slowmode de un canal (segundos entre mensajes).',[f_token(),f_channel(),f_text('secs','Segundos (0-21600)','5')],
+function(f){
+var secs=Math.min(Math.max(0,parseInt(f.secs)||0),21600);
+log('[>] Setting slowmode to '+secs+'s...','info');
+return api('/channels/'+f.channel,f.token,{method:'PATCH',body:JSON.stringify({rate_limit_per_user:secs})}).then(function(ch){
+log('[OK] Slowmode: '+secs+'s','success');
+return '<div style="color:var(--green)">[OK] Slowmode de #'+esc(ch.name)+' = '+secs+' segundos</div>';
+});
+});
+
+// ============ TOOL 24: Channel Updater ============
+T('channelupdate','Channel Updater','C','green','bot','Cambia el nombre y/o tema de un canal.',[f_token(),f_channel(),f_text('name','Nuevo nombre (opcional)',''),f_text('topic','Nuevo tema (opcional)','')],
+function(f){
+log('[>] Updating channel...','info');
+var body={};
+if(f.name)body.name=f.name;
+if(f.topic)body.topic=f.topic;
+if(!Object.keys(body).length)throw new Error('Completá nombre o tema');
+return api('/channels/'+f.channel,f.token,{method:'PATCH',body:JSON.stringify(body)}).then(function(ch){
+log('[OK] Channel updated','success');
+return '<div style="color:var(--green)">[OK] #'+esc(ch.name)+' actualizado</div><div style="font-size:0.65rem;color:#666">Tema: '+(ch.topic?esc(ch.topic.slice(0,60)):'ninguno')+'</div>';
+});
+});
+
+// ============ TOOL 25: Verification Setter ============
+T('verification','Verification Level','V','yellow','bot','Cambia el nivel de verificación del servidor.',[f_token(),f_guild(),f_select('level','Nivel',[{v:'0',l:'None'},{v:'1',l:'Low (email)'},{v:'2',l:'Medium (5min)'},{v:'3',l:'High (10min)'},{v:'4',l:'Very High (teléfono)'}])],
+function(f){
+log('[>] Setting verification level...','info');
+return api('/guilds/'+f.guild,f.token,{method:'PATCH',body:JSON.stringify({verification_level:parseInt(f.level)})}).then(function(g){
+var levels={0:'None',1:'Low',2:'Medium',3:'High',4:'Very High'};
+log('[OK] Verification: '+levels[g.verification_level],'success');
+return '<div style="color:var(--green)">[OK] Verificación = '+levels[g.verification_level]+'</div>';
+});
+});
+
+// ============ TOOL 26: Invite Creator ============
+T('invitecreate','Invite Creator','I','orange','bot','Crea un invite para un canal con duración y usos máximos.',[f_token(),f_channel(),f_text('max_uses','Usos máximos (0=infinito)','0'),f_text('max_age','Duración en segundos (0=permanente)','86400')],
+function(f){
+var maxUses=Math.max(0,parseInt(f.max_uses)||0);
+var maxAge=Math.max(0,parseInt(f.max_age)||0);
+log('[>] Creating invite...','info');
+return api('/channels/'+f.channel+'/invites',f.token,{method:'POST',body:JSON.stringify({max_uses:maxUses,max_age:maxAge,unique:true})}).then(function(inv){
+log('[OK] Invite created','success');
+return '<div style="color:var(--green)">[OK] Invite: <span style="color:var(--cyan)">discord.gg/'+esc(inv.code)+'</span></div><div style="font-size:0.65rem;color:#666">Usos máx: '+(maxUses||'∞')+' | Expira: '+(maxAge?(new Date(Date.now()+maxAge*1000).toLocaleString()):'nunca')+'</div>';
+});
+});
+
+// ============ TOOL 27: Channel Permissions ============
+T('chanperms','Channel Permissions','P','purple','bot','Analiza los overrides de permisos de un canal (quién tiene acceso especial).',[f_token(),f_channel()],
+function(f){
+log('[>] Fetching channel perms...','info');
+return api('/channels/'+f.channel,f.token).then(function(ch){
+if(!ch.permission_overwrites||!ch.permission_overwrites.length)return '<div style="color:#666">Sin overrides especiales — hereda permisos de roles/categoría</div>';
+var types={0:'ROL',1:'USUARIO'};
+var h='<div style="color:var(--green);font-size:0.85rem">'+ch.permission_overwrites.length+' overrides</div>';
+var PERMS={0x8:'Administrator',0x2:'Kick',0x4:'Ban',0x400:'Send Msgs',0x800:'Manage Msgs',0x10000:'Connect',0x20000:'Speak',0x40:'Manage Webhooks',0x8000:'Attach Files'};
+ch.permission_overwrites.forEach(function(o){
+var allow=o.allow&0x8000000000;
+var deny=o.deny&0x8000000000;
+var granted=[],blocked=[];
+Object.keys(PERMS).forEach(function(bit){
+if(o.allow&parseInt(bit))granted.push(PERMS[bit]);
+if(o.deny&parseInt(bit))blocked.push(PERMS[bit]);
+});
+h+='<div style="margin-bottom:0.5rem;border-left:2px solid var(--border);padding-left:0.5rem">';
+h+='<div style="font-size:0.65rem;color:var(--cyan)">'+types[o.type]+' :: '+o.id+'</div>';
+if(granted.length)h+='<div style="margin-top:0.2rem">'+granted.map(function(g){return '<span class="badge-good">+'+g+'</span>'}).join(' ')+'</div>';
+if(blocked.length)h+='<div style="margin-top:0.2rem">'+blocked.map(function(b){return '<span class="badge-bad">-'+b+'</span>'}).join(' ')+'</div>';
+if(!granted.length&&!blocked.length)h+='<div style="color:#666;font-size:0.6rem">Overrides neutros</div>';
+h+='</div>';
+});
+log('[OK] '+ch.permission_overwrites.length+' overrides','success');return h;
+});
+});
+
+// ============ TOOL 28: Widget Info ============
+T('widget','Server Widget','W','green','bot','Obtiene el widget del servidor: miembros online, canales, invite.',[f_token(),f_guild()],
+function(f){
+log('[>] Fetching widget...','info');
+return api('/guilds/'+f.guild+'/widget.json',f.token).then(function(w){
+var h='<div style="color:var(--green);font-size:0.85rem">'+esc(w.name)+'</div>';
+h+='<div style="font-size:0.65rem;color:#666;margin:0.3rem 0">ID: '+w.id+'</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;font-size:0.65rem">';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">MIEMBROS ONLINE</div><div style="color:var(--green)">'+w.presence_count+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">CANALES VOZ</div><div style="color:var(--cyan)">'+(w.channels?w.channels.length:0)+'</div></div>';
+h+='</div>';
+h+='<div style="font-size:0.6rem;color:#555;margin-top:0.3rem">Instant invite: <span style="color:var(--cyan)">discord.gg/'+(w.instant_invite?esc(w.instant_invite.split('/').pop()):'no disponible')+'</span></div>';
+log('[OK] Widget: '+w.name,'success');return h;
+});
+});
+
+// ============ TOOL 29: Server Stats History ============
+T('stats','Server Stats','S','green','bot','Estadísticas consolidadas del servidor en una vista rápida.',[f_token(),f_guild()],
+function(f){
+log('[>] Gathering stats...','info');
+return Promise.all([
+api('/guilds/'+f.guild,f.token),
+api('/guilds/'+f.guild+'/channels',f.token),
+api('/guilds/'+f.guild+'/roles',f.token),
+api('/guilds/'+f.guild+'/emojis',f.token),
+api('/guilds/'+f.guild+'/invites',f.token)
+]).then(function(r){
+var g=r[0],chs=r[1],roles=r[2],em=r[3],inv=r[4];
+var txt=chs.filter(function(c){return c.type===0}).length;
+var voice=chs.filter(function(c){return c.type===2}).length;
+var cat=chs.filter(function(c){return c.type===4}).length;
+var created=new Date(Number(BigInt(g.id)>>22n)+1420070400000).toLocaleDateString();
+var h='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.4rem;font-size:0.65rem">';
+var items=[
+['SERVIDOR',esc(g.name),'var(--green)'],['CREADO',created,'var(--cyan)'],['ID',g.id,'#666'],
+['MIEMBROS',g.approximate_member_count||'?','var(--green)'],['ONLINE',g.approximate_presence_count||'?','var(--cyan)'],
+['TEXT',txt,'var(--yellow)'],['VOZ',voice,'var(--orange)'],['CATEGORÍAS',cat,'var(--purple)'],
+['ROLES',roles.length,'var(--pink)'],['EMOJIS',em.length,'var(--orange)'],['INVITES',inv?inv.length:0,'var(--cyan)'],
+['BOOSTS','Tier '+(g.premium_tier||0),'var(--pink)']
+];
+items.forEach(function(it){
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555;font-size:0.55rem">'+it[0]+'</div><div style="color:'+it[2]+';font-size:0.75rem;word-break:break-all">'+it[1]+'</div></div>';
+});
+h+='</div>';
+log('[OK] Stats gathered','success');return h;
+});
+});
+
+// ============ TOOL 30: Top Members (by roles) ============
+T('topmembers','Top Members','T','yellow','bot','Miembros con más roles y sus jerarquías.',[f_token(),f_guild(),f_text('limit','Limit (1-20)','10')],
+function(f){
+var limit=Math.min(Math.max(1,parseInt(f.limit)||10),20);
+log('[>] Analyzing roles...','info');
+return api('/guilds/'+f.guild+'/roles',f.token).then(function(roles){
+return api('/guilds/'+f.guild+'/members?limit=1000',f.token).then(function(members){
+var roleMap={};roles.forEach(function(r){roleMap[r.id]=r});
+var withCount=members.map(function(m){
+var names=(m.roles||[]).filter(function(id){return roleMap[id]}).map(function(id){return roleMap[id]});
+var topPos=names.length?Math.max.apply(null,names.map(function(r){return r.position})):0;
+return {u:m.user,count:names.length,top:topPos,names:names};
+}).sort(function(a,b){return b.top-a.top}).slice(0,limit);
+var h='<div style="color:var(--green);font-size:0.85rem">Miembros por jerarquía de roles</div>';
+withCount.forEach(function(m){
+h+='<div class="item"><div style="flex:1"><div class="i-name">'+esc(m.u.username)+' <span style="color:#666;font-size:0.6rem">('+m.count+' roles)</span></div><div class="i-sub">'+(m.names.slice(0,3).map(function(r){return '@'+esc(r.name)}).join(', '))+((m.names.length>3)?' +'+(m.names.length-3):'')+'</div></div></div>';
+});
+log('[OK] Top members','success');return h;
+});
 });
 });
 
