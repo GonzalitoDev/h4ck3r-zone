@@ -256,6 +256,8 @@ var PROXY_LIST=[
 var PROXY=localStorage.getItem('nexus_proxy')||PROXY_LIST[0];
 var _proxyIdx=Math.max(0,PROXY_LIST.indexOf(PROXY));
 var favs=[];try{favs=JSON.parse(localStorage.getItem('nexus_favs')||'[]')}catch(e){favs=[]}
+var CATS={serverinfo:'discord',members:'discord',audit:'discord',channellist:'discord',rolelist:'discord',emojis:'discord',avatar:'discord',invites:'discord',webhooks:'discord',auditlog:'discord',backup:'discord',tokencheck:'discord',myservers:'discord',perms:'discord',profile:'discord',memberlist:'discord',rolemembers:'discord',channelstats:'discord',stickers:'discord',pins:'discord',decode:'universal',boosters:'discord',slowmode:'discord',channelupdate:'discord',verification:'discord',invitecreate:'discord',chanperms:'discord',widget:'discord',stats:'discord',topmembers:'discord',permcalc:'universal',snowrange:'universal',hexcolor:'universal',tokendecode:'universal',embed:'universal',template:'discord',passgen:'universal',hashgen:'universal',base64:'universal',urlcode:'universal',textanalyze:'universal',extractor:'universal',numconvert:'universal',jsonfmt:'universal',uuid:'universal',caseconv:'universal',randomnum:'universal',passcheck:'universal',lorem:'universal',ipinfo:'universal',inviteinfo:'discord',webhookinfo:'discord',avatarbuild:'discord',emojibuild:'discord',msglink:'universal',idvalidate:'universal',defaultavatar:'discord',cdnbuilder:'discord',avatarorig:'discord',msgavatar:'discord',inviteavatar:'discord',avatarsizes:'discord',webscrape:'web',metascrape:'web',emailscrape:'web',linkscrape:'web',msgscrape:'scrape',channelfeed:'scrape',memberdump:'scrape',iconlist:'scrape'};
+function catOf(cmd){return CATS[cmd]||'universal'}
 function api(endpoint,token,opts){
 opts=opts||{};
 var headers={'Content-Type':'application/json'};
@@ -1796,21 +1798,6 @@ window.togglePanel=togglePanel;window.runTool=runTool;
 
 // ============ CATEGORIES & FAVORITES ============
 var currentCat='all';
-var CATS={
-serverinfo:'discord',members:'discord',audit:'discord',channellist:'discord',rolelist:'discord',emojis:'discord',
-avatar:'discord',invites:'discord',webhooks:'discord',auditlog:'discord',backup:'discord',tokencheck:'discord',
-myservers:'discord',perms:'discord',profile:'discord',memberlist:'discord',rolemembers:'discord',channelstats:'discord',
-stickers:'discord',pins:'discord',decode:'universal',boosters:'discord',slowmode:'discord',channelupdate:'discord',
-verification:'discord',invitecreate:'discord',chanperms:'discord',widget:'discord',stats:'discord',topmembers:'discord',
-permcalc:'universal',snowrange:'universal',hexcolor:'universal',tokendecode:'universal',embed:'universal',template:'discord',
-passgen:'universal',hashgen:'universal',base64:'universal',urlcode:'universal',textanalyze:'universal',extractor:'universal',
-numconvert:'universal',jsonfmt:'universal',uuid:'universal',caseconv:'universal',randomnum:'universal',passcheck:'universal',
-lorem:'universal',ipinfo:'universal',inviteinfo:'discord',webhookinfo:'discord',avatarbuild:'discord',emojibuild:'discord',
-msglink:'universal',idvalidate:'universal',defaultavatar:'discord',cdnbuilder:'discord',avatarorig:'discord',msgavatar:'discord',
-inviteavatar:'discord',avatarsizes:'discord',webscrape:'web',metascrape:'web',emailscrape:'web',linkscrape:'web',
-msgscrape:'scrape',channelfeed:'scrape',memberdump:'scrape',iconlist:'scrape'
-};
-function catOf(cmd){return CATS[cmd]||'universal'}
 function filterCat(cat){
 currentCat=cat;
 document.querySelectorAll('.cat-tab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-cat')===cat)});
