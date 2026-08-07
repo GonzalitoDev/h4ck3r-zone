@@ -97,6 +97,17 @@ header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.95);border-b
 .tool-result .item .i-name{color:white;font-size:0.75rem}
 .tool-result .item .i-sub{color:#666;font-size:0.6rem}
 .connection-box{background:rgba(13,17,23,0.8);border:1px solid var(--border);border-radius:8px;padding:0.8rem;margin-bottom:1rem}
+.host-box{background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(6,182,212,0.08));border:1px solid var(--green);border-radius:10px;padding:1rem;margin-bottom:1rem}
+.host-title{font-size:0.85rem;font-weight:700;color:var(--green);display:flex;align-items:center;gap:0.5rem}
+.host-desc{font-size:0.7rem;color:#888;margin-top:0.3rem;line-height:1.5}
+.host-btns{display:flex;gap:0.5rem;margin-top:0.8rem;flex-wrap:wrap}
+.host-btn{flex:1;min-width:180px;text-align:center;padding:0.8rem 1rem;border-radius:8px;font-weight:700;font-size:0.75rem;text-decoration:none;transition:all 0.3s;cursor:pointer;border:none;font-family:inherit}
+.host-btn.railway{background:linear-gradient(90deg,#7c3aed,#06b6d4);color:#fff}
+.host-btn.render{background:linear-gradient(90deg,#22c55e,#0ea5e9);color:#fff}
+.host-btn:hover{transform:translateY(-2px);opacity:0.9}
+.host-steps{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:0.8rem;margin-top:0.8rem;font-size:0.7rem;line-height:1.8;color:var(--text)}
+.host-steps b{color:var(--cyan)}
+.host-steps .tok{color:var(--green)}
 .terminal-box{background:var(--terminal);border:1px solid var(--border);border-radius:6px;margin-bottom:1.5rem}
 .terminal-box-header{background:var(--border);padding:0.4rem 0.75rem;display:flex;align-items:center;gap:0.5rem;border-radius:6px 6px 0 0;font-size:0.75rem}
 .terminal-box-title{color:#666}
@@ -179,6 +190,25 @@ footer a{color:var(--green);text-decoration:none}
 </div>
 <div id="connStatus" style="font-size:0.7rem;margin-top:0.5rem;color:#666">No probado. Hacé clic en "Probar conexión" para verificar tu token.</div>
 <div style="font-size:0.6rem;color:#555;margin-top:0.3rem">El token se guarda en tu navegador (localStorage) y se autocompleta en todas las herramientas. Solo funciona para vos.</div>
+</div>
+<div class="section-title"><span class="arrow">>></span> 🚀 HOSTING DE BOT (queda prendido 24/7)</div>
+<div class="host-box">
+<div class="host-title">🤖 Nexus Host Bot — desplegalo con un clic</div>
+<div class="host-desc">Esta página (GitHub Pages) es estática y no puede correr bots. Pero tu bot <b>Nexus Host Bot</b> ya está listo en tu repo con panel web de configuración. Desplegalo en un hosting 24/7 gratuito con un clic — solo después agregás tu token.</div>
+<div class="host-btns">
+<a class="host-btn railway" href="https://railway.app/new/template?repository=github.com%2FGonzalitoDev%2Fh4ck3r-zone&subdirectory=nexus-host-bot" target="_blank">⚡ Deploy en Railway</a>
+<a class="host-btn render" href="https://render.com/deploy?repo=https://github.com/GonzalitoDev/h4ck3r-zone&blueprintFile=nexus-host-bot/render.yaml" target="_blank">🚀 Deploy en Render</a>
+</div>
+<div class="host-steps">
+<b>Pasos después de desplegar:</b><br/>
+1. Entrá a tu servicio (Railway/Render)<br/>
+2. Agregá la variable de entorno: <span class="tok">DISCORD_TOKEN</span> = el token de tu bot<br/>
+3. El bot se inicia solo y queda <b>online 24/7</b><br/>
+4. Abrí la URL del servicio → tenés el <b>panel web</b> para configurarlo sin programar<br/><br/>
+<b>¿Cómo sacar el token?</b> discord.com/developers/applications → New Application → Bot → Reset Token<br/>
+<b>¿Cómo invitar el bot?</b> https://discord.com/api/oauth2/authorize?client_id=TU_BOT_ID&permissions=8&scope=bot<br/><br/>
+<i>Railway y Render tienen plan gratuito. Si el bot se cae, se reinicia solo.</i>
+</div>
 </div>
 <div class="section-title"><span class="arrow">>></span> ADMIN TOOLS <span style="font-size:0.6rem;color:#666;letter-spacing:0">(Solo lectura y administración — nada destructivo)</span></div>
 <div class="search-box"><input type="text" id="toolSearch" placeholder="🔍 Buscar herramienta... (ej: avatar, permiso, canal, rol)" oninput="filterTools(this.value)"/><div style="font-size:0.6rem;color:#555;margin-top:0.3rem" id="searchCount"></div></div>
