@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="theme-color" content="#050002"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="icon" href="icons/icon-192.png"/>
+<title>NEXUS BREACH TERMINAL // unauthorized</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050002;--red:#ff0040;--red-dim:#990028;--neon:#ff1144;--cyan:#00ffcc;--purple:#cc00ff;--yellow:#ffcc00;--white:#e0e0e0;--dim:#4a4a4a}
+@font-face{font-family:'Terminal';src:local('Courier New')}
+body{background:var(--bg);color:var(--red);font-family:'Courier New',monospace;overflow-x:hidden;min-height:100vh}
+canvas#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.15;pointer-events:none}
+.scanlines{position:fixed;inset:0;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,0,64,0.02)2px,rgba(255,0,64,0.02)4px);pointer-events:none}
+.vignette{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at center,transparent 30%,rgba(5,0,0,0.95)100%);pointer-events:none}
+.glitch-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.03;background:linear-gradient(transparent 0%,rgba(255,0,64,0.1)50%,transparent 100%);animation:glitchMove 3s infinite}
+@keyframes glitchMove{0%,100%{transform:translateY(0)}20%{transform:translateY(-5%)}40%{transform:translateY(3%)}60%{transform:translateY(-2%)}80%{transform:translateY(4%)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes redPulse{0%,100%{box-shadow:0 0 5px var(--red),0 0 10px var(--red)}50%{box-shadow:0 0 20px var(--neon),0 0 40px var(--neon)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glitchText{0%{text-shadow:1px 0 var(--red),-1px 0 var(--cyan)}25%{text-shadow:-1px 0 var(--red),1px 0 var(--cyan)}50%{text-shadow:2px 0 var(--red),-2px 0 var(--purple)}75%{text-shadow:-2px 0 var(--red),-1px 0 var(--cyan)}100%{text-shadow:1px 0 var(--red),-1px 0 var(--cyan)}}
+@keyframes typewriter{from{width:0}to{width:100%}}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--red-dim);border-radius:2px}
+header{position:sticky;top:0;z-index:100;background:rgba(5,0,2,0.97);border-bottom:2px solid var(--red-dim);backdrop-filter:blur(10px);box-shadow:0 0 30px rgba(255,0,64,0.1)}
+.header-inner{max-width:1400px;margin:0 auto;padding:0.5rem 1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.logo{display:flex;align-items:center;gap:0.6rem;font-size:1.3rem;color:var(--red);text-decoration:none;animation:glitchText 4s infinite}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--red),var(--red-dim));clip-path:polygon(50%0%,100%50%,80%100%,20%100%,0%50%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;font-size:0.8rem;animation:redPulse 2s infinite}
+.status-bar{display:flex;align-items:center;gap:0.8rem;font-size:0.7rem}
+.status-dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:blink 0.8s infinite}
+.status-text{color:var(--red)}
+.status-secure{color:var(--yellow);border:1px solid var(--yellow);padding:0.15rem 0.5rem;border-radius:3px;font-size:0.6rem;letter-spacing:1px}
+/* Boot screen */
+.boot-overlay{position:fixed;inset:0;z-index:200;background:#050002;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.6s cubic-bezier(0.4,0,0.2,1)}
+.boot-overlay.hidden{opacity:0;pointer-events:none;transform:scale(1.05)}
+.boot-content{text-align:left;font-size:0.8rem;line-height:2;color:var(--red);min-width:380px;max-width:600px;padding:2rem}
+.boot-line{opacity:0}
+.boot-line.visible{opacity:1}
+.boot-line.blink::after{content:'_';animation:blink 0.6s infinite}
+.boot-ascii{color:var(--neon);font-size:0.5rem;line-height:1.2;text-align:center;margin-bottom:1rem;font-weight:bold;animation:redPulse 2s infinite;white-space:pre}
+.boot-bar{width:100%;height:3px;background:#1a0005;margin-top:0.8rem;border-radius:2px;overflow:hidden}
+.boot-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--neon));transition:width 0.2s ease}
+.proxy-warn{position:fixed;top:0;left:0;right:0;z-index:150;background:var(--red);color:#fff;text-align:center;font-size:0.7rem;padding:0.3rem;animation:blink 0.8s infinite;display:none}
+/* Main layout */
+.container{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:1rem}
+.split-layout{display:none;grid-template-columns:320px 1fr;gap:0.75rem}
+.split-layout.active{display:grid}
+.sidebar{display:flex;flex-direction:column;gap:0.5rem}
+.sidebar-section{background:rgba(10,0,5,0.9);border:1px solid var(--red-dim);border-radius:4px;overflow:hidden}
+.sidebar-header{background:rgba(20,0,5,0.8);padding:0.4rem 0.6rem;font-size:0.65rem;color:var(--red);border-bottom:1px solid var(--red-dim);text-transform:uppercase;letter-spacing:2px}
+.sidebar-body{padding:0.5rem}
+.sidebar-tool{display:flex;align-items:center;gap:0.4rem;padding:0.3rem 0.4rem;cursor:pointer;border-radius:3px;font-size:0.65rem;transition:all 0.15s;color:var(--white);border:1px solid transparent;margin-bottom:0.15rem}
+.sidebar-tool:hover{background:rgba(255,0,64,0.1);border-color:var(--red-dim);color:var(--neon)}
+.sidebar-tool.active{background:rgba(255,0,64,0.15);border-color:var(--red);color:var(--red)}
+.sidebar-tool .t-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sidebar-tool .t-dot.bot{background:var(--cyan)}
+.sidebar-tool .t-dot.user{background:var(--yellow)}
+.sidebar-tool .t-dot.none{background:var(--dim)}
+/* Main panel */
+.main-panel{background:rgba(10,0,5,0.9);border:1px solid var(--red-dim);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;min-height:600px}
+.panel-header{background:rgba(20,0,5,0.8);padding:0.5rem 0.8rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--red-dim)}
+.panel-header .wnd-dots{display:flex;gap:0.35rem}
+.panel-header .wnd-dot{width:10px;height:10px;border-radius:50%}
+.panel-header .wnd-dot.r{background:#ff3b30}
+.panel-header .wnd-dot.y{background:#ff9500}
+.panel-header .wnd-dot.g{background:#30d158}
+.panel-title{font-size:0.65rem;color:var(--red);letter-spacing:1px;text-transform:uppercase}
+.panel-tabs{display:flex;gap:0.15rem}
+.panel-tab{background:transparent;border:1px solid var(--red-dim);color:var(--dim);padding:0.2rem 0.6rem;font-size:0.6rem;cursor:pointer;border-radius:2px;font-family:inherit;transition:all 0.2s}
+.panel-tab:hover{border-color:var(--red);color:var(--red)}
+.panel-tab.active{background:rgba(255,0,64,0.15);border-color:var(--red);color:var(--red)}
+.panel-body{padding:0.8rem;flex:1;overflow-y:auto;max-height:70vh}
+/* Terminal output */
+.output-area{background:rgba(0,0,0,0.5);border:1px solid var(--red-dim);border-radius:3px;padding:0.6rem;font-size:0.68rem;line-height:1.6;min-height:150px;max-height:500px;overflow-y:auto}
+.output-line{color:var(--white)}
+.output-line.info{color:var(--cyan)}
+.output-line.success{color:#30d158}
+.output-line.warn{color:var(--yellow)}
+.output-line.error{color:var(--red)}
+.output-line.cmd{color:var(--purple)}
+/* Input fields */
+.tool-fields{margin-bottom:0.6rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.4rem}
+.field-group{display:flex;flex-direction:column;gap:0.15rem}
+.field-group label{font-size:0.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.field-group input,.field-group select,textarea{background:rgba(0,0,0,0.6);border:1px solid var(--red-dim);padding:0.4rem 0.5rem;border-radius:3px;color:var(--red);font-family:inherit;font-size:0.7rem;outline:none;transition:border-color 0.2s;width:100%}
+.field-group input:focus,.field-group select:focus,textarea:focus{border-color:var(--red)}
+.field-group input::placeholder{color:#2a0010}
+.action-row{display:flex;gap:0.4rem;margin-top:0.5rem;flex-wrap:wrap;align-items:center}
+/* Buttons */
+.btn{padding:0.35rem 0.9rem;border-radius:3px;font-family:inherit;font-size:0.65rem;cursor:pointer;transition:all 0.2s;text-transform:uppercase;letter-spacing:1px;font-weight:bold;border:none;text-decoration:none}
+.btn-primary{background:rgba(255,0,64,0.2);border:1px solid var(--red);color:var(--red)}
+.btn-primary:hover{background:rgba(255,0,64,0.4);box-shadow:0 0 15px rgba(255,0,64,0.3)}
+.btn-danger{background:rgba(255,0,0,0.15);border:1px solid #ff0040;color:#ff0040}
+.btn-danger:hover{background:rgba(255,0,64,0.3)}
+.btn-cyan{background:rgba(0,255,204,0.15);border:1px solid var(--cyan);color:var(--cyan)}
+.btn-cyan:hover{background:rgba(0,255,204,0.3);box-shadow:0 0 15px rgba(0,255,204,0.2)}
+.btn-yellow{background:rgba(255,204,0,0.15);border:1px solid var(--yellow);color:var(--yellow)}
+.btn-sm{padding:0.2rem 0.6rem;font-size:0.6rem}
+.btn:disabled{opacity:0.35;cursor:not-allowed}
+/* Token bar */
+.token-bar{background:rgba(10,0,5,0.9);border:1px solid var(--red-dim);border-radius:4px;padding:0.5rem 0.6rem;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
+.token-bar input{flex:1;min-width:200px;background:rgba(0,0,0,0.6);border:1px solid var(--red-dim);padding:0.4rem;border-radius:3px;color:var(--red);font-family:inherit;font-size:0.7rem;outline:none}
+.token-bar input:focus{border-color:var(--red)}
+.token-status{font-size:0.6rem;padding:0.2rem 0.5rem;border-radius:3px;letter-spacing:0.5px}
+.token-status.ok{background:rgba(48,209,88,0.15);color:#30d158;border:1px solid #30d158}
+.token-status.err{background:rgba(255,0,64,0.15);color:var(--red);border:1px solid var(--red)}
+.token-status.idle{background:rgba(100,100,100,0.15);color:var(--dim);border:1px solid var(--dim)}
+/* Result items */
+.result-item{display:flex;align-items:center;gap:0.5rem;padding:0.25rem 0;border-bottom:1px solid rgba(255,0,64,0.05);font-size:0.65rem}
+.result-item img{width:22px;height:22px;border-radius:50%;border:1px solid var(--red-dim)}
+.result-item .r-name{color:var(--white)}
+.result-item .r-sub{color:var(--dim);font-size:0.6rem}
+/* Footer */
+footer{border-top:1px solid var(--red-dim);padding:0.8rem;text-align:center;font-size:0.65rem;color:var(--dim);letter-spacing:1px}
+footer span{color:var(--red)}
+/* Toast */
+.toast{position:fixed;bottom:1rem;left:50%;transform:translate(-50%,100px);z-index:300;background:rgba(10,0,5,0.95);border:1px solid var(--red);padding:0.5rem 1.2rem;border-radius:4px;color:var(--red);font-size:0.7rem;transition:all 0.3s ease;pointer-events:none;letter-spacing:0.5px}
+.toast.show{transform:translate(-50%,0)}
+/* Responsive */
+@media(max-width:900px){.split-layout{grid-template-columns:1fr}.sidebar{display:none}}
+/* Hidden file upload */
+#fileInput{display:none}
+#pasteArea{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center}
+#pasteArea.show{display:flex}
+#pasteArea textarea{width:80vw;height:60vh;background:#000;border:2px solid var(--red);color:var(--red);font-family:monospace;font-size:0.7rem;padding:1rem;resize:none;outline:none}
+</style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div class="scanlines"></div><div class="vignette"></div><div class="glitch-overlay"></div>
+<div class="proxy-warn" id="proxyWarn">SECURE CHANNEL COMPROMISED - FALLBACK MODE ACTIVE</div>
+
+<!-- Boot Sequence -->
+<div class="boot-overlay" id="bootScreen">
+<div class="boot-content" id="bootContent">
+<div class="boot-ascii"></div>
+<div class="boot-line" id="b0">[INIT] Loading NEXUS BREACH TERMINAL v3.1...</div>
+<div class="boot-line" id="b1">[INIT] Establishing encrypted backchannel to target...</div>
+<div class="boot-line" id="b2">[INIT] Loading exploit modules (0/48)...</div>
+<div class="boot-line" id="b3">[ OK ] AES-256-GCM handshake verified</div>
+<div class="boot-line" id="b4">[ OK ] Discord API proxy configured</div>
+<div class="boot-line" id="b5">[ OK ] 48 modules loaded - operational</div>
+<div class="boot-line" id="b6">[ OK ] Connected to Nexus Admin Toolkit backbone</div>
+<div class="boot-line" id="b7">[ OK ] Secure shell ready</div>
+<div class="boot-line" id="b8">[WARN] Unauthorized access detected. Proceed with caution.</div>
+<div class="boot-line" id="b9">breach@nexus:~$ <span style="animation:blink 0.6s infinite">_</span></div>
+<div class="boot-bar"><div class="boot-bar-fill" id="bootFill"></div></div>
+</div>
+</div>
+
+<header>
+<div class="header-inner">
+<a href="#" class="logo"><div class="logo-icon">[]</div>NEXUS<span style="color:var(--red)">BREACH</span></a>
+<div class="status-bar">
+<span class="status-secure" id="secureBadge">ENCRYPTED</span>
+<span class="status-dot"></span>
+<span class="status-text" id="statusLabel">BREACH ACTIVE</span>
+<span style="color:var(--dim)">|</span>
+<span style="color:var(--dim);font-size:0.6rem" id="clock">00:00:00</span>
+<span style="color:var(--dim)">|</span>
+<button class="btn btn-sm btn-cyan" onclick="toggleProxy()" title="Configure proxy">PROXY</button>
+<button class="btn btn-sm btn-yellow" onclick="openRawConsole()" title="Raw terminal">CONSOLE</button>
+</div>
+</div>
+</header>
+
+<div class="container">
+<!-- Proxy Bar -->
+<div id="proxyBar" style="display:none;background:rgba(10,0,5,0.95);border:1px solid var(--red);border-radius:4px;padding:0.6rem;margin-bottom:0.75rem">
+<div style="font-size:0.6rem;color:var(--red);text-transform:uppercase;letter-spacing:2px;margin-bottom:0.4rem">PROXY CONFIGURATION</div>
+<div style="display:flex;gap:0.4rem;align-items:center">
+<input id="proxyInput" type="text" style="flex:1;background:rgba(0,0,0,0.6);border:1px solid var(--red-dim);padding:0.4rem;border-radius:3px;color:var(--red);font-family:inherit;font-size:0.7rem;outline:none" placeholder="none = direct connection"/>
+<button class="btn btn-primary btn-sm" onclick="saveProxy()">SAVE</button>
+<button class="btn btn-danger btn-sm" onclick="document.getElementById('proxyBar').style.display='none'">X</button>
+</div>
+<div style="font-size:0.55rem;color:var(--dim);margin-top:0.3rem">Default: none (direct from browser). If CORS errors occur with user tokens, configure a proxy URL.</div>
+</div>
+
+<!-- Token Bar -->
+<div class="token-bar">
+<div style="font-size:0.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;white-space:nowrap">TOKEN:</div>
+<input type="password" id="savedToken" placeholder="Paste your bot token (MTA...) or user token (NDU...)" spellcheck="false"/>
+<button class="btn btn-primary btn-sm" onclick="testConnection()">VERIFY</button>
+<button class="btn btn-danger btn-sm" onclick="clearToken()">CLEAR</button>
+<span class="token-status idle" id="connBadge">UNVERIFIED</span>
+</div>
+
+<!-- Split Layout -->
+<div class="split-layout active" id="mainLayout">
+<div class="sidebar" id="sidebar">
+<div class="sidebar-section">
+<div class="sidebar-header">DISCORD TOOLS</div>
+<div class="sidebar-body" id="sidebarDiscord"></div>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-header">UNIVERSAL TOOLS</div>
+<div class="sidebar-body" id="sidebarUniversal"></div>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-header">WEB / SCRAPE</div>
+<div class="sidebar-body" id="sidebarWeb"></div>
+</div>
+</div>
+
+<div class="main-panel">
+<div class="panel-header">
+<div class="wnd-dots"><div class="wnd-dot r"></div><div class="wnd-dot y"></div><div class="wnd-dot g"></div></div>
+<div class="panel-tabs">
+<button class="panel-tab active" data-tab="tool" onclick="switchPanelTab('tool')">TOOL</button>
+<button class="panel-tab" data-tab="output" onclick="switchPanelTab('output')">OUTPUT</button>
+<button class="panel-tab" data-tab="raw" onclick="switchPanelTab('raw')">RAW</button>
+</div>
+<span class="panel-title" id="panelTitle">SELECT A TOOL FROM THE SIDEBAR</span>
+</div>
+<div class="panel-body">
+<div id="toolTab">
+<div class="tool-fields" id="toolFields"></div>
+<div id="toolActions" class="action-row"></div>
+</div>
+<div id="outputTab" style="display:none" class="output-area"></div>
+<div id="rawTab" style="display:none">
+<textarea id="rawOutput" style="width:100%;height:100%;background:rgba(0,0,0,0.5);border:1px solid var(--red-dim);border-radius:3px;color:var(--red);font-family:monospace;font-size:0.65rem;padding:0.6rem;resize:none;outline:none;min-height:400px" placeholder="Raw JSON output will appear here..." readonly></textarea>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<footer>
+<span>[NEXUS_BREACH]</span> // session_id: <span id="sessId">----</span> // proxy: <span id="proxyLabel">none</span> // <span style="color:var(--red-dim)">unauthorized access terminal</span>
+</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+// ==============================
+// NEXUS BREACH TERMINAL v3.1
+// ==============================
+
+// PROXY SYSTEM
+var PROXY_LIST = ['none','https://discord-proxy-mu.vercel.app/api/proxy?url='];
+var PROXY = localStorage.getItem('breach_proxy') || 'none';
+var proxyIdx = Math.max(0, PROXY_LIST.indexOf(PROXY));
+if (proxyIdx === -1) { PROXY_LIST.push(PROXY); proxyIdx = PROXY_LIST.length - 1; }
+
+function saveProxy() {
+  var v = document.getElementById('proxyInput').value.trim() || 'none';
+  if (PROXY_LIST.indexOf(v) === -1) PROXY_LIST.push(v);
+  proxyIdx = PROXY_LIST.indexOf(v);
+  PROXY = v;
+  localStorage.setItem('breach_proxy', v);
+  document.getElementById('proxyBar').style.display = 'none';
+  document.getElementById('proxyLabel').textContent = v;
+  output('[SYSTEM] Proxy set: ' + v, 'info');
+  checkProxyWarn();
+}
+
+function toggleProxy() {
+  var bar = document.getElementById('proxyBar');
+  var inp = document.getElementById('proxyInput');
+  inp.value = PROXY;
+  bar.style.display = bar.style.display === 'none' ? 'block' : 'none';
+}
+
+function checkProxyWarn() {
+  var warn = document.getElementById('proxyWarn');
+  if (PROXY === 'none') {
+    warn.style.display = 'none';
+    document.getElementById('secureBadge').textContent = 'DIRECT';
+    document.getElementById('secureBadge').style.color = 'var(--yellow)';
+    document.getElementById('secureBadge').style.borderColor = 'var(--yellow)';
+  } else {
+    warn.style.display = 'block';
+    document.getElementById('secureBadge').textContent = 'PROXIED';
+    warn.style.animation = 'none';
+    warn.style.background = 'var(--yellow)';
+    warn.style.color = '#000';
+    warn.textContent = 'RELAY MODE: Traffic routed through external proxy';
+  }
+}
+checkProxyWarn();
+
+// API
+function api(endpoint, token, opts) {
+  opts = opts || {};
+  var headers = { 'Content-Type': 'application/json' };
+  var isBot = token && token.startsWith('M');
+  if (token) headers['Authorization'] = isBot ? 'Bot ' + token : token;
+  var method = opts.method || 'GET';
+  var base = 'https://discord.com/api/v10' + endpoint;
+  return tryFetch(method, headers, opts.body || null, base, 0);
+}
+
+function tryFetch(method, headers, body, base, attempt) {
+  var useProxy = PROXY && PROXY !== 'none';
+  var url = useProxy ? PROXY + encodeURIComponent(base) : base;
+  return fetch(url, { method: method, headers: headers, body: body })
+    .then(function (r) {
+      return r.text().then(function (text) {
+        try {
+          var d = JSON.parse(text);
+          if (!r.ok && d) {
+            if (d.code === 40333 || d.message === 'internal network error') {
+              if (attempt === 0 && proxyIdx < PROXY_LIST.length - 1) {
+                proxyIdx++; PROXY = PROXY_LIST[proxyIdx];
+                localStorage.setItem('breach_proxy', PROXY);
+                output('[!] Retrying with proxy: ' + PROXY, 'warn');
+                return tryFetch(method, headers, body, base, attempt + 1);
+              }
+              throw new Error('Blocked by Discord. Try a different token or proxy.');
+            }
+            throw new Error(d.message || d.error || 'HTTP ' + r.status);
+          }
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          document.getElementById('rawOutput').value = JSON.stringify(d, null, 2);
+          return d;
+        } catch (e) {
+          if (e.message && !e.message.includes('JSON')) throw e;
+          throw new Error('API response parse error');
+        }
+      });
+    }).catch(function (e) {
+      if (e.name === 'TypeError') {
+        if (attempt === 0 && proxyIdx < PROXY_LIST.length - 1) {
+          proxyIdx++; PROXY = PROXY_LIST[proxyIdx];
+          localStorage.setItem('breach_proxy', PROXY);
+          output('[!] Retrying with proxy: ' + PROXY, 'warn');
+          return tryFetch(method, headers, body, base, attempt + 1);
+        }
+        throw new Error('CORS blocked. Configure a proxy or use a Bot Token.');
+      }
+      throw e;
+    });
+}
+
+// Output helpers
+function output(msg, type) {
+  var el = document.getElementById('outputTab');
+  var l = document.createElement('div');
+  l.className = 'output-line' + (type ? ' ' + type : '');
+  l.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+  el.appendChild(l);
+  el.scrollTop = el.scrollHeight;
+}
+
+function toast(msg, isError) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.borderColor = isError ? '#ff0040' : 'var(--red)';
+  el.className = 'toast show';
+  setTimeout(function () { el.classList.remove('show'); }, 3000);
+}
+
+function clearOutput() {
+  document.getElementById('outputTab').innerHTML = '';
+  document.getElementById('rawOutput').value = '';
+}
+
+// Token management
+var savedToken = localStorage.getItem('breach_token') || '';
+if (savedToken) document.getElementById('savedToken').value = savedToken;
+
+document.getElementById('savedToken').addEventListener('blur', function () {
+  var t = this.value.trim();
+  if (t && t.length > 10) { localStorage.setItem('breach_token', t); savedToken = t; }
+});
+
+function clearToken() {
+  document.getElementById('savedToken').value = '';
+  localStorage.removeItem('breach_token');
+  savedToken = '';
+  document.getElementById('connBadge').className = 'token-status idle';
+  document.getElementById('connBadge').textContent = 'CLEARED';
+}
+
+function getToken() {
+  var t = document.getElementById('savedToken').value.trim();
+  if (!t) t = savedToken;
+  if (!t) { toast('No token configured. Paste one first.', true); return null; }
+  return t;
+}
+
+function testConnection() {
+  var tok = getToken();
+  if (!tok) return;
+  document.getElementById('connBadge').className = 'token-status idle';
+  document.getElementById('connBadge').textContent = 'TESTING...';
+  output('[>] Testing connection...', 'info');
+  var isBot = tok.startsWith('M');
+  var headers = { 'Content-Type': 'application/json', 'Authorization': isBot ? 'Bot ' + tok : tok };
+  var url = (PROXY && PROXY !== 'none') ? PROXY + encodeURIComponent('https://discord.com/api/v10/users/@me') : 'https://discord.com/api/v10/users/@me';
+  fetch(url, { headers: headers }).then(function (r) {
+    return r.text().then(function (t) {
+      if (!r.ok) {
+        var d; try { d = JSON.parse(t); } catch (e) { }
+        var msg = d && d.message ? d.message : 'HTTP ' + r.status;
+        document.getElementById('connBadge').className = 'token-status err';
+        document.getElementById('connBadge').textContent = 'FAILED';
+        output('[ERR] Connection failed: ' + msg, 'error');
+        return;
+      }
+      var u; try { u = JSON.parse(t); } catch (e) { u = {}; }
+      document.getElementById('connBadge').className = 'token-status ok';
+      document.getElementById('connBadge').textContent = 'VERIFIED - ' + (u.username || '?');
+      output('[OK] Verified as: ' + (u.username || '?') + (isBot ? ' (BOT)' : ''), 'success');
+    });
+  }).catch(function (e) {
+    document.getElementById('connBadge').className = 'token-status err';
+    document.getElementById('connBadge').textContent = 'CORS/ERR';
+    output('[ERR] ' + e.message, 'error');
+  });
+}
+
+// Panel tabs
+function switchPanelTab(tab) {
+  document.getElementById('toolTab').style.display = tab === 'tool' ? 'block' : 'none';
+  document.getElementById('outputTab').style.display = tab === 'output' ? 'block' : 'none';
+  document.getElementById('rawTab').style.display = tab === 'raw' ? 'block' : 'none';
+  document.querySelectorAll('.panel-tab').forEach(function (bt) { bt.classList.remove('active'); });
+  document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+}
+
+function openRawConsole() {
+  switchPanelTab('output');
+}
+
+// ==============================
+// TOOLS REGISTRY
+// ==============================
+var TOOLS = [];
+function T(cmd, name, icon, color, auth, desc, fields, fn, cat) {
+  TOOLS.push({ cmd: cmd, name: name, icon: icon, color: color, auth: auth, desc: desc, fields: fields || [], fn: fn, cat: cat || 'discord' });
+}
+
+function getFields() {
+  if (!currentTool || !currentTool.fields) return {};
+  var v = {};
+  currentTool.fields.forEach(function (f) {
+    var el = document.getElementById('f_' + f.id);
+    v[f.id] = el ? el.value : '';
+  });
+  return v;
+}
+
+// Field factories
+function ftoken(label, authType) { return { id: 'token', label: label || (authType === 'user' ? 'User Token (NDU...)' : 'Bot Token (MTA...)'), type: 'password', ph: authType === 'user' ? 'NDUxMjM0...' : 'MTA5MjM0...' }; }
+function fguild(label) { return { id: 'guild', label: label || 'Guild ID', type: 'text', ph: '123456789012345678' }; }
+function fuser(label) { return { id: 'user', label: label || 'User ID', type: 'text', ph: '876543210987654321' }; }
+function fchannel(label) { return { id: 'channel', label: label || 'Channel ID', type: 'text', ph: '123456789012345678' }; }
+function ftext(id, label, ph) { return { id: id, label: label, type: 'text', ph: ph || '' }; }
+function fselect(id, label, opts) { return { id: id, label: label, type: 'select', opts: opts }; }
+function ftextarea(id, label, ph) { return { id: id, label: label, type: 'textarea', ph: ph || '' }; }
+function fnumber(id, label, ph) { return { id: id, label: label, type: 'number', ph: ph || '' }; }
+function ffile(id, label) { return { id: id, label: label, type: 'file' }; }
+
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+// ============ DISCORD TOOLS ============
+
+// Server Overview
+T('serverinfo', 'Server Overview', '▣', 'cyan', 'bot', 'Complete server info: members, channels, roles, boosts, features.',
+  [ftoken(), fguild()],
+  function (f) {
+    return Promise.all([
+      api('/guilds/' + f.guild, f.token),
+      api('/guilds/' + f.guild + '/channels', f.token),
+      api('/guilds/' + f.guild + '/roles', f.token),
+      api('/guilds/' + f.guild + '/emojis', f.token)
+    ]).then(function (r) {
+      var g = r[0], chs = r[1], roles = r[2], em = r[3];
+      var h = '<div style="color:var(--cyan);font-size:0.85rem;margin-bottom:0.4rem">' + esc(g.name) + '</div>';
+      h += '<div style="font-size:0.6rem;color:var(--dim)">ID: ' + g.id + ' | Owner: ' + g.owner_id + '</div>';
+      h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.3rem;margin-top:0.5rem">';
+      h += statCard('MEMBERS', g.approximate_member_count || '?', 'var(--red)');
+      h += statCard('ONLINE', g.approximate_presence_count || '?', 'var(--cyan)');
+      h += statCard('CHANNELS', chs.length, 'var(--yellow)');
+      h += statCard('ROLES', roles.length, 'var(--purple)');
+      h += statCard('EMOJIS', em.length, '#ff8800');
+      h += statCard('BOOST', 'Tier ' + (g.premium_tier || 0), '#ec4899');
+      h += '</div>';
+      if (g.vanity_url_code) h += '<div style="font-size:0.6rem;margin-top:0.4rem">Vanity: <span style="color:var(--cyan)">discord.gg/' + esc(g.vanity_url_code) + '</span></div>';
+      if (g.features && g.features.length) h += '<div style="font-size:0.55rem;color:var(--dim);margin-top:0.3rem">Features: ' + g.features.slice(0, 8).join(', ') + '</div>';
+      return h;
+    });
+  }, 'discord');
+
+function statCard(label, value, color) {
+  return '<div style="background:rgba(0,0,0,0.3);padding:0.35rem;border-radius:3px;text-align:center"><div style="font-size:0.48rem;color:var(--dim);text-transform:uppercase">' + label + '</div><div style="color:' + color + ';font-size:0.9rem;font-weight:bold">' + value + '</div></div>';
+}
+
+// Member Analysis
+T('members', 'Member Analysis', 'M', 'cyan', 'bot', 'Analyze members: humans, bots count and ratio.',
+  [ftoken(), fguild()],
+  function (f) {
+    var humans = 0, bots = 0, after = '0', all = [];
+    function next() {
+      return api('/guilds/' + f.guild + '/members?limit=1000&after=' + after, f.token).then(function (d) {
+        if (!d || !d.length) {
+          var h = '<div style="color:var(--cyan);font-size:0.85rem">' + all.length + ' members</div>';
+          h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;margin-top:0.5rem">';
+          h += statCard('HUMANS', humans, 'var(--cyan)');
+          h += statCard('BOTS', bots, '#ff8800');
+          h += '</div>';
+          h += '<div style="font-size:0.55rem;color:var(--dim);margin-top:0.3rem">Bot ratio: ' + Math.round(bots / Math.max(all.length, 1) * 100) + '%</div>';
+          return h;
+        }
+        all = all.concat(d);
+        d.forEach(function (m) { if (m.user.bot) bots++; else humans++; });
+        after = d[d.length - 1].user.id;
+        output('[>] Crawling members: ' + all.length + '...', 'info');
+        return next();
+      });
+    }
+    return next();
+  }, 'discord');
+
+// Security Audit
+T('audit', 'Security Audit', '⚠', 'yellow', 'bot', 'Audits server security: exposed perms, admin roles, webhooks.',
+  [ftoken(), fguild()],
+  function (f) {
+    return Promise.all([
+      api('/guilds/' + f.guild, f.token),
+      api('/guilds/' + f.guild + '/roles', f.token),
+      api('/guilds/' + f.guild + '/webhooks', f.token)
+    ]).then(function (r) {
+      var g = r[0], roles = r[1], wh = r[2];
+      var findings = [], score = 100;
+      var flags = { administrator: 0x8, manage_guild: 0x20, manage_channels: 0x10, manage_roles: 0x10000000, ban_members: 0x4, kick_members: 0x2, manage_webhooks: 0x20000000 };
+      roles.forEach(function (role) {
+        var p = role.permissions; if (typeof p === 'string') p = parseInt(p) || 0;
+        if (p & flags.administrator) { findings.push({ sev: 'crit', txt: '@' + esc(role.name) + ' has ADMINISTRATOR' }); score -= 25; }
+        else if (p & flags.manage_guild) { findings.push({ sev: 'warn', txt: '@' + esc(role.name) + ' can manage guild' }); score -= 10; }
+        if (p & flags.manage_channels && !(p & flags.administrator)) { findings.push({ sev: 'info', txt: '@' + esc(role.name) + ' can manage channels' }); score -= 3; }
+        if (p & flags.manage_roles && !(p & flags.administrator)) { findings.push({ sev: 'info', txt: '@' + esc(role.name) + ' can manage roles' }); score -= 3; }
+      });
+      if (wh && wh.length > 3) { findings.push({ sev: 'warn', txt: wh.length + ' active webhooks' }); score -= 5; }
+      if (g.verification_level === 0) { findings.push({ sev: 'crit', txt: 'Verification: NONE - anyone can join' }); score -= 15; }
+      if (g.mfa_level === 0) { findings.push({ sev: 'warn', txt: '2FA for moderation: OFF' }); score -= 10; }
+      score = Math.max(0, score);
+      var scColor = score >= 70 ? 'var(--cyan)' : score >= 40 ? 'var(--yellow)' : 'var(--red)';
+      var h = '<div style="text-align:center;padding:0.6rem;border:1px solid var(--red-dim);border-radius:4px;margin-bottom:0.5rem">';
+      h += '<div style="font-size:2rem;font-weight:bold;color:' + scColor + '">' + score + '/100</div>';
+      h += '<div style="height:6px;background:#1a0005;border-radius:3px;margin:0.4rem auto;max-width:300px"><div style="height:100%;width:' + score + '%;background:linear-gradient(90deg,var(--red),var(--yellow),var(--cyan));border-radius:3px"></div></div>';
+      h += '<div style="font-size:0.6rem;color:var(--dim)">SECURITY SCORE</div></div>';
+      findings.forEach(function (fd) {
+        var c = fd.sev === 'crit' ? 'var(--red)' : fd.sev === 'warn' ? 'var(--yellow)' : 'var(--cyan)';
+        h += '<div style="font-size:0.6rem;padding:0.25rem;border-left:3px solid ' + c + ';margin-bottom:0.2rem;padding-left:0.5rem;color:var(--white)">' + fd.txt + '</div>';
+      });
+      if (!findings.length) h += '<div style="color:var(--cyan);font-size:0.65rem">No major issues found</div>';
+      return h;
+    });
+  }, 'discord');
+
+// Channel List
+T('channellist', 'Channel List', '#', 'cyan', 'bot', 'List all server channels with type, ID, and position.',
+  [ftoken(), fguild()],
+  function (f) {
+    return api('/guilds/' + f.guild + '/channels', f.token).then(function (chs) {
+      var ts = { 0: 'TEXT', 2: 'VOICE', 4: 'CATEGORY', 5: 'NEWS', 13: 'STAGE', 15: 'FORUM' };
+      var h = '<div style="color:var(--cyan);font-size:0.8rem">' + chs.length + ' channels</div>';
+      chs.sort(function (a, b) { return (a.position || 0) - (b.position || 0); }).forEach(function (ch) {
+        h += '<div class="result-item"><span style="color:var(--red)">' + (ts[ch.type] || '?').charAt(0) + '</span><div style="flex:1"><span class="r-name">#' + esc(ch.name) + '</span><span class="r-sub"> ' + (ts[ch.type] || '?') + ' | ' + ch.id + '</span></div></div>';
+      });
+      return h;
+    });
+  }, 'discord');
+
+// Role List
+T('rolelist', 'Role List', 'R', 'purple', 'bot', 'List all server roles with color, permissions, and position.',
+  [ftoken(), fguild()],
+  function (f) {
+    return api('/guilds/' + f.guild + '/roles', f.token).then(function (roles) {
+      var h = '<div style="color:var(--cyan);font-size:0.8rem">' + roles.length + ' roles</div>';
+      roles.sort(function (a, b) { return b.position - a.position; }).forEach(function (role) {
+        var c = role.color ? '#' + role.color.toString(16).padStart(6, '0') : '#666';
+        h += '<div class="result-item"><div style="width:12px;height:12px;border-radius:50%;background:' + c + ';border:1px solid #333;flex-shrink:0"></div><div style="flex:1"><span class="r-name">@' + esc(role.name) + '</span><span class="r-sub"> ' + role.id + (role.hoist ? ' | Hoisted' : '') + (role.mentionable ? ' | Mentionable' : '') + '</span></div></div>';
+      });
+      return h;
+    });
+  }, 'discord');
+
+// Emoji Lister
+T('emojis', 'Emoji Lister', '☺', 'orange', 'bot', 'List all custom server emojis with IDs.',
+  [ftoken(), fguild()],
+  function (f) {
+    return api('/guilds/' + f.guild + '/emojis', f.token).then(function (e) {
+      if (!e || !e.length) return '<div style="color:var(--dim)">No custom emojis</div>';
+      var h = '<div style="color:var(--cyan);font-size:0.8rem">' + e.length + ' emojis</div>';
+      e.forEach(function (em) {
+        h += '<div class="result-item"><img src="https://cdn.discordapp.com/emojis/' + em.id + '.' + (em.animated ? 'gif' : 'png') + '" style="width:20px;height:20px;border-radius:3px"/><div style="flex:1"><span class="r-name">:' + esc(em.name) + ':</span><span class="r-sub"> ' + em.id + ' | ' + (em.animated ? 'Animated' : 'Static') + '</span></div></div>';
+      });
+      return h;
+    });
+  }, 'discord');
+
+// Avatar & Banner
+T('avatar', 'Avatar Grabber', '@', 'green', 'bot', 'Extract avatar and banner from any user in full resolution.',
+  [ftoken(), fuser()],
+  function (f) {
+    return api('/users/' + f.user, f.token).then(function (d) {
+      var aExt = d.avatar && d.avatar.startsWith('a_') ? 'gif' : 'png';
+      var bExt = d.banner && d.banner.startsWith('a_') ? 'gif' : 'png';
+      var aUrl = d.avatar ? 'https://cdn.discordapp.com/avatars/' + d.id + '/' + d.avatar + '.' + aExt + '?size=2048' : null;
+      var bUrl = d.banner ? 'https://cdn.discordapp.com/banners/' + d.id + '/' + d.banner + '.' + bExt + '?size=1024' : null;
+      var h = '<div style="color:var(--cyan);font-size:0.8rem;margin-bottom:0.5rem">' + esc(d.username) + '#' + (d.discriminator && d.discriminator !== '0' ? d.discriminator : '0000') + '</div>';
+      h += '<div style="display:flex;gap:0.5rem;align-items:center">';
+      if (aUrl) h += '<div style="text-align:center"><img src="' + aUrl + '" style="width:64px;height:64px;border-radius:50%;border:2px solid var(--red)" crossorigin="anonymous"/><div style="font-size:0.5rem;color:var(--dim);margin-top:0.15rem">Avatar</div></div>';
+      if (bUrl) h += '<div style="text-align:center"><img src="' + bUrl + '" style="width:128px;height:64px;object-fit:cover;border-radius:4px;border:1px solid var(--red-dim)" crossorigin="anonymous"/><div style="font-size:0.5rem;color:var(--dim);margin-top:0.15rem">Banner</div></div>';
+      if (!aUrl && !bUrl) h += '<div style="color:var(--dim)">No custom avatar/banner</div>';
+      h += '</div>';
+      if (aUrl) h += '<div style="font-size:0.55rem;color:var(--dim);word-break:break-all;margin-top:0.4rem">' + aUrl + '</div>';
+      return h;
+    });
+  }, 'discord');
+
+// Invite List
+T('invites', 'Invite List', 'I', 'yellow', 'bot', 'List active invites with inviter, uses, and expiration.',
+  [ftoken(), fguild()],
+  function (f) {
+    return api('/guilds/' + f.guild + '/invites', f.token).then(function (inv) {
+      if (!inv || !inv.length) return '<div style="color:var(--dim)">No active invites</div>';
+      var h = '<div style="color:var(--cyan);font-size:0.8rem">' + inv.length + ' invites</div>';
+      inv.sort(function (a, b) { return (b.uses || 0) - (a.uses || 0); }).forEach(function (i) {
+        h += '<div class="result-item"><span style="color:var(--cyan);flex-shrink:0">🔗</span><div style="flex:1"><span class="r-name">discord.gg/' + esc(i.code) + '</span><span class="r-sub"> ' + (i.uses || 0) + ' uses | ' + (i.expires_at ? 'Exp: ' + new Date(i.expires_at).toLocaleDateString() : 'never') + '</span></div></div>';
+      });
+      return h;
+    });
+  }, 'discord');
+
+// Webhook List
+T('webhooks', 'Webhook List', 'W', 'orange', 'bot', 'List all server webhooks with channel association.',
+  [ftoken(), fguild()],
+  function (f) {
+    return api('/guilds/' + f.guild + '/webhooks', f.token).then(function (wh) {
+      if (!wh || !wh.length) return '<div style="color:var(--dim)">No webhooks</div>';
+      var h = '<div style="color:var(--cyan);font-size:0.8rem">' + wh.length + ' webhooks</div>';
+      wh.forEach(function (w) {
+        h += '<div class="result-item"><span style="color:var(--yellow);flex-shrink:0">W</span><div style="flex:1"><span class="r-name">' + esc(w.name || 'unnamed') + '</span><span class="r-sub"> ID:' + w.id + ' | Ch:' + (w.channel_id || '?') + '</span></div></div>';
+      });
+      return h;
+    });
+  }, 'discord');
+
+// Audit Log
+T('auditlog', 'Audit Log', 'A', 'yellow', 'bot', 'View recent moderation actions from the audit log.',
+  [ftoken(), fguild(), fnumber('limit', 'Limit (1-50)', '20')],
+  function (f) {
+    var limit = Math.min(Math.max(1, parseInt(f.limit) || 20), 50);
+    return api('/guilds/' + f.guild + '/audit-logs?limit=' + limit, f.token).then(function (d) {
+      var entries = d.audit_log_entries || [];
+      var users = d.users || [];
+      var uMap = {}; users.forEach(function (u) { uMap[u.id] = u.username; });
+      var actions = { 1: 'Updated Server', 10: 'Created Channel', 11: 'Updated Channel', 12: 'Deleted Channel', 20: 'Created Invite', 22: 'Deleted Invite', 30: 'Created Webhook', 31: 'Updated Webhook', 32: 'Deleted Webhook', 40: 'Created Role', 41: 'Updated Role', 42: 'Deleted Role', 50: 'Ban', 51: 'Unban', 52: 'Kick', 60: 'Member Joined', 70: 'Updated Member' };
+      var h = '<div style="color:var(--cyan);font-size:0.8rem">' + entries.length + ' entries</div>';
+      entries.forEach(function (en) {
+        var time = en.id ? new Date(Number(BigInt(en.id) >> 22n) + 1420070400000).toLocaleString() : '';
+        h += '<div class="result-item"><span style="color:var(--yellow);flex-shrink:0;font-size:0.55rem">' + time + '</span><div style="flex:1"><span class="r-name">' + (actions[en.action_type] || 'Action ' + en.action_type) + '</span><span class="r-sub"> by ' + esc(uMap[en.user_id] || '?') + ' | target: ' + (en.target_id || '?') + '</span></div></div>';
+      });
+      return h;
+    });
+  }, 'discord');
+
+// Server Backup
+T('backup', 'Server Backup', 'B', 'cyan', 'bot', 'Backup server structure: channels, roles, emojis as JSON.',
+  [ftoken(), fguild()],
+  function (f) {
+    return Promise.all([
+      api('/guilds/' + f.guild, f.token),
+      api('/guilds/' + f.guild + '/channels', f.token),
+      api('/guilds/' + f.guild + '/roles', f.token),
+      api('/guilds/' + f.guild + '/emojis', f.token)
+    ]).then(function (r) {
+      var backup = {
+        guild: { name: r[0].name, id: r[0].id },
+        channels: r[1].map(function (c) { return { name: c.name, type: c.type, position: c.position, parent_id: c.parent_id }; }),
+        roles: r[2].map(function (rr) { return { name: rr.name, color: rr.color, position: rr.position, permissions: rr.permissions, hoist: rr.hoist, mentionable: rr.mentionable }; }),
+        emojis: r[3].map(function (e) { return { name: e.name, animated: e.animated }; }),
+        backup_date: new Date().toISOString()
+      };
+      var json = JSON.stringify(backup, null, 2);
+      var blob = new Blob([json], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'breach_backup_' + r[0].name.replace(/[^\w]/g, '_') + '_' + Date.now() + '.json';
+      a.click();
+      document.getElementById('rawOutput').value = json;
+      return '<div style="color:var(--cyan)">[OK] Backup downloaded</div><div style="font-size:0.6rem;color:var(--dim)">' + r[1].length + ' channels | ' + r[2].length + ' roles | ' + r[3].length + ' emojis</div>';
+    });
+  }, 'discord');
+
+// Token Checker
+T('tokencheck', 'Token Checker', 'T', 'green', 'user', 'Verify user token and show account info.',
+  [ftoken('User Token', 'user')],
+  function (f) {
+    return api('/users/@me', f.token).then(function (u) {
+      return api('/users/@me/guilds?limit=1', f.token).then(function (g) {
+        var h = '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">';
+        if (u.avatar) h += '<img src="https://cdn.discordapp.com/avatars/' + u.id + '/' + u.avatar + '.png?size=64" style="width:36px;height:36px;border-radius:50%;border:2px solid var(--red)"/>';
+        h += '<div><div style="color:var(--red);font-size:0.8rem">' + esc(u.username) + '#' + (u.discriminator && u.discriminator !== '0' ? u.discriminator : '0000') + '</div><div style="font-size:0.55rem;color:var(--dim)">ID: ' + u.id + '</div></div></div>';
+        h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.25rem;font-size:0.55rem">';
+        h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><div style="color:var(--dim)">MFA</div><div style="color:' + (u.mfa_enabled ? 'var(--red)' : 'var(--dim)') + '">' + (u.mfa_enabled ? 'ENABLED' : 'No') + '</div></div>';
+        h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><div style="color:var(--dim)">NITRO</div><div style="color:' + (u.premium_type > 0 ? '#ec4899' : 'var(--dim)') + '">' + (u.premium_type > 0 ? 'Tier ' + u.premium_type : 'No') + '</div></div>';
+        h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><div style="color:var(--dim)">EMAIL</div><div style="color:' + (u.email ? 'var(--cyan)' : 'var(--dim)') + '">' + (u.email ? 'Conf' : 'Hidden') + '</div></div>';
+        h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><div style="color:var(--dim)">VERIFIED</div><div style="color:' + (u.verified ? 'var(--cyan)' : 'var(--yellow)') + '">' + (u.verified ? 'YES' : 'NO') + '</div></div>';
+        h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><div style="color:var(--dim)">LOCALE</div><div style="color:var(--white)">' + (u.locale || '?') + '</div></div>';
+        h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><div style="color:var(--dim)">GUILDS</div><div style="color:var(--white)">' + (g ? g.length : '?') + '+</div></div>';
+        h += '</div>';
+        return h;
+      });
+    });
+  }, 'discord');
+
+// Member List Dump
+T('memberdump', 'Member Dump', '☠', 'red', 'bot', 'Scrape ALL members from a server: username, ID, avatar URL.',
+  [ftoken(), fguild()],
+  function (f) {
+    var all = [], after = '0';
+    function next() {
+      return api('/guilds/' + f.guild + '/members?limit=1000&after=' + after, f.token).then(function (d) {
+        if (!d || !d.length) {
+          var csv = 'username,discriminator,id,bot,avatar_url\n';
+          all.forEach(function (m) {
+            var av = m.user.avatar ? 'https://cdn.discordapp.com/avatars/' + m.user.id + '/' + m.user.avatar + '.png' : '';
+            csv += '"' + m.user.username + '",' + (m.user.discriminator || '0') + ',' + m.user.id + ',' + (m.user.bot ? 'true' : 'false') + ',' + av + '\n';
+          });
+          var blob = new Blob([csv], { type: 'text/csv' });
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'member_dump_' + f.guild + '_' + Date.now() + '.csv';
+          a.click();
+          document.getElementById('rawOutput').value = csv;
+          return '<div style="color:var(--red);font-size:0.85rem">[DUMP] ' + all.length + ' members</div><div style="font-size:0.6rem;color:var(--dim)">CSV downloaded with all member data</div>';
+        }
+        all = all.concat(d);
+        after = d[d.length - 1].user.id;
+        output('[>] Scraping: ' + all.length + ' members...', 'info');
+        return next();
+      });
+    }
+    return next();
+  }, 'discord');
+
+// Permission Explorer
+T('perms', 'Permission Explorer', '⛭', 'purple', 'bot', 'Analyze which roles hold each permission.',
+  [ftoken(), fguild()],
+  function (f) {
+    return api('/guilds/' + f.guild + '/roles', f.token).then(function (roles) {
+      var PERMS = { 0x8: 'Administrator', 0x2: 'Kick', 0x4: 'Ban', 0x20: 'Manage Guild', 0x10: 'Manage Channels', 0x40: 'Manage Webhooks', 0x80: 'Manage Messages', 0x10000000: 'Manage Roles', 0x4000000: 'Manage Nicks' };
+      var h = '';
+      roles.sort(function (a, b) { return b.position - a.position; }).slice(0, 12).forEach(function (role) {
+        var p = role.permissions; if (typeof p === 'string') p = parseInt(p) || 0;
+        var perms = [];
+        Object.keys(PERMS).forEach(function (bit) { if (p & parseInt(bit)) perms.push(PERMS[bit]); });
+        h += '<div style="margin-bottom:0.4rem"><div style="color:var(--yellow);font-size:0.65rem">@' + esc(role.name) + '</div><div style="display:flex;flex-wrap:wrap;gap:0.15rem">' + (perms.length ? perms.map(function (pr) { return '<span style="background:rgba(255,0,64,0.1);color:var(--red);padding:0.1rem 0.35rem;border-radius:2px;font-size:0.5rem">' + pr + '</span>'; }).join('') : '<span style="color:var(--dim);font-size:0.55rem">No significant perms</span>') + '</div></div>';
+      });
+      return h;
+    });
+  }, 'discord');
+
+// Nitro Gen (simulated)
+T('nitrogen', 'Nitro Generator', 'N', 'yellow', 'none', 'Simulate Nitro gift codes (educational - codes are invalid).',
+  [fnumber('count', 'Count (1-100)', '10')],
+  function (f) {
+    var count = Math.min(parseInt(f.count) || 10, 100);
+    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var codes = '';
+    for (var i = 0; i < count; i++) {
+      var c = '';
+      for (var j = 0; j < 24; j++) c += chars.charAt(Math.floor(Math.random() * chars.length));
+      codes += 'https://discord.gift/' + c + '\n';
+    }
+    return '<pre style="color:var(--yellow);font-size:0.55rem;word-break:break-all">' + esc(codes) + '</pre><div style="color:var(--dim);font-size:0.55rem">* Simulated codes - not redeemable</div>';
+  }, 'discord');
+
+// ============ UNIVERSAL TOOLS ============
+
+// Token Decoder
+T('tokendecode', 'Token Decoder', 'K', 'yellow', 'none', 'Decode Discord token parts (base64) to extract user ID.',
+  [ftext('token', 'Token to decode', 'MTA5MjM0...NDUxMjM0...')],
+  function (f) {
+    try {
+      var parts = f.token.split('.');
+      if (parts.length !== 3) return '<div style="color:var(--red)">[ERR] Not a valid token format (need 3 parts separated by .)</div>';
+      var id = atob(parts[0]);
+      var h = '<div style="color:var(--cyan)">[OK] Token decoded</div>';
+      h += '<div style="font-size:0.6rem;margin-top:0.3rem">User/Bot ID: <span style="color:var(--red)">' + id + '</span></div>';
+      h += '<div style="font-size:0.6rem;color:var(--dim)">Token timestamp: ' + new Date(Number(id) / 4194304 + 1420070400000).toISOString() + '</div>';
+      return h;
+    } catch (e) { return '<div style="color:var(--red)">[ERR] Invalid base64 encoding</div>'; }
+  }, 'universal');
+
+// Snowflake Parser
+T('snowflake', 'Snowflake Parser', '❄', 'cyan', 'none', 'Parse a Discord snowflake ID to extract timestamp and worker.',
+  [ftext('id', 'Snowflake ID', '302050872383242240')],
+  function (f) {
+    try {
+      var id = f.id.trim();
+      if (!/^\d{10,20}$/.test(id)) return '<div style="color:var(--red)">[ERR] Not a valid snowflake ID</div>';
+      var ts = new Date(Number(BigInt(id) >> 22n) + 1420070400000);
+      var worker = (Number(BigInt(id) >> 17n) & 0x1F);
+      var process = (Number(BigInt(id) >> 12n) & 0x1F);
+      var inc = Number(BigInt(id) & 0xFFFn);
+      var h = '<div style="color:var(--cyan)">Parsed snowflake</div>';
+      h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.2rem;font-size:0.6rem;margin-top:0.3rem">';
+      h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Created</span><br><span style="color:var(--red)">' + ts.toLocaleString() + '</span></div>';
+      h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Worker</span><br><span style="color:var(--white)">' + worker + '</span></div>';
+      h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Process</span><br><span style="color:var(--white)">' + process + '</span></div>';
+      h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Increment</span><br><span style="color:var(--white)">' + inc + '</span></div>';
+      h += '</div>';
+      return h;
+    } catch (e) { return '<div style="color:var(--red)">[ERR] Parse error</div>'; }
+  }, 'universal');
+
+// Permission Calculator
+T('permcalc', 'Permission Calc', '∑', 'purple', 'none', 'Calculate Discord permission bitfield from checkboxes.',
+  [ftext('bits', 'Permission integer', '8')],
+  function (f) {
+    var n = parseInt(f.bits) || 0;
+    var PERMS = { 0x1: 'CREATE_INSTANT_INVITE', 0x2: 'KICK_MEMBERS', 0x4: 'BAN_MEMBERS', 0x8: 'ADMINISTRATOR', 0x10: 'MANAGE_CHANNELS', 0x20: 'MANAGE_GUILD', 0x40: 'ADD_REACTIONS', 0x80: 'VIEW_AUDIT_LOG', 0x100: 'PRIORITY_SPEAKER', 0x200: 'STREAM', 0x400: 'VIEW_CHANNEL', 0x800: 'SEND_MESSAGES', 0x1000: 'SEND_TTS_MESSAGES', 0x2000: 'MANAGE_MESSAGES', 0x4000: 'EMBED_LINKS', 0x8000: 'ATTACH_FILES', 0x10000: 'READ_MESSAGE_HISTORY', 0x20000: 'MENTION_EVERYONE', 0x80000: 'USE_EXTERNAL_EMOJIS', 0x100000: 'VIEW_GUILD_INSIGHTS', 0x200000: 'CONNECT', 0x400000: 'SPEAK', 0x800000: 'MUTE_MEMBERS', 0x1000000: 'DEAFEN_MEMBERS', 0x2000000: 'MOVE_MEMBERS', 0x4000000: 'USE_VAD', 0x8000000: 'CHANGE_NICKNAME', 0x10000000: 'MANAGE_NICKNAMES', 0x20000000: 'MANAGE_ROLES', 0x40000000: 'MANAGE_WEBHOOKS', 0x80000000: 'MANAGE_EMOJIS_AND_STICKERS' };
+    var h = '<div style="color:var(--cyan);font-size:0.8rem">Bitfield: <span style="color:var(--red)">' + n + '</span></div>';
+    h += '<div style="font-size:0.55rem;margin-top:0.3rem">';
+    var found = [];
+    Object.keys(PERMS).forEach(function (bit) {
+      if (n & parseInt(bit)) found.push('<div style="color:var(--red);padding:0.1rem 0">' + PERMS[bit] + '</div>');
+    });
+    if (!found.length) h += '<div style="color:var(--dim)">No permissions set</div>';
+    else h += found.join('');
+    h += '</div>';
+    return h;
+  }, 'universal');
+
+// Base64 Encoder/Decoder
+T('base64', 'Base64 Codec', '64', 'cyan', 'none', 'Encode or decode base64 text.',
+  [ftextarea('input', 'Input text', 'Hello World'), fselect('mode', 'Mode', [{ v: 'encode', l: 'Encode' }, { v: 'decode', l: 'Decode' }])],
+  function (f) {
+    try {
+      if (f.mode === 'encode') return '<div style="color:var(--cyan)">Encoded:</div><pre style="color:var(--red);font-size:0.6rem;word-break:break-all;white-space:pre-wrap">' + esc(btoa(unescape(encodeURIComponent(f.input)))) + '</pre>';
+      else return '<div style="color:var(--cyan)">Decoded:</div><pre style="color:var(--white);font-size:0.6rem;word-break:break-all;white-space:pre-wrap">' + esc(decodeURIComponent(escape(atob(f.input)))) + '</pre>';
+    } catch (e) { return '<div style="color:var(--red)">[ERR] ' + esc(e.message) + '</div>'; }
+  }, 'universal');
+
+// Password Generator
+T('passgen', 'Password Generator', '#', 'green', 'none', 'Generate secure random passwords.',
+  [fnumber('length', 'Length (8-128)', '32'), fselect('type', 'Type', [{ v: 'all', l: 'All chars' }, { v: 'alphanum', l: 'Alphanumeric' }, { v: 'hex', l: 'Hex' }, { v: 'readable', l: 'Readable' }])],
+  function (f) {
+    var len = Math.min(Math.max(8, parseInt(f.length) || 32), 128);
+    var chars = f.type === 'hex' ? '0123456789abcdef' : f.type === 'alphanum' ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' : f.type === 'readable' ? 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnopqrstuvwxyz23456789!@#$%' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+    var pwd = '';
+    var arr = new Uint32Array(len);
+    crypto.getRandomValues(arr);
+    for (var i = 0; i < len; i++) pwd += chars[arr[i] % chars.length];
+    return '<div style="color:var(--cyan)">Generated:</div><pre style="color:var(--red);font-size:0.7rem;word-break:break-all;user-select:all">' + esc(pwd) + '</pre><div style="font-size:0.5rem;color:var(--dim)">Length: ' + len + ' | Entropy: ' + Math.floor(len * Math.log2(chars.length)) + ' bits</div>';
+  }, 'universal');
+
+// Hash Generator (SHA-256)
+T('hashgen', 'Hash Generator', 'H', 'yellow', 'none', 'Generate SHA-256/512/MD5 hashes from text.',
+  [ftextarea('input', 'Text to hash', ''), fselect('algo', 'Algorithm', [{ v: 'SHA-256', l: 'SHA-256' }, { v: 'SHA-512', l: 'SHA-512' }, { v: 'SHA-1', l: 'SHA-1' }])],
+  function (f) {
+    if (!f.input) return '<div style="color:var(--red)">[ERR] Input required</div>';
+    var algo = f.algo || 'SHA-256';
+    var enc = new TextEncoder();
+    return crypto.subtle.digest(algo, enc.encode(f.input)).then(function (buf) {
+      var hash = Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+      return '<div style="color:var(--cyan)">' + algo + ':</div><pre style="color:var(--red);font-size:0.55rem;word-break:break-all">' + esc(hash) + '</pre>';
+    });
+  }, 'universal');
+
+// JSON Formatter
+T('jsonfmt', 'JSON Formatter', '{ }', 'cyan', 'none', 'Format and validate JSON.',
+  [ftextarea('input', 'JSON text', '{"key":"value"}')],
+  function (f) {
+    try {
+      var obj = JSON.parse(f.input);
+      var pretty = JSON.stringify(obj, null, 2);
+      return '<div style="color:var(--cyan)">Valid JSON (' + (typeof obj === 'array' ? 'Array' : typeof obj) + '):</div><pre style="color:var(--white);font-size:0.6rem;max-height:300px;overflow-y:auto">' + esc(pretty) + '</pre>';
+    } catch (e) { return '<div style="color:var(--red)">[ERR] Invalid JSON: ' + esc(e.message) + '</div>'; }
+  }, 'universal');
+
+// UUID Generator
+T('uuid', 'UUID Generator', 'U', 'green', 'none', 'Generate random UUID v4.',
+  [fnumber('count', 'Count (1-20)', '5')],
+  function (f) {
+    var count = Math.min(Math.max(1, parseInt(f.count) || 5), 20);
+    var h = '<div style="color:var(--cyan)">UUIDs generated:</div>';
+    for (var i = 0; i < count; i++) {
+      var arr = new Uint8Array(16);
+      crypto.getRandomValues(arr);
+      arr[6] = (arr[6] & 0x0f) | 0x40;
+      arr[8] = (arr[8] & 0x3f) | 0x80;
+      var uuid = Array.from(arr).map(function (b, j) { return b.toString(16).padStart(2, '0'); }).join('');
+      uuid = uuid.slice(0, 8) + '-' + uuid.slice(8, 12) + '-' + uuid.slice(12, 16) + '-' + uuid.slice(16, 20) + '-' + uuid.slice(20);
+      h += '<div style="color:var(--red);font-size:0.55rem">' + uuid + '</div>';
+    }
+    return h;
+  }, 'universal');
+
+// System Info
+T('sysinfo', 'System Info', 'S', 'cyan', 'none', 'Display browser and device system information.',
+  [],
+  function () {
+    var h = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.25rem;font-size:0.55rem">';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Browser</span><br><span style="color:var(--red)">' + esc(navigator.userAgent.split(' ').slice(-1)[0]) + '</span></div>';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Platform</span><br><span style="color:var(--white)">' + esc(navigator.platform || '?') + '</span></div>';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Language</span><br><span style="color:var(--white)">' + esc(navigator.language || '?') + '</span></div>';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Cookies</span><br><span style="color:' + (navigator.cookieEnabled ? 'var(--cyan)' : 'var(--red)') + '">' + (navigator.cookieEnabled ? 'YES' : 'NO') + '</span></div>';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Screen</span><br><span style="color:var(--white)">' + screen.width + 'x' + screen.height + '</span></div>';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Online</span><br><span style="color:' + (navigator.onLine ? 'var(--cyan)' : 'var(--red)') + '">' + (navigator.onLine ? 'YES' : 'NO') + '</span></div>';
+    h += '</div>';
+    return h;
+  }, 'universal');
+
+// IP Info
+T('ipinfo', 'IP Info', 'IP', 'orange', 'none', 'Get your public IP address.',
+  [],
+  function () {
+    return fetch('https://api.ipify.org?format=json').then(function (r) { return r.json(); }).then(function (d) {
+      return '<div style="color:var(--cyan);font-size:0.85rem">Public IP</div><div style="color:var(--red);font-size:0.7rem;margin-top:0.3rem">' + esc(d.ip) + '</div>';
+    }).catch(function () { return '<div style="color:var(--red)">Could not fetch IP</div>'; });
+  }, 'universal');
+
+// Invite Info
+T('inviteinfo', 'Invite Info', 'I', 'yellow', 'bot', 'Get info about a Discord invite without joining.',
+  [ftoken(), ftext('code', 'Invite Code', 'discord')],
+  function (f) {
+    return api('/invites/' + f.code.replace('discord.gg/', '').replace('https://', '').replace('http://', ''), f.token).then(function (inv) {
+      var h = '<div style="color:var(--cyan);font-size:0.8rem">' + (inv.guild ? esc(inv.guild.name) : '?') + '</div>';
+      h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.2rem;font-size:0.55rem;margin-top:0.3rem">';
+      if (inv.guild) {
+        h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Members</span><br><span style="color:var(--red)">' + (inv.approximate_member_count || '?') + '</span></div>';
+        h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Online</span><br><span style="color:var(--cyan)">' + (inv.approximate_presence_count || '?') + '</span></div>';
+        h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Uses</span><br><span style="color:var(--yellow)">' + (inv.uses || 0) + '</span></div>';
+        h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px"><span style="color:var(--dim)">Channel</span><br><span style="color:var(--white)">#' + (inv.channel ? esc(inv.channel.name) : '?') + '</span></div>';
+      }
+      h += '</div>';
+      if (inv.guild && inv.guild.icon) h += '<img src="https://cdn.discordapp.com/icons/' + inv.guild.id + '/' + inv.guild.icon + '.png?size=128" style="width:48px;height:48px;border-radius:8px;margin-top:0.3rem"/>';
+      return h;
+    });
+  }, 'discord');
+
+// QR Generator
+T('qrgen', 'QR Generator', 'Q', 'cyan', 'none', 'Generate QR codes from text/URLs.',
+  [ftextarea('input', 'Text or URL', 'https://discord.gg/example'), fnumber('size', 'Size (px)', '200')],
+  function (f) {
+    var size = Math.min(Math.max(100, parseInt(f.size) || 200), 500);
+    var url = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&data=' + encodeURIComponent(f.input || 'test');
+    return '<div style="text-align:center"><img src="' + url + '" style="width:' + size + 'px;height:' + size + 'px;border:2px solid var(--red);border-radius:4px" crossorigin="anonymous"/><div style="font-size:0.5rem;color:var(--dim);margin-top:0.3rem">' + size + 'x' + size + ' | ' + esc(f.input || '').substring(0, 50) + '</div></div>';
+  }, 'universal');
+
+// DNS Lookup (via public API)
+T('dnslookup', 'DNS Lookup', 'D', 'purple', 'none', 'Perform DNS lookup on a domain (A, AAAA, MX, NS).',
+  [ftext('domain', 'Domain', 'discord.com'), fselect('type', 'Record', [{ v: 'A', l: 'A (IPv4)' }, { v: 'AAAA', l: 'AAAA (IPv6)' }, { v: 'MX', l: 'MX (Mail)' }, { v: 'NS', l: 'NS (Nameserver)' }])],
+  function (f) {
+    var domain = f.domain || 'discord.com';
+    return fetch('https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=' + (f.type || 'A'))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.Answer || !d.Answer.length) return '<div style="color:var(--dim)">No records found for ' + esc(domain) + '</div>';
+        var h = '<div style="color:var(--cyan);font-size:0.8rem">' + esc(domain) + ' (' + (f.type || 'A') + ')</div>';
+        d.Answer.forEach(function (a) {
+          h += '<div class="result-item"><span style="color:var(--red);font-size:0.55rem">' + a.type + '</span><div style="flex:1"><span class="r-name">' + esc(a.data) + '</span><span class="r-sub"> TTL: ' + a.TTL + 's</span></div></div>';
+        });
+        return h;
+      }).catch(function () { return '<div style="color:var(--red)">DNS lookup failed</div>'; });
+  }, 'web');
+
+// Image to Base64
+T('img2b64', 'Image to Base64', 'I', 'green', 'none', 'Convert image URL to base64 data URI.',
+  [ftext('url', 'Image URL', 'https://cdn.discordapp.com/embed/avatars/0.png')],
+  function (f) {
+    return fetch(f.url).then(function (r) { return r.blob(); }).then(function (blob) {
+      return new Promise(function (resolve) {
+        var reader = new FileReader();
+        reader.onload = function () {
+          var b64 = reader.result;
+          var truncated = b64.substring(0, 200) + '... [' + Math.round(b64.length / 1024) + ' KB]';
+          resolve('<div style="color:var(--cyan)">Base64:</div><pre style="color:var(--red);font-size:0.5rem;word-break:break-all;max-height:250px;overflow-y:auto">' + esc(truncated) + '</pre><button class="btn btn-sm btn-cyan" onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent);toast(\'Copied to clipboard\')">COPY FULL</button>');
+        };
+        reader.readAsDataURL(blob);
+      });
+    }).catch(function () { return '<div style="color:var(--red)">Could not fetch image</div>'; });
+  }, 'web');
+
+// Color Palette
+T('palette', 'Color Palette', '◉', 'purple', 'none', 'Generate complementary color palettes from a hex color.',
+  [ftext('color', 'Hex color', 'ff0040')],
+  function (f) {
+    var hex = f.color.replace('#', '');
+    var r = parseInt(hex.substring(0, 2), 16), g = parseInt(hex.substring(2, 4), 16), b = parseInt(hex.substring(4, 6), 16);
+    function rgb(h, s, l) { return 'hsl(' + h + ',' + s + '%,' + l + '%)'; }
+    var h2 = 0, s = 100, l = 50;
+    h2 = Math.floor((Math.atan2(Math.sqrt(3) * (g - b), 2 * r - g - b) * 180 / Math.PI + 360) % 360);
+    var palettes = [
+      { label: 'Original', color: hex },
+      { label: 'Complement', color: hslToHex((h2 + 180) % 360, s, l) },
+      { label: 'Triadic', color: hslToHex((h2 + 120) % 360, s, l) },
+      { label: 'Triadic 2', color: hslToHex((h2 + 240) % 360, s, l) },
+      { label: 'Analogous', color: hslToHex((h2 + 30) % 360, s, l) },
+      { label: 'Analogous 2', color: hslToHex((h2 - 30 + 360) % 360, s, l) }
+    ];
+    var h = '<div style="display:flex;flex-wrap:wrap;gap:0.4rem">';
+    palettes.forEach(function (p) {
+      h += '<div style="text-align:center;width:80px"><div style="width:100%;height:40px;background:#' + p.color + ';border-radius:4px;border:1px solid var(--red-dim)"></div><div style="font-size:0.5rem;color:var(--dim);margin-top:0.15rem">' + p.label + '</div><div style="font-size:0.5rem;color:var(--white)">#' + p.color + '</div></div>';
+    });
+    h += '</div>';
+    return h;
+  }, 'universal');
+
+function hslToHex(h, s, l) {
+  s /= 100; l /= 100;
+  var a = s * Math.min(l, 1 - l);
+  var f = function (n) { var k = (n + h / 30) % 12; var c = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); return Math.round(255 * c).toString(16).padStart(2, '0'); };
+  return f(0) + f(8) + f(4);
+}
+
+// Text Analyzer
+T('textanalyze', 'Text Analyzer', 'A', 'cyan', 'none', 'Analyze text: characters, words, lines, density.',
+  [ftextarea('input', 'Text to analyze', '')],
+  function (f) {
+    var t = f.input || '';
+    var chars = t.length;
+    var words = t.trim() ? t.trim().split(/\s+/).length : 0;
+    var lines = t ? t.split('\n').length : 0;
+    var h = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.2rem;font-size:0.55rem">';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><span style="color:var(--dim)">Chars</span><br><span style="color:var(--red);font-size:0.8rem">' + chars + '</span></div>';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><span style="color:var(--dim)">Words</span><br><span style="color:var(--cyan);font-size:0.8rem">' + words + '</span></div>';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><span style="color:var(--dim)">Lines</span><br><span style="color:var(--white);font-size:0.8rem">' + lines + '</span></div>';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><span style="color:var(--dim)">Bytes</span><br><span style="color:var(--yellow);font-size:0.8rem">' + new Blob([t]).size + '</span></div>';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><span style="color:var(--dim)">Sentences</span><br><span style="color:var(--purple);font-size:0.8rem">' + (t ? t.split(/[.!?]+/).filter(function (s) { return s.trim(); }).length : 0) + '</span></div>';
+    h += '<div style="background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:3px;text-align:center"><span style="color:var(--dim)">Avg Word</span><br><span style="color:var(--red);font-size:0.8rem">' + (words ? (chars / words).toFixed(1) : '0') + '</span></div>';
+    h += '</div>';
+    return h;
+  }, 'universal');
+
+// ============ WEB / SCRAPE TOOLS ============
+
+// YouTube Thumbnail
+T('ythumb', 'YT Thumbnail', 'Y', 'red', 'none', 'Extract YouTube video thumbnail in all resolutions.',
+  [ftext('url', 'YouTube URL or Video ID', 'dQw4w9WgXcQ')],
+  function (f) {
+    var vid = f.url;
+    var m = vid.match(/(?:v=|\/)([\w-]{11})/);
+    if (m) vid = m[1];
+    if (vid.length !== 11) return '<div style="color:var(--red)">[ERR] Invalid YouTube URL or ID</div>';
+    var sizes = ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault', 'default'];
+    var h = '<div style="color:var(--cyan);font-size:0.8rem;margin-bottom:0.4rem">YouTube: ' + esc(vid) + '</div>';
+    sizes.forEach(function (sz) {
+      h += '<div style="margin-bottom:0.4rem"><span style="font-size:0.55rem;color:var(--dim)">' + sz + '</span><br><img src="https://img.youtube.com/vi/' + vid + '/' + sz + '.jpg" style="width:100%;max-width:320px;border-radius:4px;border:1px solid var(--red-dim)" onerror="this.style.display=\'none\'"/></div>';
+    });
+    return h;
+  }, 'web');
+
+// Favicon Grabber
+T('favicon', 'Favicon Grabber', 'F', 'orange', 'none', 'Extract favicon from any website URL.',
+  [ftext('url', 'Website URL', 'https://discord.com')],
+  function (f) {
+    var url = f.url;
+    if (!url.startsWith('http')) url = 'https://' + url;
+    try {
+      var u = new URL(url);
+      var icons = [
+        'https://www.google.com/s2/favicons?domain=' + u.hostname + '&sz=256',
+        'https://www.google.com/s2/favicons?domain=' + u.hostname + '&sz=64',
+        'https://www.google.com/s2/favicons?domain=' + u.hostname + '&sz=16'
+      ];
+      var h = '<div style="color:var(--cyan);font-size:0.8rem;margin-bottom:0.4rem">' + esc(u.hostname) + '</div>';
+      icons.forEach(function (src, i) {
+        h += '<img src="' + src + '" style="width:' + (i === 0 ? 128 : i === 1 ? 64 : 32) + 'px;height:auto;margin-right:0.5rem;border:1px solid var(--red-dim);border-radius:4px" onerror="this.style.display=\'none\'"/>';
+      });
+      h += '<div style="font-size:0.5rem;color:var(--dim);margin-top:0.3rem">Direct favicon: ' + u.origin + '/favicon.ico</div>';
+      return h;
+    } catch (e) { return '<div style="color:var(--red)">[ERR] Invalid URL</div>'; }
+  }, 'web');
+
+// Regex Tester
+T('regextest', 'Regex Tester', '/ /', 'purple', 'none', 'Test regular expressions with sample text.',
+  [ftextarea('input', 'Test text', ''), ftext('pattern', 'Regex pattern', '\\w+@\\w+\\.\\w+'), ftext('flags', 'Flags (g,i,m)', 'gi')],
+  function (f) {
+    if (!f.input) return '<div style="color:var(--dim)">No text provided</div>';
+    try {
+      var re = new RegExp(f.pattern, f.flags || 'g');
+      var matches = f.input.match(re);
+      if (!matches) return '<div style="color:var(--yellow)">[INFO] No matches found</div>';
+      var h = '<div style="color:var(--cyan);font-size:0.8rem">' + matches.length + ' match(es)</div>';
+      matches.forEach(function (m) {
+        h += '<div style="color:var(--red);font-size:0.55rem;padding:0.1rem 0">' + esc(m) + '</div>';
+      });
+      return h;
+    } catch (e) { return '<div style="color:var(--red)">[ERR] Invalid regex: ' + esc(e.message) + '</div>'; }
+  }, 'universal');
+
+// ==============================
+// UI RENDERING
+// ==============================
+var currentTool = null;
+
+function renderSidebar() {
+  var cats = { discord: document.getElementById('sidebarDiscord'), universal: document.getElementById('sidebarUniversal'), web: document.getElementById('sidebarWeb') };
+  Object.keys(cats).forEach(function (k) { cats[k].innerHTML = ''; });
+  TOOLS.forEach(function (t) {
+    var el = document.createElement('div');
+    el.className = 'sidebar-tool';
+    el.innerHTML = '<span class="t-dot ' + t.auth + '"></span>' + esc(t.name);
+    el.onclick = function () { selectTool(t); };
+    var cat = t.cat || 'universal';
+    if (cats[cat]) cats[cat].appendChild(el);
+  });
+}
+
+function selectTool(t) {
+  currentTool = t;
+  document.querySelectorAll('.sidebar-tool').forEach(function (el) { el.classList.remove('active'); });
+  // find and activate in sidebar
+  var allSidebarTools = document.querySelectorAll('.sidebar-tool');
+  allSidebarTools.forEach(function (el) {
+    if (el.textContent === t.name) el.classList.add('active');
+  });
+  document.getElementById('panelTitle').textContent = t.name.toUpperCase();
+  switchPanelTab('tool');
+  document.getElementById('outputTab').innerHTML = '';
+
+  var fieldsHtml = '';
+  if (t.fields && t.fields.length) {
+    fieldsHtml = '<div class="tool-fields">';
+    t.fields.forEach(function (f) {
+      fieldsHtml += '<div class="field-group">';
+      fieldsHtml += '<label>' + f.label + '</label>';
+      if (f.type === 'select') {
+        fieldsHtml += '<select id="f_' + f.id + '">';
+        (f.opts || []).forEach(function (o) { fieldsHtml += '<option value="' + o.v + '">' + o.l + '</option>'; });
+        fieldsHtml += '</select>';
+      } else if (f.type === 'textarea') {
+        fieldsHtml += '<textarea id="f_' + f.id + '" placeholder="' + (f.ph || '') + '" rows="3" spellcheck="false"></textarea>';
+      } else if (f.type === 'file') {
+        fieldsHtml += '<input type="file" id="f_' + f.id + '" style="padding:0.3rem"/>';
+      } else {
+        fieldsHtml += '<input type="' + f.type + '" id="f_' + f.id + '" placeholder="' + (f.ph || '') + '" spellcheck="false"/>';
+      }
+      fieldsHtml += '</div>';
+    });
+    fieldsHtml += '</div>';
+  }
+  document.getElementById('toolFields').innerHTML = fieldsHtml;
+  document.getElementById('toolActions').innerHTML = '<button class="btn btn-primary" onclick="executeTool()">[EXECUTE]</button><button class="btn btn-danger btn-sm" onclick="clearOutput()">CLEAR</button><span style="font-size:0.55rem;color:var(--dim)">Required: ' + (t.auth === 'user' ? 'USER TOKEN' : t.auth === 'bot' ? 'BOT TOKEN' : 'NO TOKEN') + '</span>';
+
+  // Auto-fill token if needed
+  if (t.fields) {
+    t.fields.forEach(function (f) {
+      if (f.id === 'token') {
+        var inp = document.getElementById('f_token');
+        if (inp && savedToken) { inp.value = savedToken; }
+        // save on change
+        if (inp) inp.addEventListener('blur', function () { var v = inp.value.trim(); if (v && v.length > 10) { localStorage.setItem('breach_token', v); savedToken = v; document.getElementById('savedToken').value = v; } });
+      }
+    });
+  }
+}
+
+function executeTool() {
+  if (!currentTool) { toast('Select a tool first', true); return; }
+  var f = getFields();
+  var token = f.token || savedToken;
+  if (!token && (currentTool.auth === 'bot' || currentTool.auth === 'user')) {
+    token = document.getElementById('savedToken').value.trim() || localStorage.getItem('breach_token') || '';
+    if (token) f.token = token;
+    else { toast('Token required. Paste one at the top.', true); return; }
+  }
+
+  // Check auth type
+  if (currentTool.auth === 'bot' && token.startsWith('N')) { toast('Warning: this tool requires a BOT TOKEN (MTA...), not a user token', true); }
+  if (currentTool.auth === 'user' && token.startsWith('M')) { toast('Warning: this tool requires a USER TOKEN (NDU...), not a bot token', true); }
+
+  output('[CMD] ' + currentTool.name, 'cmd');
+  switchPanelTab('output');
+
+  try {
+    var p = currentTool.fn(f);
+    if (p && typeof p.then === 'function') {
+      p.then(function (html) {
+        output('[OK] ' + currentTool.name + ' completed', 'success');
+        document.getElementById('outputTab').innerHTML += '<div style="border:1px solid var(--red-dim);border-radius:3px;padding:0.5rem;margin-top:0.4rem;background:rgba(0,0,0,0.3)">' + html + '</div>';
+      }).catch(function (err) {
+        output('[ERR] ' + err.message, 'error');
+      });
+    } else {
+      output('[OK] ' + currentTool.name + ' completed', 'success');
+      document.getElementById('outputTab').innerHTML += '<div style="border:1px solid var(--red-dim);border-radius:3px;padding:0.5rem;margin-top:0.4rem;background:rgba(0,0,0,0.3)">' + (p || '') + '</div>';
+    }
+  } catch (err) {
+    output('[ERR] ' + err.message, 'error');
+  }
+}
+
+// ==============================
+// BOOT SEQUENCE
+// ==============================
+function boot() {
+  var ascii = [
+    '    ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗',
+    '    ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝',
+    '    ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗',
+    '    ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║',
+    '    ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║',
+    '    ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝',
+    '                  BREACH TERMINAL v3.1',
+    '           unauthorized access interface',
+    ''
+  ].join('\n');
+  document.querySelector('.boot-ascii').textContent = ascii;
+
+  var lines = [
+    document.getElementById('b0'), document.getElementById('b1'), document.getElementById('b2'),
+    document.getElementById('b3'), document.getElementById('b4'), document.getElementById('b5'),
+    document.getElementById('b6'), document.getElementById('b7'), document.getElementById('b8'),
+    document.getElementById('b9')
+  ];
+  var bar = document.getElementById('bootFill');
+  var i = 0;
+
+  function showNext() {
+    if (i < lines.length) {
+      lines[i].classList.add('visible');
+      bar.style.width = ((i + 1) / lines.length * 100) + '%';
+      i++;
+      setTimeout(showNext, Math.random() * 200 + 200);
+    } else {
+      setTimeout(function () {
+        document.getElementById('bootScreen').classList.add('hidden');
+        document.getElementById('mainLayout').classList.add('active');
+      }, 800);
+    }
+  }
+  setTimeout(showNext, 400);
+}
+
+// ==============================
+// INITIALIZATION
+// ==============================
+
+// Matrix effect - red/fire colors
+var matrixCanvas = document.getElementById('matrix');
+var matrixCtx = matrixCanvas.getContext('2d');
+function resizeMatrix() { matrixCanvas.width = window.innerWidth; matrixCanvas.height = window.innerHeight; }
+resizeMatrix();
+window.addEventListener('resize', resizeMatrix);
+
+var matrixCols = Math.floor(window.innerWidth / 14);
+var matrixDrops = Array(matrixCols).fill(1);
+var matrixChars = 'ｦｧｨｩｪｫｬｭｮｯｱｲｳｵｶｼｽｾｿｸｺｻｼｼｽｾｿｸΩΔΠΞΣΦΨΘΛ01╱╲┃━☠⚡☢⚠⌂⌃⌤⌥⌦⏣◈◉◊★✨⬛⬚⬡';
+
+function drawMatrix() {
+  matrixCtx.fillStyle = 'rgba(5,0,2,0.08)';
+  matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+  matrixCtx.font = '13px monospace';
+  for (var di = 0; di < matrixDrops.length; di++) {
+    var char = matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
+    var x = di * 14;
+    var y = matrixDrops[di] * 14;
+    var r = Math.random();
+    if (r < 0.02) { matrixCtx.fillStyle = '#ff0040'; } // bright red
+    else if (r < 0.08) { matrixCtx.fillStyle = '#cc0033'; } // medium
+    else if (r < 0.15) { matrixCtx.fillStyle = '#00ffcc'; } // cyan accent
+    else { matrixCtx.fillStyle = '#33001a'; } // dim red
+    matrixCtx.fillText(char, x, y);
+    if (y > matrixCanvas.height && Math.random() > 0.97) matrixDrops[di] = 0;
+    matrixDrops[di]++;
+  }
+}
+setInterval(drawMatrix, 45);
+
+// Clock
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-ES', { hour12: false });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Session ID
+document.getElementById('sessId').textContent = Math.random().toString(36).substring(2, 10).toUpperCase();
+document.getElementById('proxyLabel').textContent = PROXY;
+
+// Token init
+var stok = localStorage.getItem('breach_token');
+if (stok) {
+  savedToken = stok;
+  document.getElementById('savedToken').value = stok;
+  testConnection();
+}
+
+// Sidebar
+renderSidebar();
+// Select first tool by default
+if (TOOLS.length > 0) selectTool(TOOLS[0]);
+
+// Boot
+boot();
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function (e) {
+  if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); executeTool(); }
+  if (e.ctrlKey && e.key === 'l') { e.preventDefault(); clearOutput(); }
+  if (e.ctrlKey && e.key === 'k') { e.preventDefault(); document.getElementById('savedToken').focus(); }
+});
+
+// Proxy input init
+document.getElementById('proxyInput').value = PROXY;
+
+// Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>
