@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Nexus Host Bot — Panel</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e2e8f0;font-family:'Segoe UI',sans-serif;min-height:100vh}
+.container{max-width:700px;margin:0 auto;padding:2rem 1rem}
+h1{font-size:1.6rem;margin-bottom:0.3rem;background:linear-gradient(90deg,#22c55e,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{color:#64748b;font-size:0.85rem;margin-bottom:2rem}
+.card{background:#14142a;border:1px solid #2a2a5a;border-radius:12px;padding:1.2rem;margin-bottom:1rem}
+.card h2{font-size:0.95rem;margin-bottom:0.8rem;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;font-size:0.8rem}
+label{display:block;font-size:0.75rem;color:#94a3b8;margin-bottom:0.3rem;margin-top:0.8rem}
+input[type=text],input[type=number],select{width:100%;background:#0d0d1a;border:1px solid #2a2a5a;border-radius:8px;padding:0.6rem;color:#e2e8f0;font-size:0.85rem;outline:none}
+input:focus,select:focus{border-color:#8b5cf6}
+.check{display:flex;align-items:center;gap:0.5rem;margin-top:0.6rem;font-size:0.8rem;color:#cbd5e1;cursor:pointer}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem}
+.btn{width:100%;background:linear-gradient(90deg,#22c55e,#10b981);border:none;color:#fff;font-size:0.95rem;font-weight:600;padding:0.9rem;border-radius:10px;cursor:pointer;transition:opacity 0.2s}
+.btn:hover{opacity:0.9}
+#saved{display:none;text-align:center;color:#22c55e;font-size:0.85rem;margin-top:0.8rem}
+.ar{background:#0d0d1a;border:1px solid #2a2a5a;border-radius:8px;padding:0.6rem;margin-top:0.5rem}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Nexus Host Bot</h1>
+<p class="subtitle">Configurá tu bot sin escribir código. Todo se guarda al instante.</p>
+
+<div class="card">
+<h2>⚙️ Estado y Actividad</h2>
+<div class="row">
+<div>
+<label>Estado</label>
+<select id="status">
+<option value="online">🟢 Online</option>
+<option value="idle">🌙 Idle</option>
+<option value="dnd">⛔ No molestar</option>
+</select>
+</div>
+<div>
+<label>Tipo de actividad</label>
+<select id="actType">
+<option value="watching">Viéndome</option>
+<option value="playing">Jugando</option>
+<option value="listening">Escuchando</option>
+</select>
+</div>
+</div>
+<label>Texto de actividad</label>
+<input type="text" id="activityText" placeholder="Nexus Host Bot"/>
+</div>
+
+<div class="card">
+<h2>👋 Mensajes de Bienvenida / Despedida</h2>
+<div class="check"><input type="checkbox" id="welcomeEnabled"/><span>Activar bienvenidas</span></div>
+<label>ID del canal de bienvenidas</label>
+<input type="text" id="welcomeChannel" placeholder="123456789012345678"/>
+<label>Mensaje (usá {user} y {guild})</label>
+<input type="text" id="welcomeMsg" placeholder="¡Bienvenido/a {user}! 🎉"/>
+<div class="check"><input type="checkbox" id="goodbyeEnabled"/><span>Activar despedidas</span></div>
+<label>ID del canal de despedidas</label>
+<input type="text" id="goodbyeChannel" placeholder="123456789012345678"/>
+<label>Mensaje</label>
+<input type="text" id="goodbyeMsg" placeholder="¡Chau {user}! 👋"/>
+</div>
+
+<div class="card">
+<h2>🤖 Auto-Respuestas</h2>
+<div id="autoReplies"></div>
+<button onclick="addAutoReply()" style="margin-top:0.6rem;background:#8b5cf6;border:none;color:#fff;padding:0.5rem 1rem;border-radius:8px;cursor:pointer">+ Agregar respuesta</button>
+</div>
+
+<div class="card">
+<h2>🛡️ Auto-Moderación</h2>
+<div class="check"><input type="checkbox" id="modEnabled"/><span>Activar auto-moderación</span></div>
+<label>Palabras prohibidas (separadas por coma)</label>
+<input type="text" id="bannedWords" placeholder="palabra1, palabra2, palabra3"/>
+<label>Mensaje de advertencia</label>
+<input type="text" id="warnMsg" placeholder="Eso no está permitido."/>
+</div>
+
+<div class="card">
+<h2>📊 Niveles y XP</h2>
+<div class="check"><input type="checkbox" id="levelsEnabled"/><span>Activar sistema de niveles</span></div>
+<label>Mensaje de subida de nivel (usá {user} y {level})</label>
+<input type="text" id="levelMsg" placeholder="¡{user} subió al nivel {level}! 🎉"/>
+</div>
+
+<div class="card">
+<h2>🎮 Comandos y Diversión</h2>
+<div class="row">
+<div>
+<div class="check"><input type="checkbox" id="cmdPing"/><span>!ping</span></div>
+<div class="check"><input type="checkbox" id="cmdSay"/><span>!say</span></div>
+<div class="check"><input type="checkbox" id="cmdAvatar"/><span>!avatar</span></div>
+<div class="check"><input type="checkbox" id="cmdEmbed"/><span>!embed</span></div>
+</div>
+<div>
+<div class="check"><input type="checkbox" id="cmdKick"/><span>!kick</span></div>
+<div class="check"><input type="checkbox" id="cmdBan"/><span>!ban</span></div>
+<div class="check"><input type="checkbox" id="cmdMute"/><span>!mute</span></div>
+<div class="check"><input type="checkbox" id="cmdClear"/><span>!clear</span></div>
+</div>
+</div>
+<div class="row">
+<div class="check"><input type="checkbox" id="funCoin"/><span>!coinflip</span></div>
+<div class="check"><input type="checkbox" id="funDice"/><span>!dice</span></div>
+<div class="check"><input type="checkbox" id="funBall"/><span>!8ball</span></div>
+</div>
+</div>
+
+<button class="btn" onclick="save()">💾 Guardar configuración</button>
+<div id="saved">✓ Configuración guardada</div>
+</div>
+
+<script>
+let cfg = null;
+
+async function load() {
+  const r = await fetch('/api/config');
+  cfg = await r.json();
+  document.getElementById('status').value = cfg.status || 'online';
+  document.getElementById('actType').value = (cfg.activity||{}).type || 'watching';
+  document.getElementById('activityText').value = (cfg.activity||{}).text || '';
+  document.getElementById('welcomeEnabled').checked = cfg.welcome?.enabled;
+  document.getElementById('welcomeChannel').value = cfg.welcome?.channel || '';
+  document.getElementById('welcomeMsg').value = cfg.welcome?.message || '';
+  document.getElementById('goodbyeEnabled').checked = cfg.goodbye?.enabled;
+  document.getElementById('goodbyeChannel').value = cfg.goodbye?.channel || '';
+  document.getElementById('goodbyeMsg').value = cfg.goodbye?.message || '';
+  document.getElementById('modEnabled').checked = cfg.auto_mod?.enabled;
+  document.getElementById('bannedWords').value = (cfg.auto_mod?.banned_words||[]).join(', ');
+  document.getElementById('warnMsg').value = cfg.auto_mod?.warning_message || '';
+  document.getElementById('levelsEnabled').checked = cfg.levels?.enabled;
+  document.getElementById('levelMsg').value = cfg.levels?.level_up_message || '';
+  document.getElementById('cmdPing').checked = cfg.commands?.ping;
+  document.getElementById('cmdSay').checked = cfg.commands?.say;
+  document.getElementById('cmdAvatar').checked = cfg.commands?.avatar;
+  document.getElementById('cmdEmbed').checked = cfg.commands?.embed;
+  document.getElementById('cmdKick').checked = cfg.commands?.kick;
+  document.getElementById('cmdBan').checked = cfg.commands?.ban;
+  document.getElementById('cmdMute').checked = cfg.commands?.mute;
+  document.getElementById('cmdClear').checked = cfg.commands?.clear;
+  document.getElementById('funCoin').checked = cfg.fun?.coinflip;
+  document.getElementById('funDice').checked = cfg.fun?.dice;
+  document.getElementById('funBall').checked = cfg.fun?.['8ball'];
+  renderAutoReplies();
+}
+
+function renderAutoReplies() {
+  const el = document.getElementById('autoReplies');
+  el.innerHTML = '';
+  (cfg.auto_replies||[]).forEach((ar, i) => {
+    const d = document.createElement('div');
+    d.className = 'ar';
+    d.innerHTML = `<label>Disparador (palabra que activa)</label>
+      <input type="text" class="ar-trigger" value="${esc(ar.trigger)}"/>
+      <label>Respuesta</label>
+      <input type="text" class="ar-response" value="${esc(ar.response)}"/>
+      <button onclick="removeAR(${i})" style="margin-top:0.4rem;background:#7f1d1d;border:none;color:#fca5a5;padding:0.3rem 0.8rem;border-radius:6px;cursor:pointer">Eliminar</button>`;
+    el.appendChild(d);
+  });
+}
+
+function addAutoReply() {
+  if (!cfg.auto_replies) cfg.auto_replies = [];
+  cfg.auto_replies.push({trigger: '', response: ''});
+  renderAutoReplies();
+}
+
+function removeAR(i) {
+  cfg.auto_replies.splice(i, 1);
+  renderAutoReplies();
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function save() {
+  cfg.status = document.getElementById('status').value;
+  cfg.activity = {
+    type: document.getElementById('actType').value,
+    text: document.getElementById('activityText').value
+  };
+  cfg.welcome = {
+    enabled: document.getElementById('welcomeEnabled').checked,
+    channel: document.getElementById('welcomeChannel').value.trim(),
+    message: document.getElementById('welcomeMsg').value
+  };
+  cfg.goodbye = {
+    enabled: document.getElementById('goodbyeEnabled').checked,
+    channel: document.getElementById('goodbyeChannel').value.trim(),
+    message: document.getElementById('goodbyeMsg').value
+  };
+  const triggers = document.querySelectorAll('.ar-trigger');
+  const responses = document.querySelectorAll('.ar-response');
+  cfg.auto_replies = Array.from(triggers).map((t, i) => ({
+    trigger: t.value, response: responses[i].value
+  }));
+  cfg.auto_mod = {
+    enabled: document.getElementById('modEnabled').checked,
+    banned_words: document.getElementById('bannedWords').value.split(',').map(s=>s.trim()).filter(Boolean),
+    warning_message: document.getElementById('warnMsg').value,
+    delete_message: true
+  };
+  cfg.levels = {
+    enabled: document.getElementById('levelsEnabled').checked,
+    level_up_message: document.getElementById('levelMsg').value,
+    xp_per_message: 15
+  };
+  cfg.commands = {
+    ping: document.getElementById('cmdPing').checked,
+    say: document.getElementById('cmdSay').checked,
+    avatar: document.getElementById('cmdAvatar').checked,
+    embed: document.getElementById('cmdEmbed').checked,
+    kick: document.getElementById('cmdKick').checked,
+    ban: document.getElementById('cmdBan').checked,
+    mute: document.getElementById('cmdMute').checked,
+    clear: document.getElementById('cmdClear').checked
+  };
+  cfg.fun = {
+    coinflip: document.getElementById('funCoin').checked,
+    dice: document.getElementById('funDice').checked,
+    '8ball': document.getElementById('funBall').checked
+  };
+  await fetch('/api/config', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(cfg)
+  });
+  const saved = document.getElementById('saved');
+  saved.style.display = 'block';
+  setTimeout(() => saved.style.display = 'none', 3000);
+}
+
+load();
+</script>
+</body>
+</html>

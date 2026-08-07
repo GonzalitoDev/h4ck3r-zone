@@ -1,0 +1,72 @@
+{
+  "prefix": "!",
+  "status": "online",
+  "activity": {
+    "type": "watching",
+    "text": "Nexus Host Bot"
+  },
+  "welcome": {
+    "enabled": true,
+    "channel": "",
+    "message": "¡Bienvenido/a {user} al servidor! 🎉"
+  },
+  "goodbye": {
+    "enabled": true,
+    "channel": "",
+    "message": "¡Chau {user}, que te vaya bien!"
+  },
+  "auto_replies": [
+    {
+      "trigger": "hola",
+      "response": "¡Hola! ¿Cómo estás? 😄"
+    },
+    {
+      "trigger": "help",
+      "response": "Escribí !help para ver mis comandos"
+    },
+    {
+      "trigger": "gracias",
+      "response": "¡De nada! 🥰"
+    }
+  ],
+  "auto_mod": {
+    "enabled": true,
+    "banned_words": [
+      "insulto1",
+      "insulto2"
+    ],
+    "warning_message": "Eso no está permitido en este servidor.",
+    "delete_message": true
+  },
+  "commands": {
+    "ping": true,
+    "say": true,
+    "avatar": true,
+    "embed": true,
+    "kick": true,
+    "ban": true,
+    "mute": true,
+    "clear": true
+  },
+  "levels": {
+    "enabled": true,
+    "level_up_message": "¡{user} subió al nivel {level}! 🎉",
+    "xp_per_message": 15
+  },
+  "reaction_roles": {
+    "enabled": false,
+    "roles": [
+      {
+        "channel": "",
+        "message_id": "",
+        "emoji": "✅",
+        "role_id": ""
+      }
+    ]
+  },
+  "fun": {
+    "coinflip": true,
+    "dice": true,
+    "8ball": true
+  }
+}
