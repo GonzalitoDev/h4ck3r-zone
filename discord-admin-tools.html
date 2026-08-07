@@ -86,7 +86,12 @@ header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.95);border-b
 .tool-panel input,.tool-panel select{width:100%;background:rgba(0,0,0,0.5);border:1px solid var(--border);padding:0.5rem 0.6rem;border-radius:3px;color:var(--green);font-family:inherit;font-size:0.75rem;outline:none;margin-bottom:0.5rem;transition:border-color 0.3s}
 .tool-panel input:focus,.tool-panel select:focus{border-color:var(--green)}
 .tool-panel input::placeholder{color:#333}
-.tool-result{font-size:0.7rem;max-height:300px;overflow-y:auto;margin-top:0.4rem;line-height:1.6;background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:3px}
+.tool-result{font-size:0.7rem;max-height:300px;overflow-y:auto;margin-top:0.4rem;line-height:1.6;background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:3px;position:relative}
+.tool-result .copy-res{position:sticky;bottom:0;right:0;float:right;font-size:0.6rem;padding:0.2rem 0.6rem;background:var(--border);border:1px solid var(--cyan);color:var(--cyan);border-radius:3px;cursor:pointer;margin-left:0.4rem}
+.search-box{margin-bottom:0.75rem}
+.search-box input{width:100%;background:rgba(13,17,23,0.8);border:1px solid var(--border);padding:0.6rem 0.8rem;border-radius:8px;color:var(--green);font-family:inherit;font-size:0.75rem;outline:none}
+.search-box input:focus{border-color:var(--cyan)}
+.tool-card.hidden{display:none}
 .tool-result .item{display:flex;align-items:center;gap:0.5rem;padding:0.25rem 0;border-bottom:1px solid rgba(255,255,255,0.02)}
 .tool-result .item img{width:24px;height:24px;border-radius:50%;border:1px solid var(--border)}
 .tool-result .item .i-name{color:white;font-size:0.75rem}
@@ -145,7 +150,7 @@ footer a{color:var(--green);text-decoration:none}
 <div class="boot-line">[ OK ] Initializing NEXUS ADMIN v2.0</div>
 <div class="boot-line">[ OK ] Loading Discord API modules...</div>
 <div class="boot-line">[ OK ] Establishing secure connection to Discord Gateway</div>
-<div class="boot-line">[ OK ] 30 admin &amp; analysis tools loaded</div>
+<div class="boot-line">[ OK ] 36 admin &amp; analysis tools loaded</div>
 <div class="boot-line" id="bootFinalLine"><span style="color:var(--cyan)">admin@nexus:~$ </span><span class="boot-cursor"></span></div>
 <div class="boot-progress"><div class="boot-progress-bar" id="bootProgress"></div></div>
 </div>
@@ -155,7 +160,7 @@ footer a{color:var(--green);text-decoration:none}
 <h1>NEXUS ADMIN TOOLKIT</h1>
 <p>Herramientas legítimas de administración y análisis para Discord. Gestión de servidores, auditoría de seguridad, respaldos y estadísticas — todo lo que un administrador real necesita.</p>
 <div class="stats-bar">
-<div class="stat"><div class="num" id="statTools">30</div><div class="lbl">Herramientas</div></div>
+<div class="stat"><div class="num" id="statTools">36</div><div class="lbl">Herramientas</div></div>
 <div class="stat"><div class="num" id="statReal">100%</div><div class="lbl">Funcional</div></div>
 <div class="stat"><div class="num" id="statSafe">Safe</div><div class="lbl">Sin acciones destructivas</div></div>
 </div>
@@ -176,16 +181,17 @@ footer a{color:var(--green);text-decoration:none}
 <div style="font-size:0.6rem;color:#555;margin-top:0.3rem">El token se guarda en tu navegador (localStorage) y se autocompleta en todas las herramientas. Solo funciona para vos.</div>
 </div>
 <div class="section-title"><span class="arrow">>></span> ADMIN TOOLS <span style="font-size:0.6rem;color:#666;letter-spacing:0">(Solo lectura y administración — nada destructivo)</span></div>
+<div class="search-box"><input type="text" id="toolSearch" placeholder="🔍 Buscar herramienta... (ej: avatar, permiso, canal, rol)" oninput="filterTools(this.value)"/><div style="font-size:0.6rem;color:#555;margin-top:0.3rem" id="searchCount"></div></div>
 <div class="tools-grid" id="toolContainer"></div>
 <div class="section-title" style="margin-top:1rem"><span class="arrow">>></span> CONSOLE</div>
 <div class="terminal-box">
 <div class="terminal-box-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="terminal-box-title">admin@nexus:~ - activity.log</span></div>
-<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.0 READY</div><div class="terminal-line">[INFO] 30 tools loaded - all legitimate</div></div>
+<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.1 READY</div><div class="terminal-line">[INFO] 36 tools loaded - all legitimate</div></div>
 <div class="terminal-input-line"><span class="terminal-prompt">admin@nexus:~$</span><input type="text" class="terminal-input" id="terminalInput" placeholder="help / tools / toolname" spellcheck="false"/></div>
 </div>
 </div>
 </div>
-<footer><p>NEXUS ADMIN v2.0 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
+<footer><p>NEXUS ADMIN v2.1 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -903,6 +909,111 @@ log('[OK] Top members','success');return h;
 });
 });
 
+// ============ TOOL 31: Permission Calculator (sin API) ============
+T('permcalc','Permission Calculator','P','none','none','Calcula el valor entero de permisos de Discord. Marcá lo que querés y copiá el número. Sin API.',[],
+function(){
+var PERMS=[
+[0x8,'Administrator','admin',1],[0x2,'Kick Members','kick',1],[0x4,'Ban Members','ban',1],[0x20,'Manage Guild','manage_guild',1],
+[0x10,'Manage Channels','manage_channels',1],[0x40,'Manage Webhooks','manage_webhooks',1],[0x10000000,'Manage Roles','manage_roles',1],
+[0x4000000,'Manage Nicknames','manage_nick',1],[0x80,'Manage Messages','manage_msgs',1],[0x400,'Send Messages','send_msgs',0],
+[0x8000,'Attach Files','attach',0],[0x2000,'Embed Links','embed_links',0],[0x10000,'Connect','connect',0],[0x20000,'Speak','speak',0],
+[0x800000,'Read Message History','read_hist',0],[0x40,'View Channels','view_ch',0],[0x100000,'Move Members','move',0],[0x40000000,'Use VAD','vad',0]
+];
+var h='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;font-size:0.7rem">';
+PERMS.forEach(function(p){
+h+='<label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;padding:0.3rem;background:rgba(0,0,0,0.25);border-radius:4px"><input type="checkbox" class="permchk" value="'+p[0]+'" data-name="'+p[1]+'"/> '+p[1]+'</label>';
+});
+h+='</div>';
+h+='<div style="margin-top:0.6rem;display:flex;gap:0.4rem;align-items:center"><button class="tool-btn" onclick="calcPerms()">Calcular</button><span id="permResult" style="color:var(--cyan);font-size:0.8rem"></span></div>';
+return h;
+});
+window.calcPerms=function(){
+var total=0,names=[];
+document.querySelectorAll('.permchk:checked').forEach(function(c){
+total|=parseInt(c.value);names.push(c.getAttribute('data-name'));
+});
+document.getElementById('permResult').textContent=' = '+total+'  ('+names.join(', ')+')';
+log('[OK] Permisos: '+total+' = '+names.join(', '),'success');
+};
+
+// ============ TOOL 32: Snowflake Range (sin API) ============
+T('snowrange','Snowflake Date Range','S','none','none','Convierte un ID de Discord a su fecha exacta de creación. Sin API.',[f_text('id','ID / Snowflake','100123456789012345')],
+function(f){
+if(!/^\d{15,20}$/.test(f.id))throw new Error('ID inválido');
+var n=BigInt(f.id),ms=(n>>22n)+1420070400000n;
+var d=new Date(Number(ms));
+var h='<div style="color:var(--green);font-size:0.85rem">Snowflake decodificado</div>';
+h+='<div style="margin-top:0.4rem;display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;font-size:0.65rem">';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">FECHA</div><div style="color:var(--green)">'+d.toLocaleDateString()+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">HORA UTC</div><div style="color:var(--cyan)">'+d.toUTCString()+'</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">EDAD</div><div style="color:var(--yellow)">'+Math.floor((Date.now()-d)/86400000)+' días</div></div>';
+h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555">ISO</div><div style="color:var(--purple)">'+d.toISOString()+'</div></div>';
+h+='</div>';
+log('[OK] Snowflake decodificado','success');return h;
+});
+
+// ============ TOOL 33: Hex Color Converter (sin API) ============
+T('hexcolor','Hex Color Converter','C','none','none','Convierte colores hex ↔ decimal para roles de Discord. Sin API.',[f_text('hex','Color HEX (ej: 8b5cf6)','8b5cf6')],
+function(f){
+var hex=f.hex.replace('#','').trim();
+if(!/^[0-9a-fA-F]{6}$/.test(hex))throw new Error('HEX inválido. Usá 6 dígitos (ej: ff003c)');
+var dec=parseInt(hex,16);
+var r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+var h='<div style="display:flex;align-items:center;gap:1rem">';
+h+='<div style="width:48px;height:48px;border-radius:8px;background:#'+hex+';border:2px solid var(--border)"></div>';
+h+='<div style="font-size:0.65rem;line-height:1.8">';
+h+='<div><span style="color:#555">HEX:</span> <span style="color:var(--green)">#'+hex+'</span></div>';
+h+='<div><span style="color:#555">DEC:</span> <span style="color:var(--cyan)">'+dec+'</span></div>';
+h+='<div><span style="color:#555">RGB:</span> <span style="color:var(--yellow)">'+r+', '+g+', '+b+'</span></div>';
+h+='<div><span style="color:#555">CSS:</span> <span style="color:var(--purple)">rgb('+r+','+g+','+b+')</span></div>';
+h+='</div></div>';
+log('[OK] Color convertido','success');return h;
+});
+
+// ============ TOOL 34: Token Decoder (sin API) ============
+T('tokendecode','Token Decoder','T','none','none','Decodifica la fecha de creación del token de Discord desde la parte ID. Sin API.',[f_text('token','Token','MTA5MjM0...')],
+function(f){
+var tok=f.token.trim();
+if(tok.length<10)throw new Error('Token muy corto');
+var idPart=tok.split('.')[0];
+if(!idPart||!/^\d+$/.test(idPart))throw new Error('No se pudo extraer la parte de ID del token');
+var n=BigInt(idPart),ms=(n>>22n)+1420070400000n;
+var d=new Date(Number(ms));
+var isBot=tok.startsWith('M')?'Bot token':'User token';
+var h='<div style="color:var(--green);font-size:0.85rem">Token decodificado</div>';
+h+='<div style="margin-top:0.4rem;font-size:0.65rem">';
+h+='<div><span style="color:#555">TIPO:</span> <span style="color:var(--cyan)">'+isBot+'</span></div>';
+h+='<div><span style="color:#555">CREADO:</span> <span style="color:var(--green)">'+d.toLocaleDateString()+' '+d.toLocaleTimeString()+'</span></div>';
+h+='<div><span style="color:#555">EDAD:</span> <span style="color:var(--yellow)">'+Math.floor((Date.now()-d)/86400000)+' días</span></div>';
+h+='</div>';
+log('[OK] Token decodificado','success');return h;
+});
+
+// ============ TOOL 35: Embed Message Builder (sin API) ============
+T('embed','Embed Builder','E','none','none','Construí un mensaje embed para pegarlo en un bot o webhook. Sin API.',[f_text('title','Título','Mi embed'),f_text('desc','Descripción','Contenido aquí'),f_text('color','Color HEX','8b5cf6'),f_text('footer','Footer','Nexus Admin')],
+function(f){
+var color=f.color.replace('#','');
+var hex='0x'+(/^[0-9a-fA-F]{6}$/.test(color)?color:'8b5cf6');
+var json=JSON.stringify({embeds:[{title:f.title,description:f.desc,color:parseInt(hex),footer:{text:f.footer}}]},null,2);
+var h='<div style="color:var(--green);font-size:0.85rem">JSON del embed (copialo para usarlo en tu bot):</div>';
+h+='<pre style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;font-size:0.65rem;color:var(--cyan);overflow-x:auto;white-space:pre-wrap;word-break:break-all">'+esc(json)+'</pre>';
+log('[OK] Embed generado','success');return h;
+});
+
+// ============ TOOL 36: Guild Template ============
+T('template','Guild Template','G','cyan','bot','Obtiene el template del servidor para compartir su estructura.',[f_token(),f_guild()],
+function(f){
+log('[>] Fetching template...','info');
+return api('/guilds/'+f.guild+'/templates',f.token).then(function(tpls){
+if(!tpls||!tpls.length)return '<div style="color:#666">Este servidor no tiene templates. Se pueden crear con Manage Guild.</div>';
+var h='<div style="color:var(--green);font-size:0.85rem">'+tpls.length+' template(s)</div>';
+tpls.forEach(function(t){
+h+='<div class="item"><div style="flex:1"><div class="i-name" style="color:var(--cyan)">discord.new/'+esc(t.code)+'</div><div class="i-sub">'+esc(t.name||'Sin nombre')+' | usos: '+(t.usage_count||0)+' | canales: '+(t.serialized_source_channel_count||'?')+'</div></div></div>';
+});
+log('[OK] Templates','success');return h;
+});
+});
+
 // ============ RENDER ============
 var container=document.getElementById('toolContainer');
 TOOLS.forEach(function(t,idx){
@@ -931,13 +1042,38 @@ var res=document.getElementById('res_'+cmd);
 res.innerHTML='<div style="color:var(--cyan)">> Procesando...</div>';
 log('[>] Running '+cmd+'...','info');
 Promise.resolve().then(function(){return t.fn(f)}).then(function(html){
-res.innerHTML=html;
+res.innerHTML=html+'<button class="copy-res" onclick="copyRes(\''+cmd+'\')">⧉ Copiar</button>';
 }).catch(function(e){
 res.innerHTML='<div style="color:var(--red)">[ERROR] '+esc(e.message)+'</div>';
 log('[ERROR] '+e.message,'error');
 });
 }
+function copyRes(cmd){
+var el=document.getElementById('res_'+cmd);
+if(!el)return;
+var txt=el.innerText.replace('⧉ Copiar','').trim();
+navigator.clipboard.writeText(txt).then(function(){
+toast('Resultado copiado');
+log('[OK] Resultado copiado al portapapeles','success');
+}).catch(function(){});
+}
+window.copyRes=copyRes;
 window.togglePanel=togglePanel;window.runTool=runTool;
+
+// ============ SEARCH FILTER ============
+function filterTools(q){
+q=(q||'').toLowerCase();
+var cards=document.querySelectorAll('.tool-card');
+var count=0;
+cards.forEach(function(card,idx){
+var t=TOOLS[idx];
+var match=!q||(t.name+' '+t.cmd+' '+t.desc+' '+(t.auth||'')).toLowerCase().indexOf(q)>-1;
+card.classList.toggle('hidden',!match);
+if(match)count++;
+});
+document.getElementById('searchCount').textContent=count;
+}
+window.filterTools=filterTools;
 
 // ============ TOKEN AUTOFILL ============
 var savedToken=localStorage.getItem('nexus_token')||'';
