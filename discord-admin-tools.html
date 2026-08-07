@@ -135,7 +135,7 @@ footer a{color:var(--green);text-decoration:none}
 <button onclick="saveProxy()" class="tool-btn">Guardar</button>
 <button onclick="document.getElementById('proxyBar').style.display='none'" class="tool-btn" style="border-color:var(--red);color:var(--red)">X</button>
 </div>
-<div style="font-size:0.6rem;color:#666;margin-top:0.4rem">Si Discord te da "internal network error", el proxy actual está bloqueado. Pegá acá la URL de otro proxy que funcione, o escribí <span style="color:var(--cyan)">none</span> para probar conexión directa.</div>
+<div style="font-size:0.6rem;color:#666;margin-top:0.4rem">Por defecto usa <span style="color:var(--cyan)">none</span> = conexión directa desde tu navegador (funciona con BOT TOKEN MTA...). Si usás un user token (NDU...) y te da error CORS, pegá acá la URL de un proxy que funcione.</div>
 </div>
 <div class="container">
 <div class="boot-screen" id="bootScreen">
@@ -180,11 +180,11 @@ footer a{color:var(--green);text-decoration:none}
 <script>
 // ============ API ============
 var PROXY_LIST=[
+'none',
 'https://discord-proxy-mu.vercel.app/api/proxy?url=',
 'https://discordapi.vercel.app/api/proxy?url=',
 'https://discord-proxy-service.vercel.app/api/proxy?url=',
-'https://api-dc-proxy.vercel.app/api/proxy?url=',
-'none'
+'https://api-dc-proxy.vercel.app/api/proxy?url='
 ];
 var PROXY=localStorage.getItem('nexus_proxy')||PROXY_LIST[0];
 var _proxyIdx=Math.max(0,PROXY_LIST.indexOf(PROXY));
@@ -198,15 +198,16 @@ if(opts.body){body=opts.body}
 var method=opts.method||'GET';
 var base='https://discord.com/api/v10'+endpoint;
 return tryFetch(PROXY,0).then(function(d){return d}).catch(function(e){
-if(e.__blocked){
+if(e.__cors||e.__blocked){
 // intentar siguiente proxy
 if(_proxyIdx<PROXY_LIST.length-1){
 _proxyIdx++;PROXY=PROXY_LIST[_proxyIdx];localStorage.setItem('nexus_proxy',PROXY);
 log('[PROXY] Cambiando a: '+PROXY,'warn');
 return tryFetch(PROXY,1);
 }
-throw new Error('Discord bloquea este token/IP en todos los proxies. Abrí la página LOCALMENTE (descargá el HTML) y usá un BOT TOKEN, o configurá tu propio proxy en el botón "Proxy".');
 }
+if(e.__cors)throw new Error('CORS bloqueado. Este modo requiere un BOT TOKEN. Los user tokens necesitan un proxy. Cambiá el token o configurá un proxy en el botón "Proxy".');
+if(e.__blocked)throw new Error('Discord bloquea este token/IP. Probá con un BOT TOKEN (MTA...) o configurá un proxy propio en el botón "Proxy".');
 throw e;
 });
 function tryFetch(proxy,attempt){
@@ -231,6 +232,9 @@ if(e.message&&!e.message.includes('Unexpected token'))throw e;
 throw new Error('API error - check your token and IDs');
 }
 });
+}).catch(function(e){
+if(e.name==='TypeError'||e.name==='SyntaxError'){var err=new Error('CORS: '+proxy);err.__cors=true;throw err;}
+throw e;
 });
 }
 }
