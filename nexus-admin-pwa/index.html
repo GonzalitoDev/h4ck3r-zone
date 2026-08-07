@@ -2316,12 +2316,13 @@ setInterval(clock,1000);clock();
 // ============ PWA INSTALL ============
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
 var deferredPWA=null;
-window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPWA=e;document.getElementById('pwaInstall').style.display='block';setTimeout(function(){document.getElementById('pwaInstall').style.display='none'},15000)});
-if(/Android|iPhone/i.test(navigator.userAgent)){setTimeout(function(){document.getElementById('pwaInstall').style.display='block';setTimeout(function(){document.getElementById('pwaInstall').style.display='none'},12000)},8000)}
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPWA=e;var el=document.getElementById('pwaInstall');if(el)el.style.display='block';setTimeout(function(){if(el)el.style.display='none'},20000)});
+// Mostrar tambien sin evento (PC + mobile)
+setTimeout(function(){var el=document.getElementById('pwaInstall');if(el)el.style.display='block';setTimeout(function(){if(el)el.style.display='none'},15000)},5000)
 </script>
 <div id="pwaInstall" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:300;background:var(--terminal);border:2px solid var(--green);border-radius:12px;padding:12px 20px;text-align:center;max-width:90vw;cursor:pointer;animation:slideUp .3s" onclick="if(deferredPWA){deferredPWA.prompt()}">
 <span style="font-size:0.8rem;color:var(--green)">Instalar Nexus Admin</span>
-<span style="font-size:0.6rem;color:#666;display:block;margin-top:2px">Tocá acá para instalar como app</span>
+<span style="font-size:0.6rem;color:#666;display:block;margin-top:2px">Toca aca o usa el icono ⊕ en la barra de Chrome</span>
 </div>
 </body>
 </html>
