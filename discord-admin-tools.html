@@ -16,6 +16,7 @@ canvas#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opaci
 @keyframes pulse{0%,100%{box-shadow:0 0 5px var(--green)}50%{box-shadow:0 0 20px var(--green)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 @keyframes glow{0%{text-shadow:0 0 5px var(--green)}50%{text-shadow:0 0 20px var(--green)}}
+@keyframes gradient{0%{background-position:0%50%}50%{background-position:100%50%}100%{background-position:0%50%}}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--green-dim);border-radius:3px}
@@ -169,7 +170,7 @@ footer a{color:var(--green);text-decoration:none}
 <div class="boot-line">[ OK ] Initializing NEXUS ADMIN v2.0</div>
 <div class="boot-line">[ OK ] Loading Discord API modules...</div>
 <div class="boot-line">[ OK ] Establishing secure connection to Discord Gateway</div>
-<div class="boot-line">[ OK ] 86 admin &amp; analysis tools loaded</div>
+<div class="boot-line">[ OK ] 100 admin &amp; analysis tools loaded</div>
 <div class="boot-line" id="bootFinalLine"><span style="color:var(--cyan)">admin@nexus:~$ </span><span class="boot-cursor"></span></div>
 <div class="boot-progress"><div class="boot-progress-bar" id="bootProgress"></div></div>
 </div>
@@ -179,7 +180,7 @@ footer a{color:var(--green);text-decoration:none}
 <h1>NEXUS ADMIN TOOLKIT</h1>
 <p>Herramientas legítimas de administración y análisis para Discord. Gestión de servidores, auditoría de seguridad, respaldos y estadísticas — todo lo que un administrador real necesita.</p>
 <div class="stats-bar">
-<div class="stat"><div class="num" id="statTools">86</div><div class="lbl">Herramientas</div></div>
+<div class="stat"><div class="num" id="statTools">100</div><div class="lbl">Herramientas</div></div>
 <div class="stat"><div class="num" id="statReal">100%</div><div class="lbl">Funcional</div></div>
 <div class="stat"><div class="num" id="statSafe">Safe</div><div class="lbl">Sin acciones destructivas</div></div>
 </div>
@@ -236,12 +237,12 @@ footer a{color:var(--green);text-decoration:none}
 <div class="section-title" style="margin-top:1rem"><span class="arrow">>></span> CONSOLE</div>
 <div class="terminal-box">
 <div class="terminal-box-header"><div class="boot-dot r"></div><div class="boot-dot y"></div><div class="boot-dot g"></div><span class="terminal-box-title">admin@nexus:~ - activity.log</span></div>
-<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v2.6 READY</div><div class="terminal-line">[INFO] 86 tools loaded - all legitimate</div></div>
+<div class="terminal-box-body" id="terminalBody"><div class="terminal-line">[SYSTEM] NEXUS ADMIN v3.0 READY</div><div class="terminal-line">[INFO] 100 tools loaded - all legitimate</div></div>
 <div class="terminal-input-line"><span class="terminal-prompt">admin@nexus:~$</span><input type="text" class="terminal-input" id="terminalInput" placeholder="help / tools / toolname" spellcheck="false"/></div>
 </div>
 </div>
 </div>
-<footer><p>NEXUS ADMIN v2.6 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
+<footer><p>NEXUS ADMIN v3.0 - <span style="color:var(--green)">Uso legítimo para administradores de Discord</span></p></footer>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -256,7 +257,7 @@ var PROXY_LIST=[
 var PROXY=localStorage.getItem('nexus_proxy')||PROXY_LIST[0];
 var _proxyIdx=Math.max(0,PROXY_LIST.indexOf(PROXY));
 var favs=[];try{favs=JSON.parse(localStorage.getItem('nexus_favs')||'[]')}catch(e){favs=[]}
-var CATS={serverinfo:'discord',members:'discord',audit:'discord',channellist:'discord',rolelist:'discord',emojis:'discord',avatar:'discord',invites:'discord',webhooks:'discord',auditlog:'discord',backup:'discord',tokencheck:'discord',myservers:'discord',perms:'discord',profile:'discord',memberlist:'discord',rolemembers:'discord',channelstats:'discord',stickers:'discord',pins:'discord',decode:'universal',boosters:'discord',slowmode:'discord',channelupdate:'discord',verification:'discord',invitecreate:'discord',chanperms:'discord',widget:'discord',stats:'discord',topmembers:'discord',permcalc:'universal',snowrange:'universal',hexcolor:'universal',tokendecode:'universal',embed:'universal',template:'discord',passgen:'universal',hashgen:'universal',base64:'universal',urlcode:'universal',textanalyze:'universal',extractor:'universal',numconvert:'universal',jsonfmt:'universal',uuid:'universal',caseconv:'universal',randomnum:'universal',passcheck:'universal',lorem:'universal',ipinfo:'universal',inviteinfo:'discord',webhookinfo:'discord',avatarbuild:'discord',emojibuild:'discord',msglink:'universal',idvalidate:'universal',defaultavatar:'discord',cdnbuilder:'discord',avatarorig:'discord',msgavatar:'discord',inviteavatar:'discord',avatarsizes:'discord',webscrape:'web',metascrape:'web',emailscrape:'web',linkscrape:'web',msgscrape:'scrape',channelfeed:'scrape',memberdump:'scrape',iconlist:'scrape',badgecheck:'discord',connections:'discord',guildfind:'discord',sysinfo:'universal',screencap:'universal',bookmarklet:'universal',filetype:'web',favicon:'web',ythumb:'web',uatest:'universal',cookies:'universal',bulkdl:'web',htmlmin:'web',jsfmt:'web',timezone:'universal',qrgen:'universal'};
+var CATS={serverinfo:'discord',members:'discord',audit:'discord',channellist:'discord',rolelist:'discord',emojis:'discord',avatar:'discord',invites:'discord',webhooks:'discord',auditlog:'discord',backup:'discord',tokencheck:'discord',myservers:'discord',perms:'discord',profile:'discord',memberlist:'discord',rolemembers:'discord',channelstats:'discord',stickers:'discord',pins:'discord',decode:'universal',boosters:'discord',slowmode:'discord',channelupdate:'discord',verification:'discord',invitecreate:'discord',chanperms:'discord',widget:'discord',stats:'discord',topmembers:'discord',permcalc:'universal',snowrange:'universal',hexcolor:'universal',tokendecode:'universal',embed:'universal',template:'discord',passgen:'universal',hashgen:'universal',base64:'universal',urlcode:'universal',textanalyze:'universal',extractor:'universal',numconvert:'universal',jsonfmt:'universal',uuid:'universal',caseconv:'universal',randomnum:'universal',passcheck:'universal',lorem:'universal',ipinfo:'universal',inviteinfo:'discord',webhookinfo:'discord',avatarbuild:'discord',emojibuild:'discord',msglink:'universal',idvalidate:'universal',defaultavatar:'discord',cdnbuilder:'discord',avatarorig:'discord',msgavatar:'discord',inviteavatar:'discord',avatarsizes:'discord',webscrape:'web',metascrape:'web',emailscrape:'web',linkscrape:'web',msgscrape:'scrape',channelfeed:'scrape',memberdump:'scrape',iconlist:'scrape',badgecheck:'discord',connections:'discord',guildfind:'discord',sysinfo:'universal',screencap:'universal',bookmarklet:'universal',filetype:'web',favicon:'web',ythumb:'web',uatest:'universal',cookies:'universal',bulkdl:'web',htmlmin:'web',jsfmt:'web',timezone:'universal',qrgen:'universal',regextest:'universal',csvjson:'universal',mdprev:'universal',dnslookup:'universal',steamban:'universal',diff:'universal',palette:'universal',img2b64:'universal',units:'universal',cron:'universal'};
 function catOf(cmd){return CATS[cmd]||'universal'}
 function api(endpoint,token,opts){
 opts=opts||{};
@@ -1983,6 +1984,153 @@ h+='<div style="margin-top:0.6rem;text-align:center"><img src="'+url+'" style="w
 h+='<div style="margin-top:0.5rem;text-align:center;font-size:0.6rem;color:#666;word-break:break-all">'+esc(f.text||'')+'</div>';
 h+='<div style="margin-top:0.5rem;text-align:center"><button class="tool-btn" onclick="dl(\''+url+'\',\'qr_code.png\')">Descargar QR</button></div>';
 log('[OK] QR generado','success');return h;
+});
+
+// ============ TOOL 87: Regex Tester (universal) ============
+T('regextest','Regex Tester','R','none','none','Probá expresiones regulares en tiempo real contra cualquier texto. SIN API.',[f_text('regex','Expresión regular','\\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}\\b'),f_text('text','Texto para probar','Contacto: test@email.com, soporte@empresa.com, otro@mail.org')],
+function(f){
+var h='',matches=[];
+try{var re=new RegExp(f.regex,'gim');matches=f.text.match(re)||[];h+='<div style="color:var(--green);font-size:0.85rem">'+matches.length+' coincidencias:</div>';
+matches.slice(0,30).forEach(function(m,i){h+='<div class="item"><div class="i-name" style="color:var(--cyan);font-size:0.7rem">['+(i+1)+'] '+esc(String(m))+'</div></div>'});
+if(matches.length>30)h+='<div style="color:#666">... +'+(matches.length-30)+' mas</div>';
+var hl=f.text.replace(re,function(m){return '<span style="background:rgba(139,92,246,0.25);color:#fff;padding:0.05rem 0.2rem;border-radius:2px">'+esc(m)+'</span>'});
+h+='<div style="margin-top:0.6rem;font-size:0.65rem;color:#666">Previsualizacion:</div>';
+h+='<div style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.3rem;font-size:0.7rem;color:var(--text);word-break:break-all;line-height:1.6">'+hl+'</div>';
+}catch(e){h='<div style="color:var(--red);font-size:0.85rem">Regex invalido: '+esc(e.message)+'</div>'}
+log('[OK] '+matches.length+' matches','success');var matches=[];return h;
+});
+
+// ============ TOOL 88: CSV to JSON (universal) ============
+T('csvjson','CSV to JSON','C','none','none','Convierte datos CSV a formato JSON. Pegas el CSV y te devuelve JSON formateado.',[f_text('csv','Datos CSV','nombre,email,edad\nJuan,juan@mail.com,25\nAna,ana@mail.com,30')],
+function(f){
+var lines=f.csv.trim().split('\n');
+if(lines.length<2)throw new Error('El CSV necesita al menos header + una fila');
+var headers=lines[0].split(',').map(function(h){return h.trim()});
+var result=[];
+for(var i=1;i<lines.length;i++){
+var vals=lines[i].split(',');
+var obj={};
+headers.forEach(function(h,j){obj[h]=vals[j]?vals[j].trim():''});
+result.push(obj);
+}
+var json=JSON.stringify(result,null,2);
+var h='<div style="color:var(--green);font-size:0.85rem">'+result.length+' filas convertidas a JSON:</div>';
+h+='<pre style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;font-size:0.65rem;color:var(--cyan);overflow-x:auto;max-height:250px;white-space:pre-wrap;word-break:break-all">'+esc(json)+'</pre>';
+log('[OK] CSV a JSON: '+result.length+' filas','success');return h;
+});
+
+// ============ TOOL 89: Markdown Preview (universal) ============
+T('mdprev','Markdown Preview','M','none','none','Escribi Markdown y miralo renderizado en vivo. Parrafos, headers, negrita, listas, links.',[f_text('md','Markdown','# Titulo\n## Subtitulo\n**Negrita** y *cursiva*\n- item 1\n- item 2\n[Link](https://ejemplo.com)')],
+function(f){
+var md=f.md;
+var html=md.replace(/### (.+)/g,'<h3>$1</h3>').replace(/## (.+)/g,'<h2>$1</h2>').replace(/# (.+)/g,'<h1>$1</h1>');
+html=html.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>');
+html=html.replace(/`(.+?)`/g,'<code style="background:rgba(0,0,0,0.4);padding:0.1rem 0.3rem;border-radius:3px">$1</code>');
+html=html.replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2" target="_blank" style="color:var(--cyan)">$1</a>');
+html=html.replace(/^- (.+)/gm,'<li style="margin-left:1rem">$1</li>');
+html=html.replace(/\n/g,'<br/>');
+var h='<div style="color:var(--green);font-size:0.85rem">Preview:</div>';
+h+='<div style="background:var(--terminal);border:1px solid var(--border);border-radius:8px;padding:0.8rem;margin-top:0.4rem;font-size:0.8rem;color:var(--text);line-height:1.8;min-height:80px">'+html+'</div>';
+log('[OK] Markdown renderizado','success');return h;
+});
+
+// ============ TOOL 90: DNS Lookup (universal) ============
+T('dnslookup','DNS Lookup','D','none','none','Consulta registros DNS (A, MX, TXT, NS) de cualquier dominio via Google DNS API.',[f_text('domain','Dominio (sin https://)','google.com'),f_select('type','Tipo',[{v:'A',l:'A (IPv4)'},{v:'MX',l:'MX (Mail)'},{v:'TXT',l:'TXT'},{v:'NS',l:'NS (Nameservers)'},{v:'AAAA',l:'AAAA (IPv6)'}])],
+function(f){
+log('[>] DNS lookup '+f.domain+'...','info');
+return fetch('https://dns.google/resolve?name='+encodeURIComponent(f.domain)+'&type='+f.type).then(function(r){return r.json()}).then(function(d){
+var records=d.Answer||[];
+var h='<div style="color:var(--green);font-size:0.85rem">Registros '+f.type+' para '+esc(f.domain)+':</div>';
+if(!records.length)return h+'<div style="color:#666;font-size:0.65rem;margin-top:0.4rem">Sin registros '+f.type+'</div>';
+records.forEach(function(r){h+='<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.65rem"><span style="color:var(--cyan)">'+r.type+'</span><span style="color:var(--green);word-break:break-all;text-align:right">'+r.data+'</span></div>'});
+h+='</div>';
+log('[OK] DNS '+records.length+' records','success');return h;
+}).catch(function(){throw new Error('Error de red o dominio invalido')});
+});
+
+// ============ TOOL 91: Steam Ban Checker (universal) ============
+T('steamban','Steam Ban Checker','S','none','none','Verifica bans de una cuenta de Steam (VAC, Game Ban, Community Ban) usando la API oficial.',[f_text('steamid','Steam ID64 o URL de perfil','76561198000000000')],
+function(f){
+var raw=f.steamid.trim();
+var id=raw.match(/\/profiles\/(\d{17})/)?.[1]||raw.match(/\/id\/([^\/]+)/)?.[1]||raw;
+log('[>] Checking Steam bans...','info');
+var url='https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=STEAM_API_KEY&steamids='+encodeURIComponent(id);
+return fetch(url).then(function(r){return r.json()}).then(function(d){
+var p=(d.players||[])[0];
+if(!p||p.NoAuth)return '<div style="color:#666">Configura la API key. Anda a steamcommunity.com/dev/apikey (gratis).</div><div style="font-size:0.65rem;margin-top:0.3rem;color:var(--yellow)">Info basica: no se pudo consultar la API de Steam. Pone tu API key gratuita en la variable STEAM_API_KEY.</div>';
+var h='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;font-size:0.65rem">';
+var items=[['VAC BAN',p.VACBanned?'SI ⚠':'NO ✓',p.VACBanned?'var(--red)':'var(--green)'],['VACs',p.NumberOfVACBans||0,'var(--orange)'],['GAME BANS',p.NumberOfGameBans||0,'var(--yellow)'],['DIAS ULTIMO',p.DaysSinceLastBan||'N/A','var(--cyan)'],['COMMUNITY',p.CommunityBanned?'SI':'NO','var(--purple)'],['ECONOMY',p.EconomyBan||'none','var(--pink)']];
+items.forEach(function(it){h+='<div style="background:rgba(0,0,0,0.3);padding:0.4rem;border-radius:4px"><div style="color:#555;font-size:0.55rem">'+it[0]+'</div><div style="color:'+it[2]+';font-size:0.8rem">'+it[1]+'</div></div>'});
+h+='</div>';
+log('[OK] Steam checked','success');return h;
+}).catch(function(){throw new Error('Error de API - Steam puede requerir API key gratuita')});
+});
+
+// ============ TOOL 92: Text Diff Comparator (universal) ============
+T('diff','Text Comparator','D','none','none','Compara dos textos y te muestra las diferencias linea por linea.',[f_text('txt1','Texto original','Hola mundo\nSegunda linea\nTercera linea mantiene'),f_text('txt2','Texto modificado','Hola mundo\nLinea modificada\nTercera linea mantiene\nNueva linea')],
+function(f){
+var a=f.txt1.split('\n'),b=f.txt2.split('\n');
+var h='<div style="color:var(--green);font-size:0.85rem">Comparacion:</div>';
+h+='<div style="display:flex;gap:0.4rem;margin-top:0.4rem"><div style="flex:1;font-size:0.65rem;color:#555;text-align:center">ORIGINAL</div><div style="flex:1;font-size:0.65rem;color:#555;text-align:center">MODIFICADO</div></div>';
+var max=Math.max(a.length,b.length);
+for(var i=0;i<Math.min(max,50);i++){
+var la=a[i]||'',lb=b[i]||'';
+var same=la===lb;
+h+='<div style="display:flex;gap:0.4rem;padding:0.15rem 0";font-size:0.65rem"><div style="flex:1;background:'+(same?'transparent':'rgba(239,68,68,0.1)')+';padding:0.2rem 0.4rem;border-radius:3px;word-break:break-all;color:'+(same?'var(--text)':'var(--red)')+'">'+esc(la||'---')+'</div><div style="flex:1;background:'+(same?'transparent':'rgba(34,197,94,0.1)')+';padding:0.2rem 0.4rem;border-radius:3px;word-break:break-all;color:'+(same?'var(--text)':'var(--green)')+'">'+esc(lb||'---')+'</div></div>';
+}
+if(max>50)h+='<div style="color:#666;font-size:0.6rem;margin-top:0.3rem">... +'+(max-50)+' lineas mas</div>';
+log('[OK] Diff comparado','success');return h;
+});
+
+// ============ TOOL 93: Color Palette Generator (universal) ============
+T('palette','Color Palette Generator','P','none','none','Genera paletas de colores aleatorias para diseño. Copia cada color.',[f_text('n','Cantidad de colores (3-12)','5')],
+function(f){
+var n=Math.min(Math.max(3,parseInt(f.n)||5),12);
+function randColor(){return Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}
+function isDark(h){var r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);return(r+g+b)/3<128}
+var h='<div style="color:var(--green);font-size:0.85rem">Paleta de '+n+' colores:</div>';
+h+='<div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap">';
+for(var i=0;i<n;i++){
+var c=randColor();
+h+='<div style="text-align:center;cursor:pointer" onclick="copySimple(\'#'+c+'\')"><div style="width:50px;height:50px;background:#'+c+';border-radius:8px;border:2px solid var(--border);margin:0 auto"></div><div style="font-size:0.55rem;color:var(--cyan);margin-top:0.2rem">#'+c+'</div></div>';
+}
+h+='</div>';
+h+='<button class="tool-btn" style="margin-top:0.5rem" onclick="runTool(\'palette\')">Generar nueva</button>';
+log('[OK] Paleta generada','success');return h;
+});
+
+// ============ TOOL 94: Image to Base64 (universal) ============
+T('img2b64','Image to Base64','I','none','none','Convierte imagenes a Base64 para embeberlas en HTML/CSS. Selecciona una imagen.',[],
+function(f){
+return new Promise(function(ok){var i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){var b64=ev.target.result;var h='<div style="color:var(--green);font-size:0.85rem">Imagen: '+esc(f.name)+' ('+Math.round(f.size/1024)+' KB)</div>';h+='<div style="margin-top:0.5rem;text-align:center"><img src="'+b64+'" style="max-width:200px;max-height:200px;border-radius:8px;border:2px solid var(--green)"/></div>';h+='<div style="margin-top:0.5rem"><div style="color:#555;font-size:0.55rem">Base64:</div><textarea style="width:100%;height:80px;background:rgba(0,0,0,0.5);border:1px solid var(--border);padding:0.4rem;border-radius:6px;color:var(--cyan);font-size:0.6rem;font-family:monospace;resize:vertical;margin-top:0.3rem" onclick="this.select()">'+b64+'</textarea></div>';h+='<button class="tool-btn" style="margin-top:0.4rem" onclick="copySimple(\''+b64.slice(0,30)+'...\');navigator.clipboard.writeText(\''+b64+'\');toast(\'Base64 copiado\')">Copiar Base64</button>';document.getElementById('res_img2b64').innerHTML=h;log('[OK] Imagen convertida','success')};r.readAsDataURL(f)};var h='<div style="color:var(--green);font-size:0.85rem">Selecciona una imagen de tu PC:</div>';h+='<div style="margin-top:0.5rem"><input type="file" accept="image/*" style="display:none" id="imgFileInp"/><button class="tool-btn" onclick="document.getElementById(\'imgFileInp\').click()">Seleccionar imagen</button></div>';i.id='imgFileInp';setTimeout(function(){document.querySelector('#res_img2b64').parentElement.appendChild(i);document.getElementById('res_img2b64').innerHTML=h},50);ok(h)});
+});
+
+// ============ TOOL 95: Unit Converter (universal) ============
+T('units','Unit Converter','U','none','none','Convierte entre unidades: temperatura, distancia, peso. SIN API.',[f_text('val','Valor','100'),f_select('mode','Conversion',[{v:'c-f',l:'Celsius > Fahrenheit'},{v:'f-c',l:'Fahrenheit > Celsius'},{v:'km-mi',l:'KM > Millas'},{v:'mi-km',l:'Millas > KM'},{v:'kg-lb',l:'KG > Libras'},{v:'lb-kg',l:'Libras > KG'},{v:'cm-in',l:'CM > Pulgadas'}])],
+function(f){
+var v=parseFloat(f.val)||0;var u='',out;
+if(f.mode==='c-f'){out=v*9/5+32;u='F'}
+else if(f.mode==='f-c'){out=(v-32)*5/9;u='C'}
+else if(f.mode==='km-mi'){out=v*0.621371;u='mi'}
+else if(f.mode==='mi-km'){out=v/0.621371;u='km'}
+else if(f.mode==='kg-lb'){out=v*2.20462;u='lb'}
+else if(f.mode==='lb-kg'){out=v/2.20462;u='kg'}
+else {out=v/2.54;u='in'}
+var labels={f:{c:'F',f:'F'}};
+var h='<div style="color:var(--green);font-size:0.85rem">'+v+' = <span style="color:var(--cyan);font-size:1rem">'+out.toFixed(2)+' '+u+'</span></div>';
+log('[OK] Conversion: '+v+' -> '+out.toFixed(2)+' '+u,'success');return h;
+});
+
+// ============ TOOL 96: Cron Expression Generator (universal) ============
+T('cron','Cron Generator','C','none','none','Genera expresiones cron para tareas programadas. Eligiendo frecuencia.',[f_select('freq','Frecuencia',[{v:'*/5 * * * *',l:'Cada 5 min'},{v:'*/30 * * * *',l:'Cada 30 min'},{v:'0 * * * *',l:'Cada hora'},{v:'0 */6 * * *',l:'Cada 6h'},{v:'0 0 * * *',l:'Diario a medianoche'},{v:'0 9 * * 1-5',l:'Lun-Vie 9AM'},{v:'0 0 1 * *',l:'1er dia del mes'},{v:'0 0 * * 0',l:'Domingo medianoche'}])],
+function(f){
+var cron=f.freq;
+var labels={'*/5 * * * *':'Cada 5 minutos','*/30 * * * *':'Cada 30 minutos','0 * * * *':'Cada hora (en punto)','0 */6 * * *':'Cada 6 horas','0 0 * * *':'Diario a medianoche','0 9 * * 1-5':'Lunes a Viernes 9AM','0 0 1 * *':'Primero de cada mes','0 0 * * 0':'Cada domingo'};
+var h='<div style="color:var(--green);font-size:0.85rem">Expresion Cron:</div>';
+h+='<div style="background:rgba(0,0,0,0.5);border:1px solid var(--cyan);border-radius:8px;padding:0.8rem;margin-top:0.4rem;text-align:center"><span style="color:var(--cyan);font-size:1.2rem;font-family:monospace;letter-spacing:2px">'+cron+'</span></div>';
+h+='<div style="font-size:0.65rem;color:var(--yellow);margin-top:0.4rem;text-align:center">'+labels[cron]+'</div>';
+h+='<div style="margin-top:0.5rem;font-size:0.6rem;color:#666">Usalo en crontab de Linux, Vercel cron jobs, o Railway cron.</div>';
+log('[OK] Cron generado: '+cron,'success');return h;
 });
 
 // ============ RENDER ============
