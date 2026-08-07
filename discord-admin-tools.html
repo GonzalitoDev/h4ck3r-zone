@@ -255,6 +255,7 @@ var PROXY_LIST=[
 ];
 var PROXY=localStorage.getItem('nexus_proxy')||PROXY_LIST[0];
 var _proxyIdx=Math.max(0,PROXY_LIST.indexOf(PROXY));
+var favs=[];try{favs=JSON.parse(localStorage.getItem('nexus_favs')||'[]')}catch(e){favs=[]}
 function api(endpoint,token,opts){
 opts=opts||{};
 var headers={'Content-Type':'application/json'};
@@ -1794,8 +1795,6 @@ window.copyRes=copyRes;
 window.togglePanel=togglePanel;window.runTool=runTool;
 
 // ============ CATEGORIES & FAVORITES ============
-var favs=[];
-try{favs=JSON.parse(localStorage.getItem('nexus_favs')||'[]')}catch(e){favs=[]}
 var currentCat='all';
 var CATS={
 serverinfo:'discord',members:'discord',audit:'discord',channellist:'discord',rolelist:'discord',emojis:'discord',
