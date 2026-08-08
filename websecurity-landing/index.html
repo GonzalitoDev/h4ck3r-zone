@@ -103,12 +103,65 @@ footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-
     <h1>WebSecurity <b>Scanner Pro</b></h1>
     <p>Escáner avanzado de vulnerabilidades web. 23 módulos de escaneo real. Reconocimiento pasivo y activo. Reportes profesionales de seguridad.</p>
     <div class="hero-buttons">
-      <a href="#descargar" class="btn-primary">&#128229; Descargar v1.0</a>
-      <a href="#funcionalidades" class="btn-secondary">Ver funcionalidades</a>
+      <a href="#descargar" class="btn-primary">&#128229; Descargar</a>
+      <button onclick="openInfo()" class="btn-secondary" style="cursor:pointer">ℹ️ ¿Para qué sirve esto?</button>
     </div>
-    <div class="version">Windows 10/11 &bull; 12 MB &bull; Gratis &bull; <span style="color:var(--green)">✅ 100% Limpio — Falso positivo de SmartScreen</span></div>
+    <div class="version">Windows 10/11 &bull; 12 MB &bull; Gratis &bull; <span style="color:var(--green)">✅ 100% Limpio — Sin virus</span></div>
   </div>
 </section>
+
+<!-- INFO MODAL -->
+<div id="infoModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);align-items:center;justify-content:center" onclick="closeInfo(event)">
+  <div style="background:var(--bg2);border:1px solid var(--accent);border-radius:16px;padding:32px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto" onclick="event.stopPropagation()">
+    <h3 style="color:var(--accent);font-size:20px;margin-bottom:16px">🛡️ ¿Qué es esta página y para qué sirve?</h3>
+
+    <p style="color:var(--text);font-size:14px;line-height:1.8;margin-bottom:16px">
+      Somos <b style="color:var(--accent)">Nexus Tools</b> — una colección de <b>herramientas gratuitas para Windows</b>.
+      Desarrollamos aplicaciones de escritorio profesionales: escáner de seguridad web, limpiador de PC,
+      dashboard cyberpunk, explorador de películas gratis, escáner de ciberseguridad y más.
+    </p>
+
+    <h4 style="color:var(--green);font-size:15px;margin-bottom:8px">✅ ¿Tienen virus?</h4>
+    <p style="color:var(--text);font-size:13px;line-height:1.8;margin-bottom:16px">
+      <b style="color:var(--green)">NO. NINGUNA de nuestras apps tiene virus, malware, spyware ni adware.</b><br><br>
+      <b>¿Por qué Windows muestra advertencia entonces?</b><br>
+      Windows SmartScreen muestra ese aviso en <b>TODOS</b> los programas nuevos descargados de internet
+      que no tienen un certificado digital pago ($300-500 USD/año). Es una protección genérica,
+      <b>no significa que el archivo tenga virus</b>.<br><br>
+      <b>¿Cómo verificarlo?</b><br>
+      • Subí cualquier .exe a <a href="https://virustotal.com" target="_blank" style="color:var(--accent)">VirusTotal.com</a> (escanea con 70+ antivirus)<br>
+      • El código fuente está en <a href="https://github.com/GonzalitoDev/h4ck3r-zone" target="_blank" style="color:var(--accent)">GitHub</a> — 100% transparente<br>
+      • Ninguna app se conecta a servidores externos sin tu permiso<br>
+      • No recolectamos datos, no mostramos publicidad, no pedimos permisos innecesarios
+    </p>
+
+    <h4 style="color:var(--accent);font-size:15px;margin-bottom:8px">📦 ¿Qué apps ofrecemos?</h4>
+    <p style="color:var(--text);font-size:13px;line-height:1.8;margin-bottom:16px">
+      🛡️ <b>WebSecurity Scanner Pro</b> — Escáner de vulnerabilidades web (23 módulos)<br>
+      🧹 <b>PC Cleaner Premium</b> — Limpiador y optimizador de PC<br>
+      ◆ <b>Nexus Dashboard</b> — Dashboard cyberpunk con monitor del sistema<br>
+      🎬 <b>Nexus Stream</b> — 45+ películas gratis (dominio público)<br>
+      🛡️ <b>CyberShield</b> — Escáner de ciberseguridad (8 módulos)<br>
+      ⚡ <b>Nexus VPS Manager</b> — Panel de control para servidores<br>
+      ⚡ <b>Nexus Server Pro</b> — Servidor web + proxy auto-hosteado<br>
+      📱 <b>Nexus Mobile</b> — 12 herramientas para Android/iOS<br>
+      🐛 <b>BetaTester Pro</b> — Toolkit de QA para testers
+    </p>
+
+    <h4 style="color:#ffd740;font-size:15px;margin-bottom:8px">💻 Requisitos</h4>
+    <p style="color:var(--text);font-size:13px;line-height:1.8;margin-bottom:16px">
+      Windows 10 o 11 (64-bit). No requiere instalación de dependencias adicionales.
+      Algunas apps necesitan conexión a internet para funciones específicas.
+    </p>
+
+    <button onclick="document.getElementById('infoModal').style.display='none'" style="display:block;width:100%;padding:12px;background:var(--accent);color:#000;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">ENTENDIDO</button>
+  </div>
+</div>
+
+<script>
+function openInfo(){document.getElementById('infoModal').style.display='flex'}
+function closeInfo(e){if(e.target===document.getElementById('infoModal'))document.getElementById('infoModal').style.display='none'}
+</script>
 
 <!-- ESTADÍSTICAS -->
 <section class="stats">
