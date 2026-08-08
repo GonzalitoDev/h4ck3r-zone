@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Nexus GPS</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#d0d0d0;font-family:system-ui,sans-serif;height:100vh;overflow:hidden}
+#map{width:100%;height:100%;z-index:1;background:#1a1a2e}
+.leaflet-control-zoom a{background:#0a1628!important;color:#38bdf8!important;border:1px solid #1a3050!important}
+.leaflet-control-attribution{display:none}
+/* Top bar */
+.topbar{position:fixed;top:10px;left:10px;right:10px;z-index:10;display:flex;gap:8px;justify-content:space-between}
+.speed-box{background:rgba(10,22,40,0.95);border:1px solid #1a3050;border-radius:14px;padding:12px 16px;text-align:center;backdrop-filter:blur(12px)}
+.speed-num{font-size:36px;font-weight:900;color:#38bdf8;letter-spacing:-1px;line-height:1}
+.speed-unit{font-size:10px;color:#3d5580;text-transform:uppercase;margin-top:2px}
+.info-row{display:flex;gap:4px}
+.info-box{background:rgba(10,22,40,0.9);border:1px solid #1a3050;border-radius:10px;padding:8px 10px;text-align:center;font-size:9px;color:#3d5580;backdrop-filter:blur(12px)}
+.info-box b{color:#38bdf8;font-size:12px;display:block}
+/* Bottom controls */
+.bottom{position:fixed;bottom:12px;left:10px;right:10px;z-index:10;display:flex;gap:6px}
+.ctrl-btn{flex:1;background:rgba(10,22,40,0.95);border:1px solid #1a3050;border-radius:12px;padding:14px 8px;color:#d0d0d0;font-size:11px;font-weight:700;cursor:pointer;text-align:center;backdrop-filter:blur(12px);transition:all 0.2s;font-family:inherit}
+.ctrl-btn:active{background:rgba(56,189,248,0.15);border-color:#38bdf8}
+.ctrl-btn.active{background:rgba(56,189,248,0.2);border-color:#38bdf8;color:#38bdf8}
+.ctrl-btn.rec{background:rgba(248,113,113,0.2);border-color:#f87171;color:#f87171;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.ctrl-icon{font-size:20px;display:block;margin-bottom:2px}
+/* Coordinates */
+.coords{position:fixed;bottom:70px;left:10px;right:10px;z-index:10;text-align:center}
+.coords-text{display:inline-block;background:rgba(10,22,40,0.9);border:1px solid #1a3050;border-radius:20px;padding:6px 18px;font-size:10px;color:#3d5580;font-family:monospace;backdrop-filter:blur(12px)}
+/* Compass */
+.compass{position:fixed;top:20px;right:20px;z-index:10;width:50px;height:50px}
+.compass svg{width:100%;height:100%}
+/* Waypoints panel */
+.panel{display:none;position:fixed;inset:0;z-index:20;background:rgba(6,8,13,0.97);overflow-y:auto;padding-bottom:20px}
+.panel.show{display:block}
+.panel-head{position:sticky;top:0;z-index:5;background:#0a1628;border-bottom:1px solid #1a3050;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.panel-head .back{background:none;border:none;color:#d0d0d0;font-size:18px;cursor:pointer}
+.panel-head .title{font-size:14px;font-weight:700;color:#38bdf8}
+.panel-body{padding:16px}
+.wp-item{background:#0a1628;border:1px solid #1a3050;border-radius:10px;padding:12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.wp-item .wicon{font-size:24px}
+.wp-info{flex:1}
+.wp-name{font-size:13px;font-weight:600;color:#d0d0d0}
+.wp-coords{font-size:10px;color:#3d5580;font-family:monospace}
+.wp-dist{font-size:10px;color:#38bdf8}
+.gps-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:9px;margin-top:4px}
+.gps-fixed{background:rgba(52,211,153,0.15);color:#34d399}
+.gps-searching{background:rgba(251,191,36,0.15);color:#fbbf24}
+.track-item{background:#0a1628;border:1px solid #1a3050;border-radius:10px;padding:12px;margin-bottom:6px}
+.track-name{font-size:13px;font-weight:600;color:#d0d0d0}
+.track-stats{font-size:10px;color:#3d5580;margin-top:4px}
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="speed-box">
+    <div class="speed-num" id="speed">0</div>
+    <div class="speed-unit">km/h</div>
+  </div>
+  <div class="info-row">
+    <div class="info-box"><b id="alt">--</b>Altitud</div>
+    <div class="info-box"><b id="head">--</b>Rumbo</div>
+    <div class="info-box"><b id="sat">--</b>Precision</div>
+  </div>
+</div>
+
+<!-- COMPASS -->
+<div class="compass" id="compass">
+  <svg viewBox="0 0 50 50">
+    <circle cx="25" cy="25" r="23" fill="rgba(10,22,40,0.9)" stroke="#1a3050" stroke-width="2"/>
+    <polygon points="25,6 30,25 20,25" fill="#f87171"/>
+    <polygon points="25,44 20,25 30,25" fill="#3d5580"/>
+    <circle cx="25" cy="25" r="3" fill="#38bdf8"/>
+  </svg>
+</div>
+
+<!-- COORDINATES -->
+<div class="coords">
+  <span class="coords-text" id="coordDisplay">--, --</span>
+</div>
+
+<!-- BOTTOM CONTROLS -->
+<div class="bottom">
+  <button class="ctrl-btn" onclick="centerMap()">
+    <span class="ctrl-icon">📍</span>Centrar
+  </button>
+  <button class="ctrl-btn" id="trackBtn" onclick="toggleTracking()">
+    <span class="ctrl-icon">🔴</span>Grabar
+  </button>
+  <button class="ctrl-btn" onclick="addWaypoint()">
+    <span class="ctrl-icon">⭐</span>Punto
+  </button>
+  <button class="ctrl-btn" onclick="openPanel('waypoints')">
+    <span class="ctrl-icon">📋</span>Lista
+  </button>
+  <button class="ctrl-btn" onclick="copyCoords()">
+    <span class="ctrl-icon">📎</span>Copiar
+  </button>
+</div>
+
+<!-- GPS STATUS -->
+<div style="position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:10">
+  <span class="gps-badge gps-searching" id="gpsStatus">🔍 Buscando GPS...</span>
+</div>
+
+<!-- WAYPOINTS PANEL -->
+<div class="panel" id="p-waypoints">
+  <div class="panel-head">
+    <button class="back" onclick="closePanel('waypoints')">←</button>
+    <span class="title">⭐ Waypoints</span>
+  </div>
+  <div class="panel-body" id="waypointList"></div>
+</div>
+
+<!-- TRACKS PANEL -->
+<div class="panel" id="p-tracks">
+  <div class="panel-head">
+    <button class="back" onclick="closePanel('tracks')">←</button>
+    <span class="title">🔴 Rutas Grabadas</span>
+  </div>
+  <div class="panel-body" id="trackList"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// MAP
+var map = L.map('map', {zoomControl:false}).setView([0,0],15);
+L.control.zoom({position:'bottomright'}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom:19, attribution:'© OSM'
+}).addTo(map);
+
+var marker = L.marker([0,0],{
+  icon: L.divIcon({html:'<div style="width:16px;height:16px;background:#38bdf8;border:3px solid #fff;border-radius:50%;box-shadow:0 0 12px #38bdf8"></div>',iconSize:[16,16],className:''})
+}).addTo(map);
+
+var accuracyCircle = L.circle([0,0],{radius:0,color:'#38bdf8',fillColor:'#38bdf8',fillOpacity:0.08,weight:1}).addTo(map);
+
+// Tracking state
+var tracking = false, trackPoints = [], trackLine = null, tracks = loadTracks();
+var watchId = null, waypoints = loadWaypoints();
+var lastPos = null, totalDist = 0;
+
+// Watch GPS position
+function startGPS(){
+  if('geolocation' in navigator){
+    watchId = navigator.geolocation.watchPosition(
+      onPosition, onError,
+      {enableHighAccuracy:true, maximumAge:1000, timeout:10000}
+    );
+  }else{
+    document.getElementById('gpsStatus').innerHTML='❌ GPS no disponible';
+  }
+}
+
+function onPosition(pos){
+  var lat = pos.coords.latitude, lng = pos.coords.longitude;
+  var speed = pos.coords.speed || 0;
+  var heading = pos.coords.heading;
+  var alt = pos.coords.altitude;
+  var acc = pos.coords.accuracy;
+
+  // Update UI
+  document.getElementById('speed').textContent = Math.round(speed * 3.6);
+  document.getElementById('alt').textContent = alt ? Math.round(alt)+'m' : '--';
+  document.getElementById('head').textContent = heading ? Math.round(heading)+'°' : '--';
+  document.getElementById('sat').textContent = acc ? '±'+Math.round(acc)+'m' : '--';
+  document.getElementById('coordDisplay').textContent = lat.toFixed(6)+', '+lng.toFixed(6);
+  document.getElementById('gpsStatus').className = 'gps-badge gps-fixed';
+  document.getElementById('gpsStatus').innerHTML = '📍 GPS Fijado';
+
+  // Update map
+  marker.setLatLng([lat, lng]);
+  accuracyCircle.setLatLng([lat, lng]);
+  accuracyCircle.setRadius(acc || 10);
+
+  // Rotate compass
+  if(heading != null){
+    var c = document.getElementById('compass').querySelector('svg');
+    c.style.transform = 'rotate('+heading+'deg)';
+  }
+
+  // Tracking
+  if(tracking){
+    trackPoints.push({lat:lat, lng:lng, time:Date.now(), speed:Math.round(speed*3.6)});
+    if(trackLine){map.removeLayer(trackLine);}
+    trackLine = L.polyline(trackPoints.map(p=>[p.lat,p.lng]),{color:'#f87171',weight:3}).addTo(map);
+
+    // Distance
+    if(lastPos){
+      totalDist += calcDist(lastPos.lat, lastPos.lng, lat, lng);
+    }
+    lastPos = {lat:lat, lng:lng};
+    updateTrackStats();
+  }
+}
+
+function onError(err){
+  document.getElementById('gpsStatus').className = 'gps-badge gps-searching';
+  document.getElementById('gpsStatus').innerHTML = '🔍 Buscando GPS...';
+}
+
+function centerMap(){
+  var pos = marker.getLatLng();
+  map.setView(pos, 17);
+}
+
+// Track recording
+function toggleTracking(){
+  tracking = !tracking;
+  var btn = document.getElementById('trackBtn');
+  if(tracking){
+    trackPoints = [];
+    totalDist = 0;
+    lastPos = null;
+    btn.className = 'ctrl-btn rec';
+    btn.innerHTML = '<span class="ctrl-icon">⏹</span>Parar';
+  }else{
+    btn.className = 'ctrl-btn';
+    btn.innerHTML = '<span class="ctrl-icon">🔴</span>Grabar';
+    // Save track
+    if(trackPoints.length > 2){
+      var track = {date:new Date().toISOString(), points:trackPoints, distance:totalDist.toFixed(2)};
+      tracks.push(track);
+      saveTracks(tracks);
+      if(trackLine){map.removeLayer(trackLine); trackLine = null;}
+    }
+    updateTrackStats();
+  }
+}
+
+function updateTrackStats(){
+  var mins = trackPoints.length > 1 ? ((trackPoints[trackPoints.length-1].time - trackPoints[0].time)/60000).toFixed(1) : 0;
+  document.getElementById('trackBtn').innerHTML = tracking ?
+    '<span class="ctrl-icon">⏹</span>'+totalDist.toFixed(2)+'km' :
+    '<span class="ctrl-icon">🔴</span>Grabar';
+}
+
+// Waypoints
+function addWaypoint(){
+  var pos = marker.getLatLng();
+  var name = prompt('Nombre del waypoint:', 'Punto '+ (waypoints.length+1));
+  if(!name) return;
+  waypoints.push({name:name, lat:pos.lat, lng:pos.lng, date:new Date().toISOString()});
+  saveWaypoints(waypoints);
+  L.marker([pos.lat, pos.lng],{
+    icon: L.divIcon({html:'<div style="font-size:18px">⭐</div>',iconSize:[20,20],className:''})
+  }).addTo(map).bindPopup(name);
+}
+
+function openPanel(p){
+  document.getElementById('p-'+p).classList.add('show');
+  if(p === 'waypoints') renderWaypoints();
+  if(p === 'tracks') renderTracks();
+}
+function closePanel(p){document.getElementById('p-'+p).classList.remove('show')}
+
+function renderWaypoints(){
+  var el = document.getElementById('waypointList');
+  el.innerHTML = waypoints.length === 0 ? '<p style="color:#3d5580;text-align:center">Sin waypoints guardados</p>' :
+    waypoints.map((w,i) => {
+      var pos = marker.getLatLng();
+      var dist = calcDist(pos.lat, pos.lng, w.lat, w.lng).toFixed(2);
+      return '<div class="wp-item" onclick="goTo('+w.lat+','+w.lng+')">'+
+        '<div class="wicon">⭐</div><div class="wp-info">'+
+        '<div class="wp-name">'+w.name+'</div>'+
+        '<div class="wp-coords">'+w.lat.toFixed(5)+', '+w.lng.toFixed(5)+'</div>'+
+        '</div><div class="wp-dist">'+dist+' km</div>'+
+        '<button onclick="event.stopPropagation();delWP('+i+')" style="background:none;border:none;color:#f87171;font-size:14px;cursor:pointer">×</button>'+
+        '</div>';
+    }).join('');
+}
+
+function renderTracks(){
+  var el = document.getElementById('trackList');
+  el.innerHTML = tracks.length === 0 ? '<p style="color:#3d5580;text-align:center">Sin rutas grabadas</p>' :
+    tracks.map((t,i) =>
+      '<div class="track-item" onclick="showTrack('+i+')">'+
+      '<div class="track-name">🔴 Ruta #'+(i+1)+'</div>'+
+      '<div class="track-stats">'+t.distance+' km • '+t.points.length+' puntos • '+new Date(t.date).toLocaleString()+'</div>'+
+      '<button onclick="event.stopPropagation();delTrack('+i+')" style="background:none;border:none;color:#f87171;font-size:12px;cursor:pointer;float:right">🗑</button>'+
+      '</div>'
+    ).join('');
+}
+
+function goTo(lat,lng){map.setView([lat,lng],17);closePanel('waypoints')}
+function delWP(i){waypoints.splice(i,1);saveWaypoints(waypoints);renderWaypoints()}
+function delTrack(i){tracks.splice(i,1);saveTracks(tracks);renderTracks()}
+
+function showTrack(i){
+  var t = tracks[i];
+  if(trackLine) map.removeLayer(trackLine);
+  trackLine = L.polyline(t.points.map(p=>[p.lat,p.lng]),{color:'#f87171',weight:3}).addTo(map);
+  map.fitBounds(trackLine.getBounds());
+}
+
+function copyCoords(){
+  var p = marker.getLatLng();
+  var text = p.lat.toFixed(6)+', '+p.lng.toFixed(6);
+  navigator.clipboard && navigator.clipboard.writeText(text);
+  document.getElementById('coordDisplay').textContent = '✓ Copiado!';
+  setTimeout(()=>document.getElementById('coordDisplay').textContent=text,1500);
+}
+
+// Helpers
+function calcDist(lat1,lon1,lat2,lon2){
+  var R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
+  var a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function loadWaypoints(){try{return JSON.parse(localStorage.getItem('nx_wp')||'[]')}catch(e){return[]}}
+function saveWaypoints(wp){localStorage.setItem('nx_wp',JSON.stringify(wp))}
+function loadTracks(){try{return JSON.parse(localStorage.getItem('nx_tr')||'[]')}catch(e){return[]}}
+function saveTracks(tr){localStorage.setItem('nx_tr',JSON.stringify(tr))}
+
+// Init
+startGPS();
+</script>
+</body>
+</html>
