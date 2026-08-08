@@ -2,11 +2,11 @@
 
 
 a = Analysis(
-    ['C:\\Users\\Gonza\\Desktop\\Programacion v2\\Nexus Bot\\nexus-stream\\stream.py'],
+    ['stream.py'],
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=['requests', 'PIL', 'sqlite3'],
+    hiddenimports=['requests', 'PIL'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
