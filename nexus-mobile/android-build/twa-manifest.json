@@ -1,0 +1,18 @@
+{
+  "packageId": "com.nexus.mobile",
+  "host": "gonzalitodev.github.io",
+  "name": "Nexus Mobile Toolkit",
+  "launcherName": "Nexus Mobile",
+  "display": "standalone",
+  "themeColor": "#08080c",
+  "navigationColor": "#08080c",
+  "backgroundColor": "#08080c",
+  "startUrl": "/h4ck3r-zone/nexus-mobile/",
+  "iconUrl": "https://gonzalitodev.github.io/h4ck3r-zone/nexus-mobile/icons/icon-512.png",
+  "maskableIconUrl": "https://gonzalitodev.github.io/h4ck3r-zone/nexus-mobile/icons/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "nexusmobile"
+  }
+}
