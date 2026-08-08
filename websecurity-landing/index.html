@@ -105,6 +105,16 @@ footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-
   </div>
 </nav>
 
+<!-- TOP SAFETY BANNER -->
+<div style="background:rgba(0,212,170,0.08);border-bottom:1px solid rgba(0,212,170,0.2);padding:10px 20px;text-align:center;font-size:13px">
+  <span style="color:var(--accent)">🛡️</span>
+  <span style="color:var(--dim)">Windows SmartScreen shows a warning on ALL new apps without a paid digital certificate.</span>
+  <span style="color:var(--green);font-weight:600">This app is 100% SAFE — no virus, no malware, no adware.</span>
+  <span style="color:var(--dim)">Click <b>"More info"</b> → <b>"Run anyway"</b> when installing.</span>
+  <span style="color:var(--accent)">|</span>
+  <a href="#trust" style="color:var(--accent);text-decoration:underline">Learn why ↓</a>
+</div>
+
 <!-- HERO -->
 <section class="hero">
   <div class="container">
@@ -114,7 +124,7 @@ footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-
       <a href="#download" class="btn-primary">&#128229; Download v1.0</a>
       <a href="#features" class="btn-secondary">View Features</a>
     </div>
-    <div class="version">Windows 10/11 &bull; 12 MB &bull; Free</div>
+    <div class="version">Windows 10/11 &bull; 12 MB &bull; Free &bull; <span style="color:var(--green)">✅ 100% Clean — False positive by SmartScreen</span></div>
   </div>
 </section>
 
@@ -311,6 +321,32 @@ footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-
     <div style="text-align:center;margin-top:24px">
       <a href="BetaTester-Pro-Setup.exe" class="btn-primary" download>📥 Download BetaTester</a>
       <div style="font-size:12px;color:var(--dim);margin-top:8px">v1.0 &bull; Windows 10/11 &bull; 39 MB &bull; Free</div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST SECTION -->
+<section style="padding:50px 0 20px" id="trust">
+  <div class="container">
+    <div class="section-title">🛡️ Why is Windows showing a warning?</div>
+    <div class="section-subtitle">Your safety matters. Here's exactly what's happening and why these apps are safe.</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:900px;margin:0 auto">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px">
+        <div style="font-size:24px;margin-bottom:8px">🔒</div>
+        <h4 style="color:var(--white);margin-bottom:6px">Windows SmartScreen</h4>
+        <p style="color:var(--dim);font-size:13px;line-height:1.6">Windows SmartScreen muestra una advertencia en TODO programa nuevo sin firma digital. <b style="color:var(--accent)">No significa que tenga virus.</b> Es una protección genérica para archivos descargados de internet. Para abrirlo: click en <b>"Más información"</b> → <b>"Ejecutar de todas formas"</b>.</p>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px">
+        <div style="font-size:24px;margin-bottom:8px">🔐</div>
+        <h4 style="color:var(--white);margin-bottom:6px">¿Por qué no está firmado?</h4>
+        <p style="color:var(--dim);font-size:13px;line-height:1.6">Los certificados de firma de código (Code Signing) cuestan <b>$300-500 USD/año</b>. Este es software gratuito y libre. La firma digital NO garantiza que un programa sea seguro — solo identifica al editor.</p>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px">
+        <div style="font-size:24px;margin-bottom:8px">✅</div>
+        <h4 style="color:var(--white);margin-bottom:6px">¿Cómo verificarlo?</h4>
+        <p style="color:var(--dim);font-size:13px;line-height:1.6">1) Subí el .exe a <a href="https://virustotal.com" target="_blank" style="color:var(--accent)">VirusTotal.com</a> para escanearlo con 70+ antivirus.<br>2) Verificá el hash SHA-256 de cada descarga.<br>3) El código fuente está disponible en <a href="https://github.com/GonzalitoDev/h4ck3r-zone" target="_blank" style="color:var(--accent)">GitHub</a>.</p>
+      </div>
     </div>
   </div>
 </section>
