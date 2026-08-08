@@ -13,7 +13,8 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#08080c;--bg2:#11111a;--bg3:#161620;--border:#1e1e30;--accent:#7c3aed;--accent2:#a78bfa;--text:#d0d0d0;--dim:#555568;--green:#00d68f;--red:#ff3d71;--orange:#ffaa00;--blue:#0095ff}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;min-height:100vh;padding-bottom:70px}
-header{position:sticky;top:0;z-index:10;background:rgba(8,8,12,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+header{position:sticky;top:0;z-index:10;background:rgba(8,8,12,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.header-left{display:flex;align-items:center;gap:8px}
 header h1{font-size:17px;font-weight:700;color:var(--accent2);letter-spacing:-0.3px}
 header .status{font-size:11px;color:var(--dim)}
 .tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}
@@ -61,9 +62,19 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 </head>
 <body>
 <header>
-  <h1>◆ Nexus Mobile</h1>
-  <span class="status" id="statusBar">Online</span>
+  <div class="header-left">
+    <h1>◆ Nexus Mobile</h1>
+    <span class="status" id="statusBar">Online</span>
+  </div>
+  <a href="https://www.pwabuilder.com/?url=https://gonzalitodev.github.io/h4ck3r-zone/nexus-mobile/" target="_blank" style="background:var(--accent);color:#fff;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none">📱 Descargar .APK</a>
 </header>
+
+<div style="background:rgba(124,58,237,0.08);border-bottom:1px solid rgba(124,58,237,0.2);padding:8px 16px;text-align:center;font-size:11px">
+  <span style="color:var(--accent)">📱</span>
+  <span style="color:var(--dim)">¿Querés el .APK? Click en </span>
+  <b style="color:var(--accent)">"Descargar .APK"</b>
+  <span style="color:var(--dim)"> arriba → se abre PWABuilder → generá tu APK en 1 click. Gratis.</span>
+</div>
 
 <div class="tools-grid" id="toolGrid">
   <div class="tool-btn" onclick="openPanel('passgen')"><div class="icon">🔐</div><div class="name">Password</div></div>
