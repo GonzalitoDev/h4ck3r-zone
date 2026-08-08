@@ -1,0 +1,16 @@
+{
+  "name": "Nexus Mobile Toolkit",
+  "short_name": "NexusMobile",
+  "description": "Utilidades esenciales para tu teléfono - contraseñas, QR, conversor, notas, red y más.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#08080c",
+  "theme_color": "#08080c",
+  "categories": ["utilities", "productivity", "tools"],
+  "lang": "es",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}

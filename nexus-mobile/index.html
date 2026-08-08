@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#08080c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<title>Nexus Mobile Toolkit</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#08080c;--bg2:#11111a;--bg3:#161620;--border:#1e1e30;--accent:#7c3aed;--accent2:#a78bfa;--text:#d0d0d0;--dim:#555568;--green:#00d68f;--red:#ff3d71;--orange:#ffaa00;--blue:#0095ff}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;min-height:100vh;padding-bottom:70px}
+header{position:sticky;top:0;z-index:10;background:rgba(8,8,12,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:17px;font-weight:700;color:var(--accent2);letter-spacing:-0.3px}
+header .status{font-size:11px;color:var(--dim)}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}
+.tool-btn{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 8px;text-align:center;cursor:pointer;transition:all 0.2s;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.tool-btn:active{background:var(--bg3);border-color:var(--accent)}
+.tool-btn .icon{font-size:26px}
+.tool-btn .name{font-size:10px;color:var(--text);font-weight:600}
+.panel{display:none;position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:0 0 20px}
+.panel.show{display:block}
+.panel-header{position:sticky;top:0;z-index:5;background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px}
+.panel-header .back{background:none;border:none;font-size:20px;color:var(--text);cursor:pointer;padding:4px}
+.panel-header .title{font-size:15px;font-weight:700;color:var(--accent2);flex:1}
+.panel-body{padding:16px}
+input,select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;margin-bottom:10px;transition:border-color 0.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;font-family:inherit;transition:all 0.2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:active{background:var(--accent2)}
+.btn-green{background:var(--green);color:#000}
+.btn-red{background:var(--red);color:#fff}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.result-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'Courier New',monospace;font-size:18px;word-break:break-all;text-align:center;color:var(--green);margin-top:10px;user-select:all}
+.info-row{display:flex;justify-content:space-between;padding:10px 14px;background:var(--bg3);border-radius:8px;margin-bottom:6px;font-size:13px}
+.info-row .lbl{color:var(--dim)}.info-row .val{color:var(--text);font-weight:600}
+.switch-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--bg3);border-radius:8px;margin-bottom:6px}
+.switch-row .lbl{font-size:13px;color:var(--text)}
+.toggle{width:48px;height:28px;background:var(--border);border-radius:14px;position:relative;cursor:pointer;transition:background 0.3s}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:'';position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:3px;left:3px;transition:all 0.3s}
+.toggle.on::after{left:23px}
+.flashlight{position:fixed;inset:0;z-index:30;background:#fff;display:none;cursor:pointer}
+.flashlight.on{display:block}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.copy-btn{font-size:11px;color:var(--accent);cursor:pointer;padding:4px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;margin-top:6px;display:inline-block}
+.badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700}
+.badge-on{background:rgba(0,214,143,0.15);color:var(--green)}
+.badge-off{background:rgba(255,61,113,0.1);color:var(--red)}
+.qr-container{text-align:center;margin-top:12px}
+.qr-container img{max-width:200px;border-radius:8px}
+.tabs{display:flex;gap:4px;margin-bottom:12px;overflow-x:auto}
+.tab{padding:8px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--dim);cursor:pointer;white-space:nowrap;font-family:inherit}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>◆ Nexus Mobile</h1>
+  <span class="status" id="statusBar">Online</span>
+</header>
+
+<div class="tools-grid" id="toolGrid">
+  <div class="tool-btn" onclick="openPanel('passgen')"><div class="icon">🔐</div><div class="name">Password</div></div>
+  <div class="tool-btn" onclick="openPanel('qr')"><div class="icon">📱</div><div class="name">QR Code</div></div>
+  <div class="tool-btn" onclick="openPanel('convert')"><div class="icon">🔄</div><div class="name">Convertir</div></div>
+  <div class="tool-btn" onclick="openPanel('notes')"><div class="icon">📝</div><div class="name">Notas</div></div>
+  <div class="tool-btn" onclick="openPanel('network')"><div class="icon">🌐</div><div class="name">Red</div></div>
+  <div class="tool-btn" onclick="openPanel('system')"><div class="icon">📊</div><div class="name">Sistema</div></div>
+  <div class="tool-btn" onclick="openPanel('texttools')"><div class="icon">Aa</div><div class="name">Texto</div></div>
+  <div class="tool-btn" onclick="openPanel('timer')"><div class="icon">⏱️</div><div class="name">Timer</div></div>
+  <div class="tool-btn" onclick="openPanel('color')"><div class="icon">🎨</div><div class="name">Color</div></div>
+  <div class="tool-btn" onclick="openPanel('flash')"><div class="icon">💡</div><div class="name">Linterna</div></div>
+  <div class="tool-btn" onclick="openPanel('todo')"><div class="icon">✅</div><div class="name">Tareas</div></div>
+  <div class="tool-btn" onclick="openPanel('calculator')"><div class="icon">🧮</div><div class="name">Calc</div></div>
+</div>
+
+<!-- PASSWORD GENERATOR -->
+<div class="panel" id="panel-passgen">
+  <div class="panel-header"><button class="back" onclick="closePanel('passgen')">←</button><div class="title">🔐 Generador de Contraseñas</div></div>
+  <div class="panel-body">
+    <div class="switch-row"><span class="lbl">Mayúsculas (A-Z)</span><div class="toggle on" id="pgUpper" onclick="toggleSwitch(this)"></div></div>
+    <div class="switch-row"><span class="lbl">Minúsculas (a-z)</span><div class="toggle on" id="pgLower" onclick="toggleSwitch(this)"></div></div>
+    <div class="switch-row"><span class="lbl">Números (0-9)</span><div class="toggle on" id="pgNum" onclick="toggleSwitch(this)"></div></div>
+    <div class="switch-row"><span class="lbl">Símbolos (!@#$)</span><div class="toggle on" id="pgSym" onclick="toggleSwitch(this)"></div></div>
+    <input type="range" min="8" max="64" value="20" id="pgLen" oninput="document.getElementById('pgLenVal').textContent=this.value" style="margin:10px 0">
+    <div style="text-align:center;color:var(--dim);font-size:12px">Longitud: <b id="pgLenVal">20</b></div>
+    <button class="btn btn-primary" onclick="genPass()" style="margin:10px 0">🔐 Generar</button>
+    <div class="result-box" id="pgResult" onclick="copyText(this)">Click en Generar</div>
+    <button class="btn btn-outline" onclick="copyText(document.getElementById('pgResult'))">📋 Copiar</button>
+  </div>
+</div>
+
+<!-- QR CODE -->
+<div class="panel" id="panel-qr">
+  <div class="panel-header"><button class="back" onclick="closePanel('qr')">←</button><div class="title">📱 QR Code</div></div>
+  <div class="panel-body">
+    <div class="tabs">
+      <div class="tab active" onclick="qrTab('generate',this)">Generar</div>
+      <div class="tab" onclick="qrTab('scan',this)">Escanear</div>
+    </div>
+    <div id="qrGenerate">
+      <input type="text" id="qrText" placeholder="Texto o URL para generar QR..." value="https://">
+      <input type="range" min="100" max="400" value="200" id="qrSize" oninput="document.getElementById('qrSizeVal').textContent=this.value+'px'">
+      <div style="text-align:center;color:var(--dim);font-size:12px">Tamaño: <b id="qrSizeVal">200px</b></div>
+      <button class="btn btn-primary" onclick="genQR()" style="margin:10px 0">📱 Generar QR</button>
+      <div class="qr-container" id="qrImg"></div>
+    </div>
+    <div id="qrScan" class="hidden">
+      <p style="color:var(--dim);font-size:13px;text-align:center;margin:20px 0">Usá la cámara para escanear un código QR.<br>Requiere permiso de cámara.</p>
+      <video id="qrVideo" style="width:100%;max-width:300px;margin:0 auto;display:block;border-radius:8px" autoplay playsinline></video>
+      <button class="btn btn-primary" onclick="startQRScan()" style="margin:10px 0">📷 Escanear QR</button>
+      <div class="result-box" id="qrScanResult" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- UNIT CONVERTER -->
+<div class="panel" id="panel-convert">
+  <div class="panel-header"><button class="back" onclick="closePanel('convert')">←</button><div class="title">🔄 Conversor</div></div>
+  <div class="panel-body">
+    <div class="tabs" id="convTabs">
+      <div class="tab active" onclick="convTab('length',this)">Longitud</div>
+      <div class="tab" onclick="convTab('weight',this)">Peso</div>
+      <div class="tab" onclick="convTab('temp',this)">Temp</div>
+      <div class="tab" onclick="convTab('data',this)">Datos</div>
+      <div class="tab" onclick="convTab('speed',this)">Velocidad</div>
+    </div>
+    <input type="number" id="convInput" placeholder="Valor" value="1" oninput="doConvert()">
+    <div class="row2">
+      <select id="convFrom" onchange="doConvert()"></select>
+      <select id="convTo" onchange="doConvert()"></select>
+    </div>
+    <div class="result-box" id="convResult">Resultado</div>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div class="panel" id="panel-notes">
+  <div class="panel-header"><button class="back" onclick="closePanel('notes')">←</button><div class="title">📝 Notas</div></div>
+  <div class="panel-body">
+    <textarea id="noteText" placeholder="Escribí tu nota acá..." rows="12" oninput="saveNote()"></textarea>
+    <button class="btn btn-outline" onclick="document.getElementById('noteText').value='';saveNote()">🗑 Borrar</button>
+    <div style="font-size:11px;color:var(--dim);text-align:center;margin-top:8px">Se guarda automáticamente</div>
+  </div>
+</div>
+
+<!-- NETWORK -->
+<div class="panel" id="panel-network">
+  <div class="panel-header"><button class="back" onclick="closePanel('network')">←</button><div class="title">🌐 Red</div></div>
+  <div class="panel-body">
+    <div class="info-row"><span class="lbl">Online</span><span class="val" id="netOnline">-</span></div>
+    <div class="info-row"><span class="lbl">Tipo de conexión</span><span class="val" id="netType">-</span></div>
+    <div class="info-row"><span class="lbl">IP Pública</span><span class="val" id="netIP">Cargando...</span></div>
+    <div class="info-row"><span class="lbl">User Agent</span><span class="val" id="netUA" style="font-size:10px">-</span></div>
+    <button class="btn btn-primary" onclick="refreshNetwork()">🔄 Actualizar</button>
+    <button class="btn btn-outline" onclick="testSpeed()" style="margin-top:6px">⚡ Test de Velocidad</button>
+    <div class="result-box" id="speedResult" style="display:none"></div>
+  </div>
+</div>
+
+<!-- SYSTEM -->
+<div class="panel" id="panel-system">
+  <div class="panel-header"><button class="back" onclick="closePanel('system')">←</button><div class="title">📊 Sistema</div></div>
+  <div class="panel-body">
+    <div class="info-row"><span class="lbl">Batería</span><span class="val" id="sysBattery">-</span></div>
+    <div class="info-row"><span class="lbl">Memoria (JS)</span><span class="val" id="sysMem">-</span></div>
+    <div class="info-row"><span class="lbl">Pantalla</span><span class="val" id="sysScreen">-</span></div>
+    <div class="info-row"><span class="lbl">Idioma</span><span class="val" id="sysLang">-</span></div>
+    <div class="info-row"><span class="lbl">Plataforma</span><span class="val" id="sysPlatform">-</span></div>
+    <div class="info-row"><span class="lbl">Cores CPU</span><span class="val" id="sysCores">-</span></div>
+    <div class="info-row"><span class="lbl">Cookies</span><span class="val" id="sysCookies">-</span></div>
+    <div class="info-row"><span class="lbl">Do Not Track</span><span class="val" id="sysDNT">-</span></div>
+    <button class="btn btn-primary" onclick="refreshSystem()">🔄 Actualizar</button>
+  </div>
+</div>
+
+<!-- TEXT TOOLS -->
+<div class="panel" id="panel-texttools">
+  <div class="panel-header"><button class="back" onclick="closePanel('texttools')">←</button><div class="title">Aa Herramientas de Texto</div></div>
+  <div class="panel-body">
+    <textarea id="textInput" placeholder="Escribí o pegá texto acá..." rows="5" oninput="analyzeText()"></textarea>
+    <div class="info-row"><span class="lbl">Caracteres</span><span class="val" id="txtChars">0</span></div>
+    <div class="info-row"><span class="lbl">Palabras</span><span class="val" id="txtWords">0</span></div>
+    <div class="info-row"><span class="lbl">Líneas</span><span class="val" id="txtLines">0</span></div>
+    <button class="btn btn-outline" onclick="textOp('upper')">MAYÚSCULAS</button>
+    <button class="btn btn-outline" onclick="textOp('lower')" style="margin-top:4px">minúsculas</button>
+    <button class="btn btn-outline" onclick="textOp('base64')" style="margin-top:4px">Base64 Encode</button>
+    <button class="btn btn-outline" onclick="textOp('reverse')" style="margin-top:4px">Invertir Texto</button>
+  </div>
+</div>
+
+<!-- TIMER -->
+<div class="panel" id="panel-timer">
+  <div class="panel-header"><button class="back" onclick="closePanel('timer')">←</button><div class="title">⏱️ Cronómetro</div></div>
+  <div class="panel-body">
+    <div style="font-size:48px;text-align:center;font-family:'Courier New',monospace;color:var(--green);margin:20px 0" id="timerDisplay">00:00:00.0</div>
+    <div class="row2">
+      <button class="btn btn-primary" id="timerBtn" onclick="toggleTimer()">▶ Iniciar</button>
+      <button class="btn btn-outline" onclick="resetTimer()">↺ Reset</button>
+    </div>
+    <div class="result-box" id="timerLaps" style="display:none;max-height:200px;overflow-y:auto;text-align:left"></div>
+    <button class="btn btn-outline" onclick="lapTimer()" style="margin-top:6px">🏁 Vuelta</button>
+  </div>
+</div>
+
+<!-- COLOR PICKER -->
+<div class="panel" id="panel-color">
+  <div class="panel-header"><button class="back" onclick="closePanel('color')">←</button><div class="title">🎨 Color</div></div>
+  <div class="panel-body">
+    <input type="color" id="colorPicker" value="#7c3aed" oninput="updateColor()" style="height:80px;padding:4px">
+    <div class="info-row"><span class="lbl">HEX</span><span class="val" id="colHex">#7c3aed</span></div>
+    <div class="info-row"><span class="lbl">RGB</span><span class="val" id="colRgb">-</span></div>
+    <div class="info-row"><span class="lbl">HSL</span><span class="val" id="colHsl">-</span></div>
+    <div style="width:100%;height:60px;border-radius:8px;margin-top:10px" id="colPreview"></div>
+  </div>
+</div>
+
+<!-- FLASHLIGHT -->
+<div class="panel" id="panel-flash">
+  <div class="panel-header"><button class="back" onclick="closePanel('flash')">←</button><div class="title">💡 Linterna</div></div>
+  <div class="panel-body">
+    <p style="color:var(--dim);text-align:center;margin:16px 0;font-size:13px">Usa la pantalla al máximo brillo como linterna de emergencia.</p>
+    <button class="btn btn-primary" id="flashBtn" onclick="toggleFlash()">💡 Encender Linterna</button>
+  </div>
+</div>
+<div class="flashlight" id="flashlight" onclick="toggleFlash()"></div>
+
+<!-- TODO -->
+<div class="panel" id="panel-todo">
+  <div class="panel-header"><button class="back" onclick="closePanel('todo')">←</button><div class="title">✅ Tareas</div></div>
+  <div class="panel-body">
+    <div style="display:flex;gap:8px">
+      <input type="text" id="todoInput" placeholder="Nueva tarea..." style="flex:1;margin-bottom:0" onkeydown="if(event.key==='Enter')addTodo()">
+      <button class="btn btn-primary" onclick="addTodo()" style="width:auto;padding:12px 20px">+</button>
+    </div>
+    <div id="todoList" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- CALCULATOR -->
+<div class="panel" id="panel-calculator">
+  <div class="panel-header"><button class="back" onclick="closePanel('calculator')">←</button><div class="title">🧮 Calculadora</div></div>
+  <div class="panel-body">
+    <div class="result-box" id="calcDisplay" style="text-align:right;font-size:28px;min-height:50px">0</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px">
+      <button class="btn btn-outline" onclick="calcInput('C')" style="color:var(--red)">C</button>
+      <button class="btn btn-outline" onclick="calcInput('(')">(</button>
+      <button class="btn btn-outline" onclick="calcInput(')')">)</button>
+      <button class="btn btn-outline" onclick="calcInput('/')" style="color:var(--accent)">÷</button>
+      <button class="btn btn-outline" onclick="calcInput('7')">7</button>
+      <button class="btn btn-outline" onclick="calcInput('8')">8</button>
+      <button class="btn btn-outline" onclick="calcInput('9')">9</button>
+      <button class="btn btn-outline" onclick="calcInput('*')" style="color:var(--accent)">×</button>
+      <button class="btn btn-outline" onclick="calcInput('4')">4</button>
+      <button class="btn btn-outline" onclick="calcInput('5')">5</button>
+      <button class="btn btn-outline" onclick="calcInput('6')">6</button>
+      <button class="btn btn-outline" onclick="calcInput('-')" style="color:var(--accent)">−</button>
+      <button class="btn btn-outline" onclick="calcInput('1')">1</button>
+      <button class="btn btn-outline" onclick="calcInput('2')">2</button>
+      <button class="btn btn-outline" onclick="calcInput('3')">3</button>
+      <button class="btn btn-outline" onclick="calcInput('+')" style="color:var(--accent)">+</button>
+      <button class="btn btn-outline" onclick="calcInput('0')" style="grid-column:span 2">0</button>
+      <button class="btn btn-outline" onclick="calcInput('.')">.</button>
+      <button class="btn btn-primary" onclick="calcEval()">=</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// NAVIGATION
+function openPanel(id){document.getElementById('panel-'+id).classList.add('show');document.getElementById('toolGrid').style.display='none'}
+function closePanel(id){document.getElementById('panel-'+id).classList.remove('show');document.getElementById('toolGrid').style.display=''}
+function toggleSwitch(el){el.classList.toggle('on')}
+function copyText(el){var t=el.textContent||el.value;navigator.clipboard?.writeText(t);el.style.background='var(--accent)';setTimeout(()=>el.style.background='',800)}
+
+// PASSWORD GENERATOR
+function genPass(){
+  var u='ABCDEFGHIJKLMNOPQRSTUVWXYZ',l='abcdefghijklmnopqrstuvwxyz',n='0123456789',s='!@#$%^&*()_+-=[]{}|;:,.<>?';
+  var chars='';
+  if(document.getElementById('pgUpper').classList.contains('on'))chars+=u;
+  if(document.getElementById('pgLower').classList.contains('on'))chars+=l;
+  if(document.getElementById('pgNum').classList.contains('on'))chars+=n;
+  if(document.getElementById('pgSym').classList.contains('on'))chars+=s;
+  if(!chars){document.getElementById('pgResult').textContent='Seleccioná al menos un tipo';return}
+  var len=parseInt(document.getElementById('pgLen').value);
+  var arr=new Uint32Array(len);crypto.getRandomValues(arr);
+  var pwd='';for(var i=0;i<len;i++)pwd+=chars[arr[i]%chars.length];
+  document.getElementById('pgResult').textContent=pwd;
+}
+
+// QR
+function qrTab(tab,el){
+  document.querySelectorAll('#panel-qr .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('qrGenerate').classList.toggle('hidden',tab!=='generate');
+  document.getElementById('qrScan').classList.toggle('hidden',tab!=='scan');
+}
+function genQR(){
+  var text=document.getElementById('qrText').value||'https://';
+  var size=document.getElementById('qrSize').value;
+  document.getElementById('qrImg').innerHTML='<img src="https://api.qrserver.com/v1/create-qr-code/?size='+size+'x'+size+'&data='+encodeURIComponent(text)+'" style="width:'+size+'px;height:'+size+'px;border-radius:8px" crossorigin="anonymous">';
+}
+function startQRScan(){
+  var video=document.getElementById('qrVideo');
+  navigator.mediaDevices?.getUserMedia({video:{facingMode:'environment'}}).then(s=>{video.srcObject=s;video.play()}).catch(()=>alert('Permiso de cámara denegado'));
+  document.getElementById('qrScanResult').style.display='block';
+  document.getElementById('qrScanResult').textContent='Apuntá la cámara al código QR';
+}
+
+// UNIT CONVERTER
+var convUnits={
+  length:{m:1,km:1000,cm:0.01,mm:0.001,mi:1609.34,ft:0.3048,in:0.0254,yd:0.9144},
+  weight:{kg:1,g:0.001,mg:0.000001,lb:0.4536,oz:0.02835,ton:1000},
+  temp:'temp',data:{B:1,KB:1024,MB:1048576,GB:1073741824,TB:1099511627776},
+  speed:{mps:1,kmh:0.27778,mph:0.44704,knot:0.51444}
+};
+var currentConv='length';
+function convTab(type,el){
+  currentConv=type;
+  document.querySelectorAll('#convTabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  var sel=document.getElementById('convFrom'),sel2=document.getElementById('convTo');
+  sel.innerHTML='';sel2.innerHTML='';
+  var units=type==='temp'?{C:'Celsius',F:'Fahrenheit',K:'Kelvin'}:convUnits[type];
+  Object.entries(units).forEach(([k,v])=>{sel.innerHTML+='<option value="'+k+'">'+k+'</option>';sel2.innerHTML+='<option value="'+k+'">'+k+'</option>'});
+  sel2.selectedIndex=1;
+  doConvert();
+}
+function doConvert(){
+  var val=parseFloat(document.getElementById('convInput').value)||0;
+  var from=document.getElementById('convFrom').value,to=document.getElementById('convTo').value;
+  var result;
+  if(currentConv==='temp'){
+    if(from==='C'&&to==='F')result=val*9/5+32;
+    else if(from==='C'&&to==='K')result=val+273.15;
+    else if(from==='F'&&to==='C')result=(val-32)*5/9;
+    else if(from==='F'&&to==='K')result=(val-32)*5/9+273.15;
+    else if(from==='K'&&to==='C')result=val-273.15;
+    else if(from==='K'&&to==='F')result=(val-273.15)*9/5+32;
+    else result=val;
+  }else{
+    result=val*convUnits[currentConv][from]/convUnits[currentConv][to];
+  }
+  document.getElementById('convResult').textContent=result.toFixed(6)+' '+to;
+}
+convTab('length',document.querySelector('#convTabs .tab'));
+
+// NOTES
+function saveNote(){try{localStorage.setItem('nxnote',document.getElementById('noteText').value)}catch(e){}}
+(function(){try{document.getElementById('noteText').value=localStorage.getItem('nxnote')||''}catch(e){}})();
+
+// NETWORK
+function refreshNetwork(){
+  document.getElementById('netOnline').textContent=navigator.onLine?'✅ Online':'❌ Offline';
+  document.getElementById('netType').textContent=navigator.connection?.effectiveType||'Desconocido';
+  document.getElementById('netUA').textContent=navigator.userAgent.substring(0,80);
+  fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{document.getElementById('netIP').textContent=d.ip}).catch(()=>document.getElementById('netIP').textContent='Error');
+}
+function testSpeed(){
+  var start=Date.now(),el=document.getElementById('speedResult');
+  el.style.display='block';el.textContent='Midiendo...';
+  fetch('https://www.google.com/favicon.ico?t='+Date.now()).then(()=>{
+    var ms=Date.now()-start;
+    el.textContent='Latencia: ~'+ms+'ms';
+  }).catch(()=>el.textContent='Error - sin conexión');
+}
+refreshNetwork();
+
+// SYSTEM
+function refreshSystem(){
+  try{navigator.getBattery().then(b=>{
+    document.getElementById('sysBattery').innerHTML='<span class="badge '+(b.level>0.2?'badge-on':'badge-off')+'">'+(b.level*100).toFixed(0)+'% '+(b.charging?'⚡':'')+'</span>'
+  })}catch(e){document.getElementById('sysBattery').textContent='No disponible'}
+  document.getElementById('sysMem').textContent=(performance?.memory?.usedJSHeapSize?Math.round(performance.memory.usedJSHeapSize/1048576)+' MB':'No disponible');
+  document.getElementById('sysScreen').textContent=screen.width+'×'+screen.height+' @ '+window.devicePixelRatio+'x';
+  document.getElementById('sysLang').textContent=navigator.language;
+  document.getElementById('sysPlatform').textContent=navigator.platform;
+  document.getElementById('sysCores').textContent=navigator.hardwareConcurrency||'?';
+  document.getElementById('sysCookies').textContent=navigator.cookieEnabled?'Habilitadas':'Deshabilitadas';
+  document.getElementById('sysDNT').textContent=navigator.doNotTrack||'No configurado';
+}
+refreshSystem();
+
+// TEXT TOOLS
+function analyzeText(){
+  var t=document.getElementById('textInput').value;
+  document.getElementById('txtChars').textContent=t.length;
+  document.getElementById('txtWords').textContent=t.trim()?t.trim().split(/\s+/).length:0;
+  document.getElementById('txtLines').textContent=t?t.split('\n').length:0;
+}
+function textOp(op){
+  var el=document.getElementById('textInput'),t=el.value;
+  if(op==='upper')el.value=t.toUpperCase();
+  else if(op==='lower')el.value=t.toLowerCase();
+  else if(op==='reverse')el.value=t.split('').reverse().join('');
+  else if(op==='base64')try{el.value=btoa(unescape(encodeURIComponent(t)))}catch(e){el.value='Error de encoding'}
+  analyzeText();
+}
+
+// TIMER
+var timerRunning=false,timerStart=0,timerElapsed=0,timerInterval;
+function toggleTimer(){
+  if(timerRunning){clearInterval(timerInterval);timerRunning=false;document.getElementById('timerBtn').textContent='▶ Continuar'}else{
+    timerStart=Date.now();timerRunning=true;document.getElementById('timerBtn').textContent='⏸ Pausar';
+    timerInterval=setInterval(()=>{
+      var t=timerElapsed+(Date.now()-timerStart);
+      var h=Math.floor(t/3600000),m=Math.floor((t%3600000)/60000),s=Math.floor((t%60000)/1000),ms=Math.floor((t%1000)/100);
+      document.getElementById('timerDisplay').textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+'.'+ms;
+    },50);
+  }
+}
+function resetTimer(){clearInterval(timerInterval);timerRunning=false;timerElapsed=0;document.getElementById('timerDisplay').textContent='00:00:00.0';document.getElementById('timerBtn').textContent='▶ Iniciar';document.getElementById('timerLaps').innerHTML='';document.getElementById('timerLaps').style.display='none'}
+function lapTimer(){
+  if(!timerRunning)return;
+  var t=timerElapsed+(Date.now()-timerStart);
+  var h=Math.floor(t/3600000),m=Math.floor((t%3600000)/60000),s=Math.floor((t%60000)/1000),ms=Math.floor((t%1000)/100);
+  document.getElementById('timerLaps').style.display='block';
+  document.getElementById('timerLaps').innerHTML+='<div>🏁 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+'.'+ms+'</div>';
+}
+
+// COLOR
+function updateColor(){
+  var hex=document.getElementById('colorPicker').value;
+  document.getElementById('colHex').textContent=hex;
+  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  document.getElementById('colRgb').textContent='rgb('+r+', '+g+', '+b+')';
+  document.getElementById('colPreview').style.background=hex;
+}
+updateColor();
+
+// FLASHLIGHT
+function toggleFlash(){
+  var el=document.getElementById('flashlight');
+  el.classList.toggle('on');
+  document.getElementById('flashBtn').textContent=el.classList.contains('on')?'💡 Apagar Linterna':'💡 Encender Linterna';
+}
+
+// TODO
+function loadTodos(){try{return JSON.parse(localStorage.getItem('nxtodos')||'[]')}catch(e){return[]}}
+function saveTodos(todos){localStorage.setItem('nxtodos',JSON.stringify(todos))}
+function renderTodos(){
+  var todos=loadTodos(),el=document.getElementById('todoList');
+  el.innerHTML=todos.map((t,i)=>'<div class="switch-row"><span class="lbl" style="'+(t.done?'text-decoration:line-through;color:var(--dim)':'')+'" onclick="toggleTodo('+i+')">'+t.text+'</span><button class="btn btn-outline" style="width:auto;padding:6px 12px;font-size:11px;margin:0" onclick="delTodo('+i+')">×</button></div>').join('');
+}
+function addTodo(){
+  var inp=document.getElementById('todoInput'),text=inp.value.trim();
+  if(!text)return;
+  var todos=loadTodos();todos.push({text:text,done:false});saveTodos(todos);
+  inp.value='';renderTodos();
+}
+function toggleTodo(i){var todos=loadTodos();todos[i].done=!todos[i].done;saveTodos(todos);renderTodos()}
+function delTodo(i){var todos=loadTodos();todos.splice(i,1);saveTodos(todos);renderTodos()}
+renderTodos();
+
+// CALCULATOR
+var calcExpr='0';
+function calcInput(v){
+  if(v==='C'){calcExpr='0'}else if(calcExpr==='0'&&'0123456789.'.includes(v)){calcExpr=v}else{calcExpr+=v}
+  document.getElementById('calcDisplay').textContent=calcExpr.replace(/\*/g,'×').replace(/\//g,'÷');
+}
+function calcEval(){
+  try{var r=eval(calcExpr.replace(/×/g,'*').replace(/÷/g,'/'));calcExpr=String(r);document.getElementById('calcDisplay').textContent=calcExpr}catch(e){document.getElementById('calcDisplay').textContent='Error'}
+}
+
+// STATUS BAR
+function updateStatus(){document.getElementById('statusBar').textContent=navigator.onLine?'🟢 Online':'🔴 Offline'}
+setInterval(updateStatus,5000);updateStatus();
+
+// SERVICE WORKER
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+</script>
+</body>
+</html>
