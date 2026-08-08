@@ -113,6 +113,7 @@ footer{border-top:1px solid rgba(255,255,255,0.04);padding:36px 0;text-align:cen
     </a>
     <div style="display:flex;align-items:center;gap:12px">
       <span style="font-size:8px;color:var(--accent);background:rgba(0,212,170,0.1);padding:3px 8px;border-radius:10px;border:1px solid rgba(0,212,170,0.2)">🔒 HTTPS</span>
+      <a href="#tools" class="nav-btn" style="background:rgba(96,165,250,0.2);color:#60a5fa;font-size:13px">🔧 Tools</a>
       <a href="#foro" class="nav-btn" style="background:var(--purple);font-size:13px">💬 Foro</a>
       <a href="#descargar" class="nav-btn">Descargar</a>
     </div>
@@ -383,23 +384,6 @@ function closeSupport(e){if(e.target===document.getElementById('supportModal'))d
   </div>
 </section>
 
-<!-- NEXUS HUB -->
-<section class="features" style="padding-top:0">
-  <div class="container">
-    <div class="section-title">🔄 Nexus Hub</div>
-    <div class="section-subtitle">Instalador universal — descargá, instalá y actualizá todas las apps desde un solo lugar</div>
-    <div class="feature-grid">
-      <div class="feature-card"><div class="feature-icon">📥</div><h3>Install All</h3><p>Instalá todas las aplicaciones con un solo click. Descarga automática desde el catálogo.</p></div>
-      <div class="feature-card"><div class="feature-icon">🔄</div><h3>Auto-Updater</h3><p>Detecta versiones nuevas y actualiza apps. Compara versión instalada vs última disponible.</p></div>
-      <div class="feature-card"><div class="feature-icon">📊</div><h3>Catálogo Central</h3><p>Todas las apps en un solo lugar. Versiones, tamaños, estados de instalación en vivo.</p></div>
-      <div class="feature-card"><div class="feature-icon">🚀</div><h3>Launch Directo</h3><p>Abrí cualquier app instalada desde el Hub. Sin buscar en el menú inicio o escritorio.</p></div>
-    </div>
-    <div style="text-align:center;margin-top:24px">
-      <a href="NexusHub-Setup.exe" class="btn-primary" download style="background:linear-gradient(135deg,#6366f1,#818cf8)">🔄 Descargar Nexus Hub</a>
-      <div style="font-size:12px;color:var(--dim);margin-top:8px">v1.0 &bull; Windows 10/11 &bull; Instalador Universal &bull; Gratis</div>
-    </div>
-  </div>
-</section>
 <!-- NETGUARD -->
 <section class="features" style="padding-top:0">
   <div class="container">
@@ -565,11 +549,29 @@ function closeSupport(e){if(e.target===document.getElementById('supportModal'))d
 </section>
 
 <!-- ===== TOOLS SECTION ===== -->
-<div class="section-divider">
+<div class="section-divider" id="tools">
   <div class="tag" style="color:#60a5fa">🔧 Tools & Utilities</div>
   <div class="heading">Herramientas para tu PC</div>
-  <div class="sub">Limpiadores, dashboards, scrapers, betatesters y más</div>
+  <div class="sub">5 aplicaciones — limpiador, dashboard, scraper, beta tester, hub</div>
 </div>
+
+<!-- NEXUS HUB -->
+<section class="features" style="padding-top:0">
+  <div class="container">
+    <div class="section-title">🔄 Nexus Hub</div>
+    <div class="section-subtitle">Instalador universal — descargá, instalá y actualizá todas las apps desde un solo lugar</div>
+    <div class="feature-grid">
+      <div class="feature-card"><div class="feature-icon">📥</div><h3>Install All</h3><p>Instalá todas las aplicaciones con un solo click. Descarga automática desde el catálogo.</p></div>
+      <div class="feature-card"><div class="feature-icon">🔄</div><h3>Auto-Updater</h3><p>Detecta versiones nuevas y actualiza apps. Compara versión instalada vs última disponible.</p></div>
+      <div class="feature-card"><div class="feature-icon">📊</div><h3>Catálogo Central</h3><p>Todas las apps en un solo lugar. Versiones, tamaños, estados de instalación en vivo.</p></div>
+      <div class="feature-card"><div class="feature-icon">🚀</div><h3>Launch Directo</h3><p>Abrí cualquier app instalada desde el Hub. Sin buscar en el menú inicio o escritorio.</p></div>
+    </div>
+    <div style="text-align:center;margin-top:24px">
+      <a href="NexusHub-Setup.exe" class="btn-primary" download>🔄 Descargar Nexus Hub</a>
+      <div style="font-size:12px;color:var(--dim);margin-top:8px">v1.0 &bull; Windows 10/11 &bull; Instalador Universal &bull; Gratis</div>
+    </div>
+  </div>
+</section>
 
 <!-- PC CLEANER PREMIUM -->
 <section class="features" style="padding-top:0">
