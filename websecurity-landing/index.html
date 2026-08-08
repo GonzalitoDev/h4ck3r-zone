@@ -107,6 +107,9 @@ footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-
       <button onclick="openInfo()" class="btn-secondary" style="cursor:pointer">ℹ️ ¿Para qué sirve esto?</button>
     </div>
     <div class="version">Windows 10/11 &bull; 12 MB &bull; Gratis &bull; <span style="color:var(--green)">✅ 100% Limpio — Sin virus</span></div>
+    <div style="margin-top:12px">
+      <button onclick="openSupport()" style="background:transparent;border:1px solid var(--border);color:var(--dim);padding:8px 16px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">📧 Contactar Soporte</button>
+    </div>
   </div>
 </section>
 
@@ -161,7 +164,52 @@ footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-
 <script>
 function openInfo(){document.getElementById('infoModal').style.display='flex'}
 function closeInfo(e){if(e.target===document.getElementById('infoModal'))document.getElementById('infoModal').style.display='none'}
+function openSupport(){document.getElementById('supportModal').style.display='flex'}
+function closeSupport(e){if(e.target===document.getElementById('supportModal'))document.getElementById('supportModal').style.display='none'}
 </script>
+
+<!-- SUPPORT MODAL -->
+<div id="supportModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);align-items:center;justify-content:center" onclick="closeSupport(event)">
+  <div style="background:var(--bg2);border:1px solid var(--accent);border-radius:16px;padding:32px;max-width:550px;width:90%;max-height:80vh;overflow-y:auto" onclick="event.stopPropagation()">
+    <h3 style="color:var(--accent);font-size:20px;margin-bottom:16px">📧 Soporte Técnico</h3>
+
+    <p style="color:var(--text);font-size:13px;line-height:1.7;margin-bottom:16px">
+      Si alguna aplicación falla, no carga o encontraste un error, contactanos.
+      Respondemos en <b style="color:var(--accent)">24-48 horas</b>.
+    </p>
+
+    <h4 style="color:var(--accent);font-size:14px;margin-bottom:8px">📋 Reportar un problema</h4>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px">
+      <p style="color:var(--text);font-size:12px;line-height:1.6">
+        <b style="color:#ffd740">1)</b> Abrí un issue en GitHub:<br>
+        <a href="https://github.com/GonzalitoDev/h4ck3r-zone/issues" target="_blank" style="color:var(--accent);word-break:break-all">github.com/GonzalitoDev/h4ck3r-zone/issues</a>
+      </p>
+      <p style="color:var(--text);font-size:12px;line-height:1.6;margin-top:8px">
+        <b style="color:#ffd740">2)</b> Incluí esta información:<br>
+        <span style="color:var(--dim)">• Qué aplicación falló<br>• Qué error muestra (captura de pantalla)<br>• Tu versión de Windows<br>• Qué pasos hiciste antes del error</span>
+      </p>
+    </div>
+
+    <h4 style="color:var(--accent);font-size:14px;margin-bottom:8px">⚡ Soluciones rápidas</h4>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px">
+      <p style="color:var(--text);font-size:12px;line-height:2">
+        • <b style="color:var(--green)">¿Windows bloquea el .exe?</b> — Click en "Más información" → "Ejecutar de todas formas"<br>
+        • <b style="color:var(--green)">¿No carga/abre?</b> — Ejecutá como Administrador (click derecho → Ejecutar como administrador)<br>
+        • <b style="color:var(--green)">¿Error de conexión?</b> — Verificá tu internet. Algunas apps necesitan conexión (API de TMDB, YouTube, etc.)<br>
+        • <b style="color:var(--green)">¿Pantalla en blanco?</b> — Cerrá y volvé a abrir. Si persiste, reportalo<br>
+        • <b style="color:var(--green)">¿SmartScreen insiste?</b> — Descomprimí el ZIP en una carpeta, no ejecutes desde el navegador
+      </p>
+    </div>
+
+    <h4 style="color:var(--accent);font-size:14px;margin-bottom:8px">📧 Contacto directo</h4>
+    <p style="color:var(--text);font-size:12px;line-height:1.6;margin-bottom:16px">
+      GitHub Issues es el medio principal y más rápido.<br>
+      También podés crear un issue desde la app <b>BetaTester Pro</b> (incluida en esta página).
+    </p>
+
+    <button onclick="document.getElementById('supportModal').style.display='none'" style="display:block;width:100%;padding:12px;background:var(--accent);color:#000;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">ENTENDIDO</button>
+  </div>
+</div>
 
 <!-- ESTADÍSTICAS -->
 <section class="stats">
@@ -555,7 +603,7 @@ function closeInfo(e){if(e.target===document.getElementById('infoModal'))documen
 </section>
 
 <footer>
-  <p>WebSecurity Scanner Pro v1.0 &bull; Solo para pruebas de seguridad autorizadas &bull; <a href="https://github.com/GonzalitoDev/h4ck3r-zone" style="color:var(--accent);text-decoration:none">GitHub</a></p>
+  <p>WebSecurity Scanner Pro v1.0 &bull; Solo para pruebas de seguridad autorizadas &bull; <a href="https://github.com/GonzalitoDev/h4ck3r-zone" style="color:var(--accent);text-decoration:none">GitHub</a> &bull; <a href="#" onclick="openSupport();return false" style="color:var(--accent);text-decoration:none">📧 Soporte</a></p>
 </footer>
 
 <script>
