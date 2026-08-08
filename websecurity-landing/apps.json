@@ -1,0 +1,116 @@
+{
+  "version": "1.0",
+  "updated": "2026-08-08",
+  "apps": [
+    {
+      "id": "websecurity",
+      "name": "WebSecurity Scanner Pro",
+      "version": "1.0",
+      "description": "Escáner avanzado de vulnerabilidades web. 23 módulos de escaneo real.",
+      "icon": "🛡️",
+      "filename": "WebSecurityScanner-Pro-Setup.exe",
+      "size_mb": 24,
+      "category": "security",
+      "install_path": "WebSecurity Scanner"
+    },
+    {
+      "id": "pccleaner",
+      "name": "PC Cleaner Premium",
+      "version": "2.0",
+      "description": "Optimizador del sistema con limpieza profunda, duplicados, archivos grandes.",
+      "icon": "✦",
+      "filename": "PCCleanerPremium-Setup.exe",
+      "size_mb": 42,
+      "category": "tools",
+      "install_path": "PC Cleaner Premium"
+    },
+    {
+      "id": "nexusdashboard",
+      "name": "Nexus Dashboard",
+      "version": "1.0",
+      "description": "Dashboard cyberpunk con monitor del sistema, notas, clima, matrix rain.",
+      "icon": "◆",
+      "filename": "NexusDashboard-Setup.exe",
+      "size_mb": 42,
+      "category": "tools",
+      "install_path": "Nexus Dashboard"
+    },
+    {
+      "id": "nexusstream",
+      "name": "Nexus Stream",
+      "version": "2.0",
+      "description": "Catálogo de 45+ películas gratis con SQLite. Reproducción directa.",
+      "icon": "🎬",
+      "filename": "NexusStream-Setup.exe",
+      "size_mb": 40,
+      "category": "media",
+      "install_path": "Nexus Stream"
+    },
+    {
+      "id": "nexusmovies",
+      "name": "Nexus Movies",
+      "version": "3.0",
+      "description": "Explorador de películas con TMDB API. Netflix-style UI.",
+      "icon": "🎬",
+      "filename": "NexusMovies-Setup.exe",
+      "size_mb": 35,
+      "category": "media",
+      "install_path": "Nexus Movies"
+    },
+    {
+      "id": "cybershield",
+      "name": "CyberShield",
+      "version": "1.0",
+      "description": "Escáner de ciberseguridad. Procesos, red, registro, navegador, malware.",
+      "icon": "🛡️",
+      "filename": "CyberShield-Setup.exe",
+      "size_mb": 20,
+      "category": "security",
+      "install_path": "CyberShield"
+    },
+    {
+      "id": "nexusvps",
+      "name": "Nexus VPS Manager",
+      "version": "1.0",
+      "description": "Panel de control premium para servidores. SSH, monitoreo en tiempo real.",
+      "icon": "⚡",
+      "filename": "NexusVPS-Setup.exe",
+      "size_mb": 30,
+      "category": "tools",
+      "install_path": "Nexus VPS"
+    },
+    {
+      "id": "nexusserver",
+      "name": "Nexus Server Pro",
+      "version": "2.0",
+      "description": "Servidor web + proxy auto-hosteado. System tray, 24/7.",
+      "icon": "⚡",
+      "filename": "NexusServer-Setup.exe",
+      "size_mb": 30,
+      "category": "tools",
+      "install_path": "Nexus Server"
+    },
+    {
+      "id": "betatester",
+      "name": "BetaTester Pro",
+      "version": "1.0",
+      "description": "Kit de QA para reportes de bugs, features y sesiones de prueba.",
+      "icon": "🐛",
+      "filename": "BetaTester-Pro-Setup.exe",
+      "size_mb": 39,
+      "category": "tools",
+      "install_path": "BetaTester"
+    },
+    {
+      "id": "nexusvpn",
+      "name": "Nexus VPN Pro",
+      "version": "2.0",
+      "description": "VPN propia con proxy encriptado. Auto-configuración del sistema.",
+      "icon": "🔐",
+      "filename": "NexusVPN-Setup.exe",
+      "size_mb": 15,
+      "category": "security",
+      "install_path": "Nexus VPN"
+    }
+  ]
+}
