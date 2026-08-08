@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>CyberGuard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#06080d;--bg2:#0c1018;--bg3:#111620;--border:#1a2030;--accent:#10b981;--accent2:#34d399;--red:#ef4444;--text:#d1d5db;--dim:#4b5563;--gold:#f59e0b}
+body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min-height:100vh;padding-bottom:70px}
+header{position:sticky;top:0;z-index:10;background:rgba(6,8,13,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:16px;font-weight:700;color:var(--accent)}
+.badge{font-size:9px;background:rgba(16,185,129,0.15);color:var(--accent);padding:3px 8px;border-radius:10px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 8px;text-align:center;cursor:pointer;transition:all 0.2s;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.card:active{background:var(--bg3);border-color:var(--accent)}
+.card .icon{font-size:24px}
+.card .name{font-size:10px;font-weight:600}
+.panel{display:none;position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding-bottom:20px}
+.panel.show{display:block}
+.pbar{position:sticky;top:0;z-index:5;background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px}
+.pbar .back{background:none;border:none;font-size:18px;color:var(--text);cursor:pointer;padding:4px}
+.pbar .title{font-size:14px;font-weight:700;color:var(--accent2);flex:1}
+.pbody{padding:16px}
+input,textarea,select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;margin-bottom:10px}
+input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;font-family:inherit;margin-bottom:6px}
+.btn-primary{background:var(--accent);color:#000}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-red{background:var(--red);color:#fff}
+.result{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:monospace;font-size:14px;word-break:break-all;text-align:center;color:var(--accent);margin-top:8px;user-select:all}
+.switch-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg3);border-radius:10px;margin-bottom:6px;font-size:13px}
+.toggle{width:46px;height:26px;background:var(--border);border-radius:13px;position:relative;cursor:pointer;transition:all 0.3s}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:all 0.3s}
+.toggle.on::after{left:23px}
+.info-row{display:flex;justify-content:space-between;padding:10px 14px;background:var(--bg3);border-radius:10px;margin-bottom:6px;font-size:12px}
+.info-row .lbl{color:var(--dim)}.info-row .val{font-weight:600}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tip{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;font-size:12px;line-height:1.7}
+.tip .n{color:var(--accent);font-weight:700;font-size:14px;margin-right:6px}
+.hidden{display:none}
+.slider{width:100%;margin:10px 0}
+.slider-val{text-align:center;color:var(--dim);font-size:11px;margin-bottom:8px}
+.guide-step{background:var(--bg3);border-left:3px solid var(--accent);padding:12px 14px;margin-bottom:8px;border-radius:0 8px 8px 0;font-size:12px;line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+  <h1>🛡️ CyberGuard</h1>
+  <span class="badge">OFFLINE</span>
+</header>
+
+<div class="grid">
+  <div class="card" onclick="openP('passgen')"><div class="icon">🔐</div><div class="name">Password</div></div>
+  <div class="card" onclick="openP('hash')"><div class="icon">#️⃣</div><div class="name">Hash</div></div>
+  <div class="card" onclick="openP('base64')"><div class="icon">6️⃣4️⃣</div><div class="name">Base64</div></div>
+  <div class="card" onclick="openP('encrypt')"><div class="icon">🔒</div><div class="name">AES</div></div>
+  <div class="card" onclick="openP('strength')"><div class="icon">💪</div><div class="name">Fuerza</div></div>
+  <div class="card" onclick="openP('network')"><div class="icon">🌐</div><div class="name">Red</div></div>
+  <div class="card" onclick="openP('totp')"><div class="icon">⏰</div><div class="name">2FA</div></div>
+  <div class="card" onclick="openP('notes')"><div class="icon">📝</div><div class="name">Notas</div></div>
+  <div class="card" onclick="openP('guides')"><div class="icon">📖</div><div class="name">Guías</div></div>
+</div>
+
+<!-- PASSWORD GEN -->
+<div class="panel" id="p-passgen"><div class="pbar"><button class="back" onclick="closeP('passgen')">←</button><span class="title">🔐 Generador</span></div>
+<div class="pbody">
+  <div class="switch-row"><span>Mayúsculas</span><div class="toggle on" id="pgU" onclick="this.classList.toggle('on')"></div></div>
+  <div class="switch-row"><span>Minúsculas</span><div class="toggle on" id="pgL" onclick="this.classList.toggle('on')"></div></div>
+  <div class="switch-row"><span>Números</span><div class="toggle on" id="pgN" onclick="this.classList.toggle('on')"></div></div>
+  <div class="switch-row"><span>Símbolos</span><div class="toggle on" id="pgS" onclick="this.classList.toggle('on')"></div></div>
+  <input type="range" class="slider" min="8" max="64" value="24" id="pgLen" oninput="g('pgLenV').textContent=this.value">
+  <div class="slider-val">Longitud: <b id="pgLenV">24</b></div>
+  <button class="btn btn-primary" onclick="genPass()">🔐 Generar</button>
+  <div class="result" id="pgResult" onclick="copy(this)">Click Generar</div>
+</div></div>
+
+<!-- HASH -->
+<div class="panel" id="p-hash"><div class="pbar"><button class="back" onclick="closeP('hash')">←</button><span class="title">#️⃣ Hash</span></div>
+<div class="pbody">
+  <textarea id="hashInput" placeholder="Texto para hashear..." rows="4"></textarea>
+  <select id="hashAlgo"><option>SHA-256</option><option>SHA-512</option><option>SHA-1</option></select>
+  <button class="btn btn-primary" onclick="genHash()">#️⃣ Generar Hash</button>
+  <div class="result" id="hashResult" onclick="copy(this)">Resultado</div>
+</div></div>
+
+<!-- BASE64 -->
+<div class="panel" id="p-base64"><div class="pbar"><button class="back" onclick="closeP('base64')">←</button><span class="title">6️⃣4️⃣ Base64</span></div>
+<div class="pbody">
+  <textarea id="b64Input" placeholder="Texto..." rows="4"></textarea>
+  <div class="row2">
+    <button class="btn btn-primary" onclick="b64Op('encode')">Codificar</button>
+    <button class="btn btn-primary" onclick="b64Op('decode')">Decodificar</button>
+  </div>
+  <div class="result" id="b64Result" onclick="copy(this)">Resultado</div>
+</div></div>
+
+<!-- AES ENCRYPT -->
+<div class="panel" id="p-encrypt"><div class="pbar"><button class="back" onclick="closeP('encrypt')">←</button><span class="title">🔒 AES Encrypt</span></div>
+<div class="pbody">
+  <input type="password" id="aesKey" placeholder="Clave secreta...">
+  <textarea id="aesInput" placeholder="Texto a encriptar/desencriptar..." rows="4"></textarea>
+  <div class="row2">
+    <button class="btn btn-primary" onclick="aesOp('encrypt')">🔒 Encriptar</button>
+    <button class="btn btn-primary" onclick="aesOp('decrypt')">🔓 Desencriptar</button>
+  </div>
+  <div class="result" id="aesResult" onclick="copy(this)">Resultado</div>
+</div></div>
+
+<!-- PASSWORD STRENGTH -->
+<div class="panel" id="p-strength"><div class="pbar"><button class="back" onclick="closeP('strength')">←</button><span class="title">💪 Fuerza</span></div>
+<div class="pbody">
+  <input type="text" id="strInput" placeholder="Escribí una contraseña..." oninput="checkStrength()">
+  <div class="result" id="strBar" style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;padding:0;margin-top:8px"><div id="strFill" style="height:100%;width:0%;background:var(--red);border-radius:4px;transition:all 0.3s"></div></div>
+  <div class="result" id="strResult" style="text-align:center;margin-top:4px">Esperando...</div>
+</div></div>
+
+<!-- NETWORK -->
+<div class="panel" id="p-network"><div class="pbar"><button class="back" onclick="closeP('network')">←</button><span class="title">🌐 Red</span></div>
+<div class="pbody">
+  <div class="info-row"><span class="lbl">Online</span><span class="val" id="nwOn">-</span></div>
+  <div class="info-row"><span class="lbl">Tipo</span><span class="val" id="nwType">-</span></div>
+  <div class="info-row"><span class="lbl">Downlink</span><span class="val" id="nwDown">-</span></div>
+  <div class="info-row"><span class="lbl">RTT</span><span class="val" id="nwRtt">-</span></div>
+  <div class="info-row"><span class="lbl">Guardar datos</span><span class="val" id="nwSave">-</span></div>
+  <button class="btn btn-primary" onclick="refreshNet()">🔄 Actualizar</button>
+</div></div>
+
+<!-- TOTP 2FA -->
+<div class="panel" id="p-totp"><div class="pbar"><button class="back" onclick="closeP('totp')">←</button><span class="title">⏰ 2FA Code</span></div>
+<div class="pbody">
+  <input type="text" id="totpSecret" placeholder="Clave secreta (Base32)...">
+  <div class="result" id="totpResult" style="font-size:32px;letter-spacing:4px">------</div>
+  <button class="btn btn-primary" onclick="genTOTP()">⏰ Generar Código</button>
+  <div style="font-size:11px;color:var(--dim);text-align:center;margin-top:6px">Códigos TOTP válidos por 30 segundos (RFC 6238)</div>
+</div></div>
+
+<!-- SECURE NOTES -->
+<div class="panel" id="p-notes"><div class="pbar"><button class="back" onclick="closeP('notes')">←</button><span class="title">📝 Notas Seguras</span></div>
+<div class="pbody">
+  <input type="password" id="notePass" placeholder="Contraseña para tus notas...">
+  <textarea id="noteText" placeholder="Escribí notas seguras acá... (encriptadas)" rows="8"></textarea>
+  <div class="row2">
+    <button class="btn btn-primary" onclick="saveSecureNote()">💾 Guardar</button>
+    <button class="btn btn-primary" onclick="loadSecureNote()">📂 Cargar</button>
+  </div>
+  <button class="btn btn-red" onclick="deleteSecureNote()" style="margin-top:4px">🗑 Borrar Notas</button>
+  <div style="font-size:10px;color:var(--dim);text-align:center;margin-top:6px">Notas encriptadas con AES-GCM en localStorage</div>
+</div></div>
+
+<!-- SECURITY GUIDES -->
+<div class="panel" id="p-guides"><div class="pbar"><button class="back" onclick="closeP('guides')">←</button><span class="title">📖 Guías de Seguridad</span></div>
+<div class="pbody">
+  <div class="guide-step"><span class="n">1</span><b>Usá contraseñas únicas</b><br>Nunca reutilices contraseñas. Cada cuenta debe tener una contraseña diferente. Usá el generador de esta app.</div>
+  <div class="guide-step"><span class="n">2</span><b>Activá 2FA en todo</b><br>El doble factor de autenticación (2FA) es la capa más importante. Usá apps como Google Authenticator o la función TOTP de esta app.</div>
+  <div class="guide-step"><span class="n">3</span><b>Mantené todo actualizado</b><br>Actualizá sistema operativo, apps y navegador. Los parches de seguridad corrigen vulnerabilidades conocidas.</div>
+  <div class="guide-step"><span class="n">4</span><b>No confíes en WiFi públicas</b><br>Usá siempre una VPN en redes WiFi abiertas. Cualquiera puede interceptar tu tráfico en redes sin contraseña.</div>
+  <div class="guide-step"><span class="n">5</span><b>Verificá links antes de click</b><br>Pasá el mouse/dedo sobre un link para ver la URL real. No abras archivos adjuntos de remitentes desconocidos.</div>
+  <div class="guide-step"><span class="n">6</span><b>Cifrá tus datos sensibles</b><br>Usá la función AES de esta app para encriptar información importante antes de guardarla o compartirla.</div>
+  <div class="guide-step"><span class="n">7</span><b>Hacé backups regulares</b><br>Regla 3-2-1: 3 copias, 2 medios diferentes, 1 fuera de casa. Los backups te salvan del ransomware.</div>
+  <div class="guide-step"><span class="n">8</span><b>Usá un gestor de contraseñas</b><br>Bitwarden, 1Password o KeePass. No intentes recordar todas tus contraseñas.</div>
+  <div class="guide-step"><span class="n">9</span><b>Revisá permisos de apps</b><br>¿Esa app de linterna necesita acceso a tus contactos? Revisá permisos en Ajustes → Aplicaciones.</div>
+  <div class="guide-step"><span class="n">10</span><b>Bloqueá tu pantalla</b><br>PIN de 6+ dígitos o biometría. El bloqueo automático a 30 segundos evita accesos no autorizados.</div>
+</div></div>
+
+<script>
+// Navigation
+function openP(id){document.getElementById('p-'+id).classList.add('show')}
+function closeP(id){document.getElementById('p-'+id).classList.remove('show')}
+function copy(el){var t=el.textContent;navigator.clipboard&&navigator.clipboard.writeText(t);el.style.background='var(--accent2)';setTimeout(()=>el.style.background='',600)}
+function g(id){return document.getElementById(id)}
+function toggleSwitch(el){el.classList.toggle('on')}
+
+// Password Generator
+function genPass(){
+  var u='ABCDEFGHIJKLMNOPQRSTUVWXYZ',l='abcdefghijklmnopqrstuvwxyz',n='0123456789',s='!@#$%^&*()_+-=[]{}|;:,.<>?',c='';
+  if(g('pgU').classList.contains('on'))c+=u;if(g('pgL').classList.contains('on'))c+=l;
+  if(g('pgN').classList.contains('on'))c+=n;if(g('pgS').classList.contains('on'))c+=s;
+  if(!c){g('pgResult').textContent='Seleccioná al menos un tipo';return}
+  var len=parseInt(g('pgLen').value),a=new Uint32Array(len);
+  crypto.getRandomValues(a);var p='';
+  for(var i=0;i<len;i++)p+=c[a[i]%c.length];
+  g('pgResult').textContent=p;
+}
+
+// Hash
+function genHash(){
+  var t=g('hashInput').value||'',a=g('hashAlgo').value,enc=new TextEncoder();
+  crypto.subtle.digest(a,enc.encode(t)).then(buf=>{
+    g('hashResult').textContent=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  });
+}
+
+// Base64
+function b64Op(op){
+  try{
+    var t=g('b64Input').value||'';
+    if(op==='encode')g('b64Result').textContent=btoa(unescape(encodeURIComponent(t)));
+    else g('b64Result').textContent=decodeURIComponent(escape(atob(t)));
+  }catch(e){g('b64Result').textContent='Error: '+e.message}
+}
+
+// AES
+async function aesOp(op){
+  var key=g('aesKey').value,text=g('aesInput').value;
+  if(!key||!text){g('aesResult').textContent='Ingresá clave y texto';return}
+  try{
+    var enc=new TextEncoder(),keyData=await crypto.subtle.digest('SHA-256',enc.encode(key));
+    var cryptoKey=await crypto.subtle.importKey('raw',keyData,{name:'AES-GCM'},false,['encrypt','decrypt']);
+    if(op==='encrypt'){
+      var iv=crypto.getRandomValues(new Uint8Array(12));
+      var ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},cryptoKey,enc.encode(text));
+      var combined=new Uint8Array(iv.length+ct.byteLength);
+      combined.set(iv);combined.set(new Uint8Array(ct),iv.length);
+      g('aesResult').textContent=btoa(String.fromCharCode(...combined));
+    }else{
+      var data=Uint8Array.from(atob(text),c=>c.charCodeAt(0));
+      var iv2=data.slice(0,12),ct2=data.slice(12);
+      var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv2},cryptoKey,ct2);
+      g('aesResult').textContent=new TextDecoder().decode(pt);
+    }
+  }catch(e){g('aesResult').textContent='Error: '+e.message}
+}
+
+// Password Strength
+function checkStrength(){
+  var p=g('strInput').value,score=0;
+  if(p.length>=8)score++;if(p.length>=12)score++;if(p.length>=16)score++;
+  if(/[A-Z]/.test(p))score++;if(/[a-z]/.test(p))score++;if(/[0-9]/.test(p))score++;
+  if(/[^A-Za-z0-9]/.test(p))score++;
+  var pct=(score/7)*100;
+  g('strFill').style.width=pct+'%';
+  var colors=['#ef4444','#ef4444','#f97316','#f97316','#f59e0b','#f59e0b','#10b981','#10b981'];
+  var labels=['Muy débil','Débil','Regular','Regular','Buena','Buena','Fuerte','Muy fuerte'];
+  g('strFill').style.background=colors[Math.min(score,7)];
+  g('strResult').textContent=labels[Math.min(score,7)]+' ('+score+'/7)';
+  g('strResult').style.color=colors[Math.min(score,7)];
+}
+
+// Network
+function refreshNet(){
+  var c=navigator.connection||{};
+  g('nwOn').textContent=navigator.onLine?'✅ Online':'❌ Offline';
+  g('nwType').textContent=c.effectiveType||'N/A';
+  g('nwDown').textContent=c.downlink?c.downlink+' Mbps':'N/A';
+  g('nwRtt').textContent=c.rtt?c.rtt+' ms':'N/A';
+  g('nwSave').textContent=c.saveData?'Activado':'Desactivado';
+}
+refreshNet();
+
+// TOTP
+function genTOTP(){
+  var secret=g('totpSecret').value.trim();
+  if(!secret){g('totpResult').textContent='Ingresá clave';return}
+  try{
+    var b32='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',bits='',key='';
+    for(var i=0;i<secret.toUpperCase().replace(/\s/g,'').length;i++){
+      var v=b32.indexOf(secret[i]);if(v===-1)continue;
+      bits+=v.toString(2).padStart(5,'0');
+    }
+    for(var j=0;j<bits.length;j+=8)key+=String.fromCharCode(parseInt(bits.substr(j,8).padEnd(8,'0'),2));
+    var time=Math.floor(Date.now()/30000);
+    var msg=new Uint8Array(8);
+    for(var k=7;k>=0;k--){msg[k]=time&0xff;time>>=8}
+    crypto.subtle.importKey('raw',new TextEncoder().encode(key),{name:'HMAC',hash:'SHA-1'},false,['sign'])
+    .then(k=>crypto.subtle.sign('HMAC',k,msg))
+    .then(sig=>{
+      var b=new Uint8Array(sig),offset=b[19]&0xf;
+      var bin=((b[offset]&0x7f)<<24)|((b[offset+1]&0xff)<<16)|((b[offset+2]&0xff)<<8)|(b[offset+3]&0xff);
+      g('totpResult').textContent=(bin%1000000).toString().padStart(6,'0');
+    });
+  }catch(e){g('totpResult').textContent='Error'}
+}
+
+// Secure Notes
+async function saveSecureNote(){
+  var pass=g('notePass').value,text=g('noteText').value;
+  if(!pass){alert('Ingresá contraseña');return}
+  try{
+    var enc=new TextEncoder(),keyData=await crypto.subtle.digest('SHA-256',enc.encode(pass));
+    var cryptoKey=await crypto.subtle.importKey('raw',keyData,{name:'AES-GCM'},false,['encrypt']);
+    var iv=crypto.getRandomValues(new Uint8Array(12));
+    var ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},cryptoKey,enc.encode(text));
+    var combined=new Uint8Array(iv.length+ct.byteLength);
+    combined.set(iv);combined.set(new Uint8Array(ct),iv.length);
+    localStorage.setItem('cyber_note',btoa(String.fromCharCode(...combined)));
+    g('noteText').value='';g('notePass').value='';
+    alert('✅ Nota guardada y encriptada');
+  }catch(e){alert('Error: '+e.message)}
+}
+async function loadSecureNote(){
+  var pass=g('notePass').value,data=localStorage.getItem('cyber_note');
+  if(!pass){alert('Ingresá contraseña');return}
+  if(!data){alert('No hay notas guardadas');return}
+  try{
+    var enc=new TextEncoder(),keyData=await crypto.subtle.digest('SHA-256',enc.encode(pass));
+    var cryptoKey=await crypto.subtle.importKey('raw',keyData,{name:'AES-GCM'},false,['decrypt']);
+    var raw=Uint8Array.from(atob(data),c=>c.charCodeAt(0));
+    var iv=raw.slice(0,12),ct=raw.slice(12);
+    var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},cryptoKey,ct);
+    g('noteText').value=new TextDecoder().decode(pt);
+  }catch(e){alert('Contraseña incorrecta o datos corruptos')}
+}
+function deleteSecureNote(){
+  if(confirm('¿Borrar todas las notas?')){localStorage.removeItem('cyber_note');g('noteText').value='';alert('Notas borradas')}
+}
+</script>
+</body>
+</html>
