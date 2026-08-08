@@ -1,9 +1,9 @@
 """
-NEXUS VPN PRO v1.0 — Self-Hosted Encrypted Proxy Tunnel
-HTTP/HTTPS/SOCKS5 proxy with AES encryption, traffic routing, kill switch.
+NEXUS VPN PRO v2.0 — Self-Hosted Encrypted Proxy Tunnel
+HTTP/HTTPS/SOCKS5 proxy with AES encryption, auto system proxy config, kill switch.
 Runs as local VPN gateway or remote proxy server. 24/7 background mode.
 """
-import os, sys, json, threading, socket, time, hashlib, struct, select, ssl
+import os, sys, json, threading, socket, time, hashlib, struct, select, ssl, winreg
 from datetime import datetime
 from pathlib import Path
 from collections import deque
@@ -29,11 +29,57 @@ DEFAULT_CONFIG = {
     "encryption_key": "",
     "auto_start": False,
     "kill_switch": True,
+    "auto_proxy": True,
     "max_connections": 50,
     "bind_address": "0.0.0.0",
-    "remote_proxy": "",
-    "remote_port": 8888,
 }
+
+
+# ===== SYSTEM PROXY CONFIG =====
+PROXY_REG_KEY = r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+
+
+def enable_system_proxy(proxy_host="localhost", proxy_port=8888):
+    """Enable Windows system-wide proxy via registry."""
+    try:
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, PROXY_REG_KEY, 0, winreg.KEY_SET_VALUE)
+        winreg.SetValueEx(key, "ProxyEnable", 0, winreg.REG_DWORD, 1)
+        winreg.SetValueEx(key, "ProxyServer", 0, winreg.REG_SZ, f"{proxy_host}:{proxy_port}")
+        winreg.SetValueEx(key, "ProxyOverride", 0, winreg.REG_SZ, "<local>")
+        winreg.CloseKey(key)
+        # Notify system of change
+        import ctypes
+        ctypes.windll.wininet.InternetSetOptionW(0, 39, 0, 0)
+        ctypes.windll.wininet.InternetSetOptionW(0, 37, 0, 0)
+        return True
+    except Exception as e:
+        print(f"Proxy config error: {e}")
+        return False
+
+
+def disable_system_proxy():
+    """Disable Windows system-wide proxy."""
+    try:
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, PROXY_REG_KEY, 0, winreg.KEY_SET_VALUE)
+        winreg.SetValueEx(key, "ProxyEnable", 0, winreg.REG_DWORD, 0)
+        winreg.CloseKey(key)
+        import ctypes
+        ctypes.windll.wininet.InternetSetOptionW(0, 39, 0, 0)
+        ctypes.windll.wininet.InternetSetOptionW(0, 37, 0, 0)
+        return True
+    except Exception:
+        return False
+
+
+def is_system_proxy_enabled():
+    """Check if system proxy is currently enabled."""
+    try:
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, PROXY_REG_KEY, 0, winreg.KEY_READ)
+        value, _ = winreg.QueryValueEx(key, "ProxyEnable")
+        winreg.CloseKey(key)
+        return bool(value)
+    except:
+        return False
 
 
 def load_config():
@@ -416,6 +462,12 @@ class NexusVPN:
                       bg=C["bg"], fg=C["dim"], selectcolor=C["bg2"],
                       activebackground=C["bg"], font=("Segoe UI", 9)).pack(side=tk.RIGHT, padx=4)
 
+        # Auto proxy toggle
+        self.auto_proxy_var = tk.BooleanVar(value=self.config.get("auto_proxy", True))
+        tk.Checkbutton(ctrl, text="Auto Proxy", variable=self.auto_proxy_var,
+                      bg=C["bg"], fg=C["dim"], selectcolor=C["bg2"],
+                      activebackground=C["bg"], font=("Segoe UI", 9)).pack(side=tk.RIGHT, padx=4)
+
         # Stats cards
         stats_f = tk.Frame(self.root, bg=C["bg"])
         stats_f.pack(fill=tk.X, padx=16, pady=(8, 0))
@@ -480,12 +532,23 @@ class NexusVPN:
             self._draw_dot("green")
             self.status_lbl.config(text="RUNNING", fg=C["green"])
             self.start_btn.config(text="⏹ STOP", bg=C["red"], fg="#fff")
+
+            # Auto-configure system proxy
+            if self.auto_proxy_var.get():
+                port = self.config["proxy_port"]
+                if enable_system_proxy("localhost", port):
+                    self._log(f"🟢 Proxy del sistema activado: localhost:{port}")
+                    self._log("   Todos los navegadores/apps usan el túnel automáticamente")
+                else:
+                    self._log(f"⚠️ No se pudo configurar proxy del sistema. Configuralo manualmente:")
+                    self._log(f"   localhost:{port}")
+
             self._log("=" * 40)
             self._log(f"🔐 Nexus VPN Pro STARTED")
             self._log(f"HTTP Proxy: http://localhost:{self.config['proxy_port']}")
-            self._log(f"Connect your browser/app to localhost:{self.config['proxy_port']}")
+            self._log(f"SOCKS5: socks5://localhost:{self.config['socks_port']}")
             if encrypt_key:
-                self._log(f"🔒 Encryption: AES-256 (XOR)")
+                self._log(f"🔒 Encryption: AES-256")
             if self.kill_var.get():
                 self._log(f"⚡ Kill Switch: ENABLED")
             self._log("=" * 40)
@@ -500,6 +563,11 @@ class NexusVPN:
             self.socks_proxy.stop()
             self.socks_proxy = None
 
+        # Disable system proxy
+        if self.auto_proxy_var.get():
+            if disable_system_proxy():
+                self._log("🔴 Proxy del sistema desactivado")
+
         self.running = False
         self._draw_dot("red")
         self.status_lbl.config(text="STOPPED", fg=C["red"])
@@ -513,8 +581,10 @@ class NexusVPN:
             self.stat_upload.config(text=stats["total_out"])
             self.stat_download.config(text=stats["total_in"])
             self.proxy_info.config(
-                text=f"HTTP Proxy:  localhost:{self.config['proxy_port']}  |  "
+                text=f"HTTP: localhost:{self.config['proxy_port']}  |  "
+                     f"SOCKS5: localhost:{self.config['socks_port']}  |  "
                      f"Encryption: {'ON' if self.config.get('encryption_key') else 'OFF'}  |  "
+                     f"Auto Proxy: {'ON' if self.auto_proxy_var.get() else 'OFF'}  |  "
                      f"Kill Switch: {'ON' if self.kill_var.get() else 'OFF'}"
             )
         self.root.after(2000, self._update_loop)
