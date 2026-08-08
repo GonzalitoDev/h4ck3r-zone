@@ -411,6 +411,20 @@ function closeSupport(e){if(e.target===document.getElementById('supportModal'))d
     <div style="text-align:center;margin-top:24px">
       <a href="CyberGuard.apk" class="btn-primary" download>📱 Descargar CyberGuard .APK</a>
       <div style="font-size:12px;color:var(--dim);margin-top:8px">v1.0 &bull; Android 7.0+ &bull; 16 KB &bull; <b style="color:var(--green)">100% OFFLINE</b> &bull; No necesita internet</div>
+      <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:8px;padding:12px;margin-top:10px;max-width:600px;margin-left:auto;margin-right:auto;text-align:left">
+        <div style="font-size:11px;color:#ef4444;font-weight:700;margin-bottom:6px">⚠️ Falsos positivos en VirusTotal — NO tiene virus</div>
+        <table style="width:100%;font-size:10px;color:var(--dim);border-collapse:collapse">
+          <tr><td style="padding:3px 6px"><b>Microsoft</b></td><td style="padding:3px 6px;color:#ff5252">Wacatac.B!ml</td><td style="padding:3px 6px;font-size:9px"><span style="color:var(--green)">!ml = IA adivinando, no firma real</span></td></tr>
+          <tr><td style="padding:3px 6px"><b>Bkav Pro</b></td><td style="padding:3px 6px;color:#ff5252">W32.Malware</td><td style="padding:3px 6px;font-size:9px"><span style="color:var(--green)">W32 = Windows, pero es APK Android. Error del motor</span></td></tr>
+          <tr><td style="padding:3px 6px"><b>CrowdStrike</b></td><td style="padding:3px 6px;color:#ff5252">90% confidence</td><td style="padding:3px 6px;font-size:9px"><span style="color:var(--green)">No está seguro. Es heurística, no confirmado.</span></td></tr>
+          <tr><td style="padding:3px 6px"><b>70+ antivirus</b></td><td style="padding:3px 6px;color:var(--green)">LIMPIO ✅</td><td style="padding:3px 6px;font-size:9px"><span style="color:var(--green)">Kaspersky, ESET, Avast, Bitdefender, Norton, etc.</span></td></tr>
+        </table>
+        <div style="font-size:10px;color:var(--dim);margin-top:8px;line-height:1.5">
+          <b style="color:var(--text)">¿Por qué?</b> Los 4-5 antivirus que lo marcan usan <b>IA/heurística</b>, no firma de virus real.
+          Detectan "archivo nuevo sin firma digital" y adivinan. Es el mismo falso positivo que TODOS los programas
+          independientes reciben. El código fuente está en GitHub — 0% malware.
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -574,6 +588,17 @@ function closeSupport(e){if(e.target===document.getElementById('supportModal'))d
         <div style="font-size:24px;margin-bottom:8px">✅</div>
         <h4 style="color:var(--white);margin-bottom:6px">¿Cómo verificarlo?</h4>
         <p style="color:var(--dim);font-size:13px;line-height:1.6">1) Subí el .exe a <a href="https://virustotal.com" target="_blank" style="color:var(--accent)">VirusTotal.com</a> para escanearlo con 70+ antivirus.<br>2) Verificá el hash SHA-256 de cada descarga.<br>3) El código fuente está disponible en <a href="https://github.com/GonzalitoDev/h4ck3r-zone" target="_blank" style="color:var(--accent)">GitHub</a>.</p>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px">
+        <div style="font-size:24px;margin-bottom:8px">🧪</div>
+        <h4 style="color:var(--white);margin-bottom:6px">VirusTotal: Falsos Positivos</h4>
+        <p style="color:var(--dim);font-size:13px;line-height:1.6">
+          <b style="color:var(--green)">70+ antivirus dicen LIMPIO.</b> Solo 3-5 motores con IA/heurística marcan falso positivo.<br><br>
+          • <b style="color:#ef4444">Microsoft: Wacatac.B!ml</b> → El <b>!ml</b> significa Machine Learning adivinando<br>
+          • <b style="color:#ef4444">CrowdStrike: 90% confidence</b> → "No estamos seguros"<br>
+          • <b style="color:#ef4444">Bkav: W32.Malware</b> → Aplica firmas de Windows a archivos que no son de Windows<br>
+          <b style="color:var(--accent)">Kaspersky, ESET, Bitdefender, Avast, Norton, McAfee, Avira y 60+ más:</b> <span style="color:var(--green)">LIMPIO ✅</span>
+        </p>
       </div>
     </div>
   </div>
