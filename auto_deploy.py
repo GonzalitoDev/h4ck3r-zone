@@ -1,29 +1,64 @@
 """
-Nexus Auto-Deploy — Watch files, auto commit + push to GitHub.
-Runs in background. Saves you from manual git commands.
+Nexus Auto-Deploy v2.0 — Watch files, auto cache-bust, commit + push.
+Runs in background. Injects version timestamp for instant updates.
 """
-import os, sys, time, subprocess, threading
+import os, sys, time, subprocess, re
 from pathlib import Path
 from datetime import datetime
 
 WATCH_DIR = Path(__file__).resolve().parent / "websecurity-landing"
-DEBOUNCE_SECONDS = 5  # Wait 5s after last change before committing
+DEBOUNCE_SECONDS = 3  # Wait 3s after last change
+HTML_FILE = WATCH_DIR / "index.html"
+
+
+def inject_version():
+    """Inject version timestamp into HTML for cache busting."""
+    try:
+        content = HTML_FILE.read_text(encoding="utf-8")
+        version = datetime.now().strftime("%Y%m%d%H%M%S")
+
+        # Remove old version
+        content = re.sub(
+            r'<meta name="nexus-version" content="[^"]*">',
+            f'<meta name="nexus-version" content="{version}">',
+            content
+        )
+
+        # If version meta doesn't exist, add it after charset
+        if '<meta name="nexus-version"' not in content:
+            content = content.replace(
+                '<meta charset="UTF-8">',
+                f'<meta charset="UTF-8">\n<meta name="nexus-version" content="{version}">\n<meta http-equiv="cache-control" content="no-cache">'
+            )
+
+        HTML_FILE.write_text(content, encoding="utf-8")
+        return version
+    except Exception as e:
+        print(f"  Version inject error: {e}")
+        return None
 
 
 def git_add_commit_push():
     """Add all changes, commit with timestamp, push."""
     try:
         os.chdir(WATCH_DIR.parent)
+
+        # Inject version for cache busting
+        ver = inject_version()
+        if ver:
+            subprocess.run(["git", "add", str(HTML_FILE)], capture_output=True, timeout=5)
+
         subprocess.run(["git", "add", "websecurity-landing/"], capture_output=True, timeout=10)
         result = subprocess.run(
-            ["git", "commit", "-m", f"Auto-deploy: {datetime.now():%H:%M:%S}", "--no-verify"],
+            ["git", "commit", "-m", f"Auto-deploy v{ver or '?'}", "--no-verify"],
             capture_output=True, timeout=10
         )
-        if "nothing to commit" not in result.stdout.decode() + result.stderr.decode():
+        output = result.stdout.decode() + result.stderr.decode()
+        if "nothing to commit" not in output:
             subprocess.run(["git", "push", "origin", "master"], capture_output=True, timeout=30)
-            print(f"[{datetime.now():%H:%M:%S}] ✓ Pushed to GitHub")
+            print(f"[{datetime.now():%H:%M:%S}] ✓ Pushed v{ver} — page updates in 1-3 min")
         else:
-            print(f"[{datetime.now():%H:%M:%S}] No changes to commit")
+            print(f"[{datetime.now():%H:%M:%S}] No changes")
     except Exception as e:
         print(f"[{datetime.now():%H:%M:%S}] ✗ Error: {e}")
 
