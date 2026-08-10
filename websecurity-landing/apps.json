@@ -111,6 +111,83 @@
       "size_mb": 15,
       "category": "security",
       "install_path": "Nexus VPN"
+    },
+    {
+      "id": "netguard",
+      "name": "NetGuard",
+      "version": "1.0",
+      "description": "Escáner de red WiFi. Descubre dispositivos, puertos, fabricante.",
+      "icon": "📡",
+      "filename": "NetGuard-Setup.exe",
+      "size_mb": 24,
+      "category": "security",
+      "install_path": "NetGuard"
+    },
+    {
+      "id": "numberinfo",
+      "name": "NumberInfo",
+      "version": "1.0",
+      "description": "Analizador de números telefónicos. Detecta estafas, carrier, país.",
+      "icon": "📞",
+      "filename": "NumberInfo-Setup.exe",
+      "size_mb": 20,
+      "category": "security",
+      "install_path": "NumberInfo"
+    },
+    {
+      "id": "vulnlog",
+      "name": "VulnLog",
+      "version": "1.0",
+      "description": "Registro de vulnerabilidades web. SQLite, búsqueda, import/export.",
+      "icon": "📋",
+      "filename": "VulnLog-Setup.exe",
+      "size_mb": 18,
+      "category": "security",
+      "install_path": "VulnLog"
+    },
+    {
+      "id": "nexusproxy",
+      "name": "Nexus Proxy Server",
+      "version": "1.0",
+      "description": "Servidor proxy HTTP/HTTPS/SOCKS5 con auth y túnel público.",
+      "icon": "🔀",
+      "filename": "NexusProxy-Setup.exe",
+      "size_mb": 18,
+      "category": "tools",
+      "install_path": "Nexus Proxy"
+    },
+    {
+      "id": "nexusws",
+      "name": "Nexus WebSocket Pro",
+      "version": "1.0",
+      "description": "Servidor WebSocket con dashboard en vivo. Broadcast, monitoreo.",
+      "icon": "🔌",
+      "filename": "NexusWS-Setup.exe",
+      "size_mb": 45,
+      "category": "tools",
+      "install_path": "Nexus WebSocket"
+    },
+    {
+      "id": "nexusorganizer",
+      "name": "Nexus Organizer AI",
+      "version": "1.0",
+      "description": "Organizador de carpetas con IA. Clasifica por tipo, fecha, tamaño.",
+      "icon": "🤖",
+      "filename": "NexusOrganizer-Setup.exe",
+      "size_mb": 166,
+      "category": "tools",
+      "install_path": "Nexus Organizer"
+    },
+    {
+      "id": "nexussraper",
+      "name": "Nexus Data Scraper",
+      "version": "1.0",
+      "description": "Extracción de datos web. Emails, teléfonos, links, imágenes, tablas.",
+      "icon": "🕷️",
+      "filename": "NexusScraper-Setup.exe",
+      "size_mb": 20,
+      "category": "tools",
+      "install_path": "Nexus Scraper"
     }
   ]
 }
