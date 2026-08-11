@@ -17,7 +17,7 @@ C = {
     "border": "#1e1e40", "text": "#d0d0e8", "dim": "#484878",
     "accent": "#10b981", "accent2": "#34d399",
     "green": "#34d399", "red": "#f87171", "orange": "#fb923c",
-    "gold": "#fbbf24", "blue": "#60a5fa",
+    "gold": "#fbbf24", "blue": "#60a5fa", "purple": "#a855f7",
 }
 
 DATA_DIR = Path.home() / "Documents" / "NexusAnon"
