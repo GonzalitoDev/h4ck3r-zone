@@ -265,6 +265,39 @@
       "size_mb": 40,
       "category": "security",
       "install_path": "Nexus Fortress"
+    },
+    {
+      "id": "nexustv",
+      "name": "Nexus TV",
+      "version": "1.0",
+      "description": "TV gratis en vivo. 25 canales, sin anuncios, sin registro.",
+      "icon": "📺",
+      "filename": "NexusTV-Setup.exe",
+      "size_mb": 26,
+      "category": "media",
+      "install_path": "Nexus TV"
+    },
+    {
+      "id": "nexuscalm",
+      "name": "Nexus Calm",
+      "version": "1.0",
+      "description": "Alivio de ansiedad. Respiración guiada, grounding, afirmaciones.",
+      "icon": "🧘",
+      "filename": "NexusCalm-Setup.exe",
+      "size_mb": 31,
+      "category": "tools",
+      "install_path": "Nexus Calm"
+    },
+    {
+      "id": "nexusextractorpro",
+      "name": "Nexus Extractor Pro",
+      "version": "1.0",
+      "description": "Extracción de inteligencia web. Emails, docs, APIs, metadata, source.",
+      "icon": "🕸️",
+      "filename": "NexusExtractorPro-Setup.exe",
+      "size_mb": 99,
+      "category": "security",
+      "install_path": "Nexus Extractor Pro"
     }
   ]
 }
