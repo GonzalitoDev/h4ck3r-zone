@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="nexus-version" content="20260811022436">
+<meta name="nexus-version" content="20260811022504">
 <meta http-equiv="cache-control" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="WebSecurity Scanner Pro - Escáner avanzado de vulnerabilidades web. 23 módulos. Reconocimiento, headers de seguridad, TLS, CORS, DNS, puertos y más.">
@@ -85,12 +85,13 @@ nav{position:sticky;top:0;z-index:100;background:rgba(1,3,2,0.95);backdrop-filte
 .safety h4{color:var(--red);font-size:14px;margin-bottom:10px}
 .safety p{color:var(--dim);font-size:13px;line-height:1.8}
 
-footer{border-top:1px solid rgba(255,255,255,0.04);padding:36px 0;text-align:center;font-size:13px;color:var(--dim)}
+footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;font-size:12px;color:var(--dim);font-family:monospace}
 
-.section-divider{text-align:center;padding:50px 0 15px}
-.section-divider .tag{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:8px}
-.section-divider .heading{font-size:26px;font-weight:800;color:var(--white)}
-.section-divider .sub{font-size:14px;color:var(--dim);margin-top:6px}
+.section-divider{text-align:center;padding:50px 0 15px;position:relative}
+.section-divider::after{content:'';display:block;width:80px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:10px auto 0}
+.section-divider .tag{font-size:10px;font-weight:700;letter-spacing:5px;text-transform:uppercase;margin-bottom:8px;font-family:monospace}
+.section-divider .heading{font-size:24px;font-weight:900;color:var(--accent);font-family:'Courier New',monospace;text-shadow:0 0 10px var(--accent-glow)}
+.section-divider .sub{font-size:13px;color:var(--dim);margin-top:6px;font-family:monospace}
 
 @media(max-width:768px){
   .hero h1{font-size:30px}
