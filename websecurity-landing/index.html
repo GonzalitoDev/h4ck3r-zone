@@ -1303,9 +1303,9 @@ draw();
     var ws=new WebSocket('ws://localhost:9001');
     ws.onopen=function(){status.style.color='#34d399';status.textContent='🟢 LIVE';status.title='WebSocket Connected'};
     ws.onclose=function(){status.style.color='#484878';status.textContent='🔌';status.title='WebSocket Offline'};
-    ws.onerror=function(){status.style.color='#f87171';status.textContent='🔴';status.title='WebSocket Error'};
-    setInterval(function(){if(ws.readyState!==1){status.style.color='#484878';status.textContent='🔌'}},5000);
-  }catch(e){status.style.color='#484878';status.textContent='🔌'}
+    ws.onerror=function(){status.style.color='#484878';status.textContent='🔌';status.title='Run Nexus WebSocket Pro to connect'};
+    setTimeout(function(){if(ws.readyState!==1){status.style.color='#484878';status.textContent='🔌'}},3000);
+  }catch(e){}
 })();
 </script>
 
