@@ -1308,5 +1308,37 @@ draw();
   }catch(e){status.style.color='#484878';status.textContent='🔌'}
 })();
 </script>
+
+<!-- Auto-Update: Real-time page refresh when new version deployed -->
+<script>
+(function(){
+  var currentVersion = document.querySelector('meta[name="nexus-version"]').content;
+  if(!currentVersion) return;
+
+  function checkUpdate(){
+    fetch(location.href + '?t=' + Date.now(), {method:'HEAD',cache:'no-store'})
+      .then(function(r){
+        // Try to get version from response headers or re-fetch
+        return fetch(location.href + '?t=' + Date.now());
+      })
+      .then(function(r){ return r.text(); })
+      .then(function(html){
+        var m = html.match(/<meta name="nexus-version" content="([^"]+)"/);
+        if(m && m[1] !== currentVersion){
+          // New version detected!
+          var toast = document.createElement('div');
+          toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#00ff41;color:#000;padding:12px 24px;border-radius:4px;font-family:monospace;font-weight:700;z-index:9999;box-shadow:0 0 20px rgba(0,255,65,0.5);animation:slideUp 0.3s ease';
+          toast.textContent = '🔄 Nueva version disponible! Actualizando...';
+          document.body.appendChild(toast);
+          setTimeout(function(){ location.reload(true); }, 1500);
+        }
+      })
+      .catch(function(){});
+  }
+
+  // Check every 15 seconds
+  setInterval(checkUpdate, 15000);
+})();
+</script>
 </body>
 </html>
