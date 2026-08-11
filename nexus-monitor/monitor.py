@@ -14,7 +14,7 @@ from tkinter import ttk,messagebox
 try:import requests;HAS_REQ=True
 except:HAS_REQ=False
 
-C={"bg":"#080810","bg2":"#101022","card":"#181830","border":"#1e1e42","text":"#d0d0e4","dim":"#484870","accent":"#6366f1","accent2":"#818cf8","green":"#34d399","red":"#f87171","orange":"#fb923c","gold":"#fbbf24","blue":"#60a5fa"}
+C={"bg":"#080810","bg2":"#101022","card":"#181830","border":"#1e1e42","text":"#d0d0e4","dim":"#484870","accent":"#6366f1","accent2":"#818cf8","green":"#34d399","red":"#f87171","orange":"#fb923c","gold":"#fbbf24","blue":"#60a5fa","purple":"#a855f7"}
 
 DATA_DIR=Path.home()/"Documents"/"NexusMonitor";DATA_DIR.mkdir(parents=True,exist_ok=True)
 LOG_FILE=DATA_DIR/"monitor_log.json"
