@@ -1,46 +1,123 @@
 """
-Nexus Auto-Deploy v2.0 — Watch files, auto cache-bust, commit + push.
-Runs in background. Injects version timestamp for instant updates.
+█▀█ █▀▀ ▀▄▀ █░█ █▀   █▀▄ █▀▀ █▀█ █░░ █▀█ █▄█
+█▄█ ██▄ █░█ █▄█ ▄█   █▄▀ ██▄ █▀▀ █▄▄ █▄█ ░█░
+Nexus Auto-Deploy v3.0 — Hacker Terminal Edition
+Watches files, auto cache-bust, commit + push. 24/7 background.
 """
-import os, sys, time, subprocess, re
+import os, sys, time, subprocess, re, platform, socket
 from pathlib import Path
 from datetime import datetime
 
 WATCH_DIR = Path(__file__).resolve().parent / "websecurity-landing"
-DEBOUNCE_SECONDS = 3  # Wait 3s after last change
+DEBOUNCE_SECONDS = 3
 HTML_FILE = WATCH_DIR / "index.html"
+
+# ANSI colors for hacker terminal
+G = "\033[92m"  # Green
+R = "\033[91m"  # Red
+C = "\033[96m"  # Cyan
+Y = "\033[93m"  # Yellow
+P = "\033[95m"  # Purple
+D = "\033[90m"  # Dim
+W = "\033[97m"  # White
+X = "\033[0m"   # Reset
+
+
+def clear(): os.system("cls" if platform.system() == "Windows" else "clear")
+
+
+def type_out(text, delay=0.02):
+    """Typewriter effect."""
+    for char in text:
+        sys.stdout.write(char)
+        sys.stdout.flush()
+        time.sleep(delay)
+    print()
+
+
+def progress_bar(label, duration=1.5, steps=20):
+    """Animated progress bar."""
+    sys.stdout.write(f"{D}[{label}] {X}")
+    for i in range(steps + 1):
+        bar = "█" * i + "░" * (steps - i)
+        sys.stdout.write(f"\r{D}[{label}] {G}[{bar}]{X} {i * 5}%")
+        sys.stdout.flush()
+        time.sleep(duration / steps)
+    print()
+
+
+def boot_sequence():
+    """Hacker-style boot animation."""
+    clear()
+    print(f"""
+{G}    ╔══════════════════════════════════════════════════════════╗
+    ║                                                          ║
+    ║   {C}███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗{G}        ║
+    ║   {C}████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝{G}        ║
+    ║   {C}██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗{G}        ║
+    ║   {C}██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║{G}        ║
+    ║   {C}██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║{G}        ║
+    ║   {C}╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝{G}        ║
+    ║                                                          ║
+    ║          {W}AUTO-DEPLOY SYSTEM v3.0{G}                          ║
+    ║          {D}Hacker Terminal Edition{G}                            ║
+    ╚══════════════════════════════════════════════════════════╝
+{X}""")
+
+    print(f"{D}═══ INITIALIZING DEPLOYMENT ENGINE ═══{X}")
+    time.sleep(0.3)
+
+    # Fake boot sequence
+    lines = [
+        (f"Connecting to secure channel...", 0.2),
+        (f"Establishing encrypted tunnel...", 0.2),
+        (f"Loading watcher modules (12 threads)...", 0.3),
+        (f"Scanning target directory...", 0.2),
+        (f"Initializing cache-bust engine...", 0.2),
+        (f"Configuring auto-commit pipeline...", 0.3),
+        (f"Git remote verified: github.com/GonzalitoDev/h4ck3r-zone", 0.2),
+        (f"Encryption: AES-256-GCM", 0.1),
+        (f"Mode: 24/7 SURVEILLANCE", 0.2),
+    ]
+    for line, delay in lines:
+        print(f"{G}[>]{X} {line}")
+        time.sleep(delay)
+
+    print(f"\n{G}[OK]{X} All systems operational")
+    print(f"{G}[OK]{X} Target: {D}{WATCH_DIR}{X}")
+    print(f"{G}[OK]{X} Debounce: {C}{DEBOUNCE_SECONDS}s{X}")
+    print(f"{G}[OK]{X} Pipeline: {C}file change → inject → commit → push → GitHub Pages{X}")
+    print(f"\n{D}═══ DEPLOYMENT ENGINE ACTIVE ═══{X}")
+    print(f"{Y}  STATUS: {G}ONLINE{X}  |  {Y}MODE: {C}AUTOMATIC{X}  |  {Y}HOST: {P}{socket.gethostname()}{X}")
+    print(f"{D}═══ ═══ ═══ ═══ ═══ ═══ ═══ ═══ ═══{X}\n")
+    print(f"{W}  Edit any file → auto deploy in {C}{DEBOUNCE_SECONDS}s{W}. Ctrl+C to stop.{X}\n")
 
 
 def inject_version():
     """Inject version timestamp into HTML for cache busting."""
     try:
-        # Use raw file operations for Windows compatibility
         with open(str(HTML_FILE), "r", encoding="utf-8") as f:
             content = f.read()
         version = datetime.now().strftime("%Y%m%d%H%M%S")
 
-        # Remove old version
         content = re.sub(
             r'<meta name="nexus-version" content="[^"]*">',
             f'<meta name="nexus-version" content="{version}">',
             content
         )
-
-        # If version meta doesn't exist, add it after charset
         if '<meta name="nexus-version"' not in content:
             content = content.replace(
                 '<meta charset="UTF-8">',
                 f'<meta charset="UTF-8">\n<meta name="nexus-version" content="{version}">\n<meta http-equiv="cache-control" content="no-cache">'
             )
-
         with open(str(HTML_FILE), "w", encoding="utf-8") as f:
             f.write(content)
         return version
     except PermissionError:
-        print(f"  ⚠️ File locked - retrying on next cycle")
+        print(f"  {Y}[!]{X} File locked - retrying next cycle")
         return None
     except Exception as e:
-        print(f"  Version inject warning: {e}")
+        print(f"  {Y}[!]{X} Version warning: {e}")
         return None
 
 
@@ -48,8 +125,6 @@ def git_add_commit_push():
     """Add all changes, commit with timestamp, push."""
     try:
         os.chdir(WATCH_DIR.parent)
-
-        # Inject version for cache busting
         ver = inject_version()
         if ver:
             subprocess.run(["git", "add", str(HTML_FILE)], capture_output=True, timeout=5)
@@ -61,20 +136,22 @@ def git_add_commit_push():
         )
         output = result.stdout.decode() + result.stderr.decode()
         if "nothing to commit" not in output:
+            sys.stdout.write(f"\r{D}[{datetime.now():%H:%M:%S}]{X} ")
+            sys.stdout.write(f"{P}Pushing...{X}")
+            sys.stdout.flush()
             subprocess.run(["git", "push", "origin", "master"], capture_output=True, timeout=30)
-            print(f"[{datetime.now():%H:%M:%S}] ✓ Pushed v{ver} — page updates in 1-3 min")
+            sys.stdout.write(f"\r{D}[{datetime.now():%H:%M:%S}]{X} ")
+            print(f"{G}▲ DEPLOYED {W}v{ver}{G} — GitHub Pages updating (1-3 min){X}")
         else:
-            print(f"[{datetime.now():%H:%M:%S}] No changes")
+            sys.stdout.write(f"\r{D}[{datetime.now():%H:%M:%S}]{X} ")
+            print(f"{D}◻ No changes detected{X}")
     except Exception as e:
-        print(f"[{datetime.now():%H:%M:%S}] ✗ Error: {e}")
+        sys.stdout.write(f"\r{D}[{datetime.now():%H:%M:%S}]{X} ")
+        print(f"{R}✗ Error: {e}{X}")
 
 
 def watch():
     """Watch directory for file changes."""
-    print(f"👀 Watching: {WATCH_DIR}")
-    print("   Edit any file → auto commit + push in {DEBOUNCE_SECONDS}s")
-    print("   Press Ctrl+C to stop\n")
-
     last_modified = {}
     for root, dirs, files in os.walk(WATCH_DIR):
         for f in files:
@@ -85,12 +162,13 @@ def watch():
                 pass
 
     last_push = time.time()
+    deploy_count = 0
 
     try:
         while True:
             changed = False
+            changed_file = ""
             for root, dirs, files in os.walk(WATCH_DIR):
-                # Skip .git
                 if ".git" in root:
                     continue
                 for f in files:
@@ -101,26 +179,29 @@ def watch():
                         mtime = os.path.getmtime(fp)
                         if fp not in last_modified or mtime != last_modified[fp]:
                             changed = True
+                            changed_file = f
                             last_modified[fp] = mtime
                     except:
                         pass
 
             if changed and time.time() - last_push > DEBOUNCE_SECONDS:
-                print(f"\n[{datetime.now():%H:%M:%S}] Change detected! Deploying...")
+                deploy_count += 1
+                print(f"\n{Y}[!]{X} {W}Change detected:{X} {C}{changed_file}{X}")
+                print(f"{G}[▲]{X} {W}Deploy #{deploy_count} initiating...{X}")
                 git_add_commit_push()
                 last_push = time.time()
 
             time.sleep(1)
     except KeyboardInterrupt:
-        print("\n👋 Stopped.")
+        print(f"\n{R}[✗]{X} Session terminated.")
+        print(f"{D}  Total deploys: {G}{deploy_count}{D}")
+        print(f"{D}  Session ended: {datetime.now():%Y-%m-%d %H:%M:%S}{X}\n")
 
 
 def main():
-    # First, do an immediate push to sync
-    print("🔄 Syncing with GitHub...")
+    boot_sequence()
+    print(f"{D}[{datetime.now():%H:%M:%S}]{X} {C}Initial sync with GitHub...{X}")
     git_add_commit_push()
-
-    # Then watch
     watch()
 
 
