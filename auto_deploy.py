@@ -14,7 +14,9 @@ HTML_FILE = WATCH_DIR / "index.html"
 def inject_version():
     """Inject version timestamp into HTML for cache busting."""
     try:
-        content = HTML_FILE.read_text(encoding="utf-8")
+        # Use raw file operations for Windows compatibility
+        with open(str(HTML_FILE), "r", encoding="utf-8") as f:
+            content = f.read()
         version = datetime.now().strftime("%Y%m%d%H%M%S")
 
         # Remove old version
@@ -31,10 +33,14 @@ def inject_version():
                 f'<meta charset="UTF-8">\n<meta name="nexus-version" content="{version}">\n<meta http-equiv="cache-control" content="no-cache">'
             )
 
-        HTML_FILE.write_text(content, encoding="utf-8")
+        with open(str(HTML_FILE), "w", encoding="utf-8") as f:
+            f.write(content)
         return version
+    except PermissionError:
+        print(f"  ⚠️ File locked - retrying on next cycle")
+        return None
     except Exception as e:
-        print(f"  Version inject error: {e}")
+        print(f"  Version inject warning: {e}")
         return None
 
 
