@@ -188,6 +188,83 @@
       "size_mb": 20,
       "category": "tools",
       "install_path": "Nexus Scraper"
+    },
+    {
+      "id": "nexusbrowser",
+      "name": "Nexus Browser",
+      "version": "1.0",
+      "description": "Navegador web propio con pestañas, bookmarks, historial.",
+      "icon": "🌐",
+      "filename": "NexusBrowser-Setup.exe",
+      "size_mb": 42,
+      "category": "tools",
+      "install_path": "Nexus Browser"
+    },
+    {
+      "id": "nexusosint",
+      "name": "Nexus OSINT Pro",
+      "version": "1.0",
+      "description": "Inteligencia de fuentes abiertas. Domain, email, username, IP, phone.",
+      "icon": "🔍",
+      "filename": "NexusOSINT-Setup.exe",
+      "size_mb": 260,
+      "category": "security",
+      "install_path": "Nexus OSINT"
+    },
+    {
+      "id": "nexushost",
+      "name": "Nexus Host Pro",
+      "version": "2.0",
+      "description": "Servidor web 24/7 con dominio público gratis y auto-start.",
+      "icon": "⚡",
+      "filename": "NexusHost-Setup.exe",
+      "size_mb": 20,
+      "category": "tools",
+      "install_path": "Nexus Host"
+    },
+    {
+      "id": "nexusanon",
+      "name": "Nexus Anon",
+      "version": "1.0",
+      "description": "Proxy de privacidad anónimo. Header stripping, Tor routing.",
+      "icon": "🛡️",
+      "filename": "NexusAnon-Setup.exe",
+      "size_mb": 46,
+      "category": "security",
+      "install_path": "Nexus Anon"
+    },
+    {
+      "id": "nexusgames",
+      "name": "Nexus Game Center",
+      "version": "1.0",
+      "description": "8 juegos gratis built-in. Snake, Tetris, Pong, Flappy, Invaders y más.",
+      "icon": "🎮",
+      "filename": "NexusGames-Setup.exe",
+      "size_mb": 56,
+      "category": "media",
+      "install_path": "Nexus Games"
+    },
+    {
+      "id": "nexusgamescraper",
+      "name": "Nexus Game Scraper",
+      "version": "1.0",
+      "description": "Buscador de juegos gratis. Steam, Epic, itch.io, Game Jolt, Archive.",
+      "icon": "🎮",
+      "filename": "NexusGameScraper-Setup.exe",
+      "size_mb": 115,
+      "category": "media",
+      "install_path": "Nexus Game Scraper"
+    },
+    {
+      "id": "nexusfortress",
+      "name": "Nexus Fortress",
+      "version": "1.0",
+      "description": "Auditoría y hardening de seguridad de Windows. Scan, score, auto-fix.",
+      "icon": "🏰",
+      "filename": "NexusFortress-Setup.exe",
+      "size_mb": 40,
+      "category": "security",
+      "install_path": "Nexus Fortress"
     }
   ]
 }
