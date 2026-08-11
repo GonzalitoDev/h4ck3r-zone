@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="nexus-version" content="20260811182641">
+<meta name="nexus-version" content="20260811183040">
 <meta http-equiv="cache-control" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="WebSecurity Scanner Pro - Escáner avanzado de vulnerabilidades web. 23 módulos. Reconocimiento, headers de seguridad, TLS, CORS, DNS, puertos y más.">
@@ -1299,12 +1299,13 @@ draw();
 (function(){
   var status=document.getElementById('wsStatus');
   if(!status)return;
+  // Only try WebSocket on localhost - avoids ERR_CONNECTION_REFUSED on GitHub Pages
+  if(window.location.hostname!=='localhost'&&window.location.hostname!=='127.0.0.1'){status.textContent='🌐';status.title='WebSocket (localhost only)';return}
   try{
     var ws=new WebSocket('ws://localhost:9001');
     ws.onopen=function(){status.style.color='#34d399';status.textContent='🟢 LIVE';status.title='WebSocket Connected'};
     ws.onclose=function(){status.style.color='#484878';status.textContent='🔌';status.title='WebSocket Offline'};
-    ws.onerror=function(){status.style.color='#484878';status.textContent='🔌';status.title='Run Nexus WebSocket Pro to connect'};
-    setTimeout(function(){if(ws.readyState!==1){status.style.color='#484878';status.textContent='🔌'}},3000);
+    ws.onerror=function(){status.style.color='#484878';status.textContent='🔌'};
   }catch(e){}
 })();
 </script>
