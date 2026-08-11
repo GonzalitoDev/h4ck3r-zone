@@ -23,15 +23,25 @@ HISTORY_FILE=DATA_DIR/"history.json"
 UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/125.0.0.0 Safari/537.36"
 
 SEARCH_ENGINES={
+    # Surface Web
     "Google":"https://www.google.com/search?q=",
     "DuckDuckGo":"https://duckduckgo.com/html/?q=",
     "Reddit":"https://www.reddit.com/search/?q=",
     "StackOverflow":"https://stackoverflow.com/search?q=",
     "GitHub":"https://github.com/search?q=",
     "Wikipedia":"https://en.wikipedia.org/w/index.php?search=",
-    "Bing":"https://www.bing.com/search?q=",
-    "Medium":"https://medium.com/search?q=",
-    "Dev.to":"https://dev.to/search?q=",
+    # Safe Deep Web — Academic, Government, Legal
+    "Google Scholar":"https://scholar.google.com/scholar?q=",
+    "arXiv":"https://arxiv.org/search/?query=",
+    "PubMed":"https://pubmed.ncbi.nlm.nih.gov/?term=",
+    "Internet Archive":"https://archive.org/search.php?query=",
+    "Project Gutenberg":"https://www.gutenberg.org/ebooks/search/?query=",
+    "PublicWWW":"https://publicwww.com/websites/",
+    "CORE.ac.uk":"https://core.ac.uk/search?q=",
+    "Data.gov":"https://catalog.data.gov/dataset?q=",
+    "WHOIS":"https://www.whois.com/whois/",
+    "Exploit-DB":"https://www.exploit-db.com/search?q=",
+    "OpenAlex":"https://openalex.org/works?search=",
 }
 
 def load_history():
@@ -115,6 +125,27 @@ def search_github(query):
     return results
 
 
+def search_archive(query):
+    results=[]
+    try:
+        data=json.loads(http_get(f"https://archive.org/advancedsearch.php?q={urllib.parse.quote(query)}&fl[]=identifier,title,description&rows=8&output=json")[0])
+        for doc in data.get("response",{}).get("docs",[]):
+            identifier=doc.get("identifier","");title=doc.get("title","Unknown");desc=(doc.get("description","")or"")[:150]
+            if identifier:results.append({"title":title[:120],"url":f"https://archive.org/details/{identifier}","source":"Internet Archive","snippet":desc})
+    except:pass
+    return results
+
+def search_arxiv(query):
+    results=[]
+    try:
+        data=http_get(f"http://export.arxiv.org/api/query?search_query=all:{urllib.parse.quote(query)}&max_results=8")[0]
+        if data:
+            for entry in data.split("<entry>")[1:]:
+                tm=re.search(r'<title>(.*?)</title>',entry,re.DOTALL);um=re.search(r'<id>(.*?)</id>',entry);sm=re.search(r'<summary>(.*?)</summary>',entry,re.DOTALL)
+                if tm and um:results.append({"title":tm.group(1).strip().replace("\n"," ")[:120],"url":um.group(1).strip(),"source":"arXiv","snippet":(sm.group(1).strip()[:150]if sm else"")})
+    except:pass
+    return results
+
 class NexusSearch:
     def __init__(self,root):
         self.root=root;root.title("NEXUS SEARCH PRO — Multi-Engine Search");root.geometry("900x620");root.minsize(650,450);root.configure(bg=C["bg"])
@@ -138,10 +169,22 @@ class NexusSearch:
         # Engine toggles
         tf=tk.Frame(self.root,bg=C["bg"]);tf.pack(fill=tk.X,padx=16,pady=(4,0))
         self.engine_vars={}
-        for name,color in[("Google",C["blue"]),("Reddit",C["orange"]),("StackOverflow",C["orange"]),("GitHub",C["purple"]),("Wikipedia",C["dim"]),("DuckDuckGo",C["orange"]),("Bing",C["blue"]),("Medium",C["dim"]),("Dev.to",C["dim"])]:
-            var=tk.BooleanVar(value=name in["Google","Reddit","StackOverflow","GitHub"])
-            self.engine_vars[name]=var
-            tk.Checkbutton(tf,text=name,variable=var,bg=C["bg"],fg=color,selectcolor=C["bg2"],activebackground=C["bg"],font=("Segoe UI",8)).pack(side=tk.LEFT,padx=2)
+        engines_ui=[
+            ("🌐 Google",C["blue"]),("🦆 DuckDuckGo",C["orange"]),("💬 Reddit",C["red"]),
+            ("📚 StackOverflow",C["orange"]),("🐙 GitHub",C["purple"]),("📖 Wikipedia",C["dim"]),
+            # Deep Web — Safe & Legal
+            ("🎓 Scholar",C["green"]),("📄 arXiv",C["green"]),("🏥 PubMed",C["green"]),
+            ("📦 Archive.org",C["gold"]),("📕 Gutenberg",C["gold"]),("💻 PublicWWW",C["blue"]),
+            ("🔬 CORE",C["green"]),("🏛️ Data.gov",C["blue"]),("🔍 WHOIS",C["accent"]),
+            ("🛡️ Exploit-DB",C["red"]),("📊 OpenAlex",C["green"]),
+        ]
+        row_frame=None
+        for i,(name,color)in enumerate(engines_ui):
+            if i%6==0:row_frame=tk.Frame(tf,bg=C["bg"]);row_frame.pack(fill=tk.X)
+            engine_key=name.split(" ",1)[1]if" "in name else name
+            var=tk.BooleanVar(value=engine_key in["Google","Reddit","StackOverflow","GitHub","Scholar","Archive.org"])
+            self.engine_vars[engine_key]=var
+            tk.Checkbutton(row_frame,text=name,variable=var,bg=C["bg"],fg=color,selectcolor=C["bg2"],activebackground=C["bg"],font=("Segoe UI",7)).pack(side=tk.LEFT,padx=1)
 
         # Results
         self.result_frame=tk.Frame(self.root,bg=C["bg"]);self.result_frame.pack(fill=tk.BOTH,expand=True,padx=16,pady=(6,8))
@@ -191,6 +234,12 @@ class NexusSearch:
                     t=threading.Thread(target=lambda:_add("Reddit",search_reddit(query)),daemon=True);t.start();threads.append(t)
                 elif engine=="GitHub":
                     t=threading.Thread(target=lambda:_add("GitHub",search_github(query)),daemon=True);t.start();threads.append(t)
+                elif engine=="Scholar":
+                    all_results.append({"title":f"Search on Google Scholar: {query}","url":f"https://scholar.google.com/scholar?q={urllib.parse.quote(query)}","source":"Google Scholar","snippet":"Academic papers, theses, books"})
+                elif engine=="Archive.org":
+                    t=threading.Thread(target=lambda:_add("Internet Archive",search_archive(query)),daemon=True);t.start();threads.append(t)
+                elif engine=="arXiv":
+                    t=threading.Thread(target=lambda:_add("arXiv",search_arxiv(query)),daemon=True);t.start();threads.append(t)
                 else:
                     # Direct link for other engines
                     url=SEARCH_ENGINES.get(engine,"")+urllib.parse.quote(query)
@@ -210,7 +259,7 @@ class NexusSearch:
         if not self.results:
             tk.Label(self.results_f,text="No results found.\nTry different keywords or check your internet connection.",font=("Segoe UI",12),fg=C["dim"],bg=C["bg"]).pack(expand=True,pady=60);return
 
-        source_colors={"Google":C["blue"],"StackOverflow":C["orange"],"Reddit":C["red"],"GitHub":C["purple"],"Wikipedia":C["dim"],"DuckDuckGo":C["orange"],"Bing":C["blue"],"Medium":C["dim"],"Dev.to":C["dim"]}
+        source_colors={"Google":C["blue"],"StackOverflow":C["orange"],"Reddit":C["red"],"GitHub":C["purple"],"Wikipedia":C["dim"],"DuckDuckGo":C["orange"],"Google Scholar":C["green"],"Internet Archive":C["gold"],"arXiv":C["green"],"Bing":C["blue"],"Medium":C["dim"],"Dev.to":C["dim"]}
 
         for i,r in enumerate(self.results):
             card=tk.Frame(self.results_f,bg=C["card"],highlightbackground=C["border"],highlightthickness=1,cursor="hand2")
