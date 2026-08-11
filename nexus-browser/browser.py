@@ -122,14 +122,6 @@ class NexusBrowser:
         self.status_lbl.pack(side=tk.LEFT, padx=10, pady=2)
 
     def _new_tab(self, url=""):
-        if not HAS_WEBVIEW:
-            if url:
-                webbrowser.open(url)
-            elif not self.tabs:
-                webbrowser.open(HOME_PAGE)
-            self.status_lbl.config(text="WebView2 not available. Install: pip install pywebview")
-            return
-
         tab = Tab(self, url=url)
         self.tabs.append(tab)
         self._select_tab(tab)
