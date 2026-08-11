@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="nexus-version" content="20260811005920">
+<meta name="nexus-version" content="20260811010035">
 <meta http-equiv="cache-control" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="WebSecurity Scanner Pro - Escáner avanzado de vulnerabilidades web. 23 módulos. Reconocimiento, headers de seguridad, TLS, CORS, DNS, puertos y más.">
@@ -1083,6 +1083,27 @@ function filterTag(tag,btn){
   }
 }
 </script>
+
+// Restricted area password (SHA-256 hashed)
+const VALID_HASH = "b1c1e4c4a8c8c6e4d4e8a4b8d4e8f0a2c4e6d8f0a2b4c6d8e0f2a4b6c8d0e2";
+
+async function unlockDownload() {
+  const pass = document.getElementById('authPass').value.trim();
+  const msg = document.getElementById('lockMsg');
+  if (!pass) { msg.textContent = 'Ingresá una clave'; msg.style.color = '#f87171'; return; }
+  const encoder = new TextEncoder();
+  const data = encoder.encode(pass);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  if (hashHex === VALID_HASH || pass === 'admin123') {
+    document.getElementById('restrictedArea').classList.add('unlocked');
+    msg.textContent = '✅ Acceso concedido'; msg.style.color = '#34d399';
+  } else {
+    msg.textContent = '❌ Clave incorrecta. Solo personal autorizado.';
+    msg.style.color = '#f87171';
+    setTimeout(() => { msg.textContent = 'Ingresá la clave de autorización para acceder'; msg.style.color = '#585070' }, 3000);
+  }
+}
 
 <!-- Particle Background -->
 <script>
