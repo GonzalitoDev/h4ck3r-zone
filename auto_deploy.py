@@ -121,19 +121,19 @@ def git_add_commit_push():
         os.chdir(WATCH_DIR.parent)
         ver = inject_version()
         if ver:
-            subprocess.run(["git", "add", str(HTML_FILE)], capture_output=True, timeout=5)
+            subprocess.run(["git", "add", str(HTML_FILE)], capture_output=True, timeout=10)
 
-        subprocess.run(["git", "add", "websecurity-landing/"], capture_output=True, timeout=10)
+        subprocess.run(["git", "add", "websecurity-landing/"], capture_output=True, timeout=60)
         result = subprocess.run(
             ["git", "commit", "-m", f"Auto-deploy v{ver or '?'}", "--no-verify"],
-            capture_output=True, timeout=10
+            capture_output=True, timeout=30
         )
         output = result.stdout.decode() + result.stderr.decode()
         if "nothing to commit" not in output:
             sys.stdout.write(f"\r{D}[{datetime.now():%H:%M:%S}]{X} ")
             sys.stdout.write(f"{P}Pushing...{X}")
             sys.stdout.flush()
-            subprocess.run(["git", "push", "origin", "master"], capture_output=True, timeout=30)
+            subprocess.run(["git", "push", "origin", "master"], capture_output=True, timeout=120)
             sys.stdout.write(f"\r{D}[{datetime.now():%H:%M:%S}]{X} ")
             print(f"{G}▲ DEPLOYED {W}v{ver}{G} — live in ~60s{X}")
         else:
