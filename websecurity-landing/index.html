@@ -194,7 +194,15 @@ footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;font-
       <span class="static">Software libre —</span>
       <span class="dynamic" id="typing"></span>
     </div>
-    <p>27 aplicaciones gratuitas para Windows y Android. Escáneres de seguridad, limpiadores, TV en vivo, VPN, dashboards, APKs, servidores y más. Todo 100% seguro, sin publicidad, sin trackers.</p>
+    <p>29 aplicaciones gratuitas para Windows y Android. Escáneres de seguridad, limpiadores, TV en vivo, VPN, dashboards, APKs, servidores y más. Todo 100% seguro, sin publicidad, sin trackers.</p>
+    <div style="margin:12px 0 0">
+      <span style="display:inline-block;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:#34d399;padding:4px 14px;border-radius:20px;font-size:11px;font-family:monospace;margin:3px" id="liveBadge">
+        <span style="display:inline-block;width:6px;height:6px;background:#34d399;border-radius:50%;margin-right:6px;animation:blink 1.5s infinite"></span>ONLINE 24/7
+      </span>
+      <span style="display:inline-block;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:#fbbf24;padding:4px 14px;border-radius:20px;font-size:11px;font-family:monospace;margin:3px">⚡ 29 Apps Gratis</span>
+      <span style="display:inline-block;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);color:#818cf8;padding:4px 14px;border-radius:20px;font-size:11px;font-family:monospace;margin:3px">🔒 100% Seguro</span>
+      <span style="display:inline-block;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.3);color:#c084fc;padding:4px 14px;border-radius:20px;font-size:11px;font-family:monospace;margin:3px">📡 Auto-Update 5s</span>
+    </div>
     <div class="hero-buttons">
       <a href="#descargar" class="btn-primary">&#128229; Descargar</a>
       <button onclick="openInfo()" class="btn-secondary" style="cursor:pointer">ℹ️ ¿Para qué sirve esto?</button>
@@ -330,6 +338,17 @@ function closeSupport(e){if(e.target===document.getElementById('supportModal'))d
     <button class="tag-filter" onclick="filterTag('premium',this)">⚡ Premium</button>
   </div>
   <div style="text-align:center;font-size:12px;color:var(--dim);margin-top:4px" id="filterCount"></div>
+  <!-- Quick Nav Pills -->
+  <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px;padding:0 10px">
+    <a href="#hub" style="color:var(--accent);font-size:10px;font-family:monospace;text-decoration:none;padding:5px 12px;border:1px solid var(--border);border-radius:14px;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">🔄 Hub</a>
+    <a href="#security" style="color:var(--red);font-size:10px;font-family:monospace;text-decoration:none;padding:5px 12px;border:1px solid var(--border);border-radius:14px;transition:all 0.2s" onmouseover="this.style.borderColor='var(--red)'" onmouseout="this.style.borderColor='var(--border)'">🛡️ Security</a>
+    <a href="#tools" style="color:#60a5fa;font-size:10px;font-family:monospace;text-decoration:none;padding:5px 12px;border:1px solid var(--border);border-radius:14px;transition:all 0.2s" onmouseover="this.style.borderColor='#60a5fa'" onmouseout="this.style.borderColor='var(--border)'">🔧 Tools</a>
+    <a href="#media" style="color:#f59e0b;font-size:10px;font-family:monospace;text-decoration:none;padding:5px 12px;border:1px solid var(--border);border-radius:14px;transition:all 0.2s" onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='var(--border)'">🎬 Media</a>
+    <a href="#mobile" style="color:#34d399;font-size:10px;font-family:monospace;text-decoration:none;padding:5px 12px;border:1px solid var(--border);border-radius:14px;transition:all 0.2s" onmouseover="this.style.borderColor='#34d399'" onmouseout="this.style.borderColor='var(--border)'">📱 Mobile</a>
+    <a href="#premium" style="color:#fbbf24;font-size:10px;font-family:monospace;text-decoration:none;padding:5px 12px;border:1px solid var(--border);border-radius:14px;transition:all 0.2s" onmouseover="this.style.borderColor='#fbbf24'" onmouseout="this.style.borderColor='var(--border)'">⚡ Premium</a>
+    <a href="#foro" style="color:#c084fc;font-size:10px;font-family:monospace;text-decoration:none;padding:5px 12px;border:1px solid var(--border);border-radius:14px;transition:all 0.2s" onmouseover="this.style.borderColor='#c084fc'" onmouseout="this.style.borderColor='var(--border)'">💬 Foro</a>
+    <a href="#contacto" style="color:#60a5fa;font-size:10px;font-family:monospace;text-decoration:none;padding:5px 12px;border:1px solid var(--border);border-radius:14px;transition:all 0.2s" onmouseover="this.style.borderColor='#60a5fa'" onmouseout="this.style.borderColor='var(--border)'">📧 Contacto</a>
+  </div>
 </div>
 
 <!-- FUNCIONALIDADES -->
@@ -531,7 +550,7 @@ function closeSupport(e){if(e.target===document.getElementById('supportModal'))d
 </section>
 
 <!-- ===== SECURITY SECTION ===== -->
-<div class="section-divider reveal" data-category="security">
+<div class="section-divider reveal" data-category="security" id="security">
   <div class="tag" style="color:#f87171">🛡️ Security</div>
   <div class="heading">Ciberseguridad y Escaneo</div>
   <div class="sub">Escáneres de vulnerabilidades, ciberseguridad, VPN y análisis de red</div>
@@ -560,7 +579,7 @@ function closeSupport(e){if(e.target===document.getElementById('supportModal'))d
 </section>
 
 <!-- ===== MEDIA SECTION ===== -->
-<div class="section-divider reveal" data-category="media">
+<div class="section-divider reveal" data-category="media" id="media">
   <div class="tag" style="color:#f59e0b">🎬 Media & Streaming</div>
   <div class="heading">Películas y Entretenimiento</div>
   <div class="sub">Catálogos de películas gratis, streaming y exploradores</div>
@@ -643,7 +662,7 @@ function closeSupport(e){if(e.target===document.getElementById('supportModal'))d
 </section>
 
 <!-- ===== MOBILE SECTION ===== -->
-<div class="section-divider reveal" data-category="mobile">
+<div class="section-divider reveal" data-category="mobile" id="mobile">
   <div class="tag" style="color:#34d399">📱 Mobile</div>
   <div class="heading">Apps para Android</div>
   <div class="sub">APKs nativos, PWAs, herramientas offline</div>
