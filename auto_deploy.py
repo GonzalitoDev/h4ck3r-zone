@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import datetime
 
 WATCH_DIR = Path(__file__).resolve().parent / "websecurity-landing"
-DEBOUNCE_SECONDS = 3
+DEBOUNCE_SECONDS = 1  # Instant deploy (1s wait)
 HTML_FILE = WATCH_DIR / "index.html"
 
 # ANSI colors for hacker terminal
@@ -69,15 +69,9 @@ def boot_sequence():
 
     # Fake boot sequence
     lines = [
-        (f"Connecting to secure channel...", 0.2),
-        (f"Establishing encrypted tunnel...", 0.2),
-        (f"Loading watcher modules (12 threads)...", 0.3),
-        (f"Scanning target directory...", 0.2),
-        (f"Initializing cache-bust engine...", 0.2),
-        (f"Configuring auto-commit pipeline...", 0.3),
-        (f"Git remote verified: github.com/GonzalitoDev/h4ck3r-zone", 0.2),
-        (f"Encryption: AES-256-GCM", 0.1),
-        (f"Mode: 24/7 SURVEILLANCE", 0.2),
+        (f"Initializing watcher (12 threads)...", 0),
+        (f"Target: {WATCH_DIR}", 0),
+        (f"Pipeline active — {DEBOUNCE_SECONDS}s response", 0),
     ]
     for line, delay in lines:
         print(f"{G}[>]{X} {line}")
@@ -141,7 +135,7 @@ def git_add_commit_push():
             sys.stdout.flush()
             subprocess.run(["git", "push", "origin", "master"], capture_output=True, timeout=30)
             sys.stdout.write(f"\r{D}[{datetime.now():%H:%M:%S}]{X} ")
-            print(f"{G}▲ DEPLOYED {W}v{ver}{G} — GitHub Pages updating (1-3 min){X}")
+            print(f"{G}▲ DEPLOYED {W}v{ver}{G} — live in ~60s{X}")
         else:
             sys.stdout.write(f"\r{D}[{datetime.now():%H:%M:%S}]{X} ")
             print(f"{D}◻ No changes detected{X}")
