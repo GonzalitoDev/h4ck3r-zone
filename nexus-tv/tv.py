@@ -15,36 +15,38 @@ DATA_DIR.mkdir(parents=True,exist_ok=True)
 FAVS_FILE=DATA_DIR/"favorites.json"
 
 CHANNELS = [
-    # NEWS
-    {"name":"France 24 English","url":"https://www.youtube.com/embed/igRL6eR5PvI?autoplay=1","cat":"News","lang":"EN","desc":"24/7 international news (English)"},
-    {"name":"DW News","url":"https://www.youtube.com/embed/b63V1msNNQM?autoplay=1","cat":"News","lang":"EN","desc":"Deutsche Welle news"},
-    {"name":"Al Jazeera English","url":"https://www.youtube.com/embed/bNyUyrR0PHo?autoplay=1","cat":"News","lang":"EN","desc":"International news"},
-    {"name":"Euronews","url":"https://www.youtube.com/embed/sPgqEHsONK8?autoplay=1","cat":"News","lang":"EN","desc":"European news network"},
-    {"name":"ABC News","url":"https://www.youtube.com/embed/w_Ma8oQLmSM?autoplay=1","cat":"News","lang":"EN","desc":"ABC News live"},
-    {"name":"NBC News NOW","url":"https://www.youtube.com/embed/XOacA3R3wQ4?autoplay=1","cat":"News","lang":"EN","desc":"NBC News live stream"},
-    {"name":"CBS News 24/7","url":"https://www.youtube.com/embed/N7FsiI0I5x4?autoplay=1","cat":"News","lang":"EN","desc":"CBS News live"},
-    {"name":"Sky News","url":"https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1","cat":"News","lang":"EN","desc":"Sky News live"},
-    {"name":"WION","url":"https://www.youtube.com/embed/3tMDHSAs5Q0?autoplay=1","cat":"News","lang":"EN","desc":"World is One News"},
-    {"name":"Bloomberg TV","url":"https://www.youtube.com/embed/dp8PhLsUcFE?autoplay=1","cat":"News","lang":"EN","desc":"Business & markets"},
+    # NEWS - using YouTube watch URLs (more reliable than embed)
+    {"name":"France 24 English","url":"https://www.youtube.com/watch?v=igRL6eR5PvI","cat":"News","lang":"EN","desc":"24/7 international news (English)"},
+    {"name":"DW News","url":"https://www.youtube.com/watch?v=b63V1msNNQM","cat":"News","lang":"EN","desc":"Deutsche Welle live news"},
+    {"name":"Al Jazeera English","url":"https://www.youtube.com/watch?v=bNyUyrR0PHo","cat":"News","lang":"EN","desc":"International news 24/7"},
+    {"name":"Euronews English","url":"https://www.youtube.com/watch?v=sPgqEHsONK8","cat":"News","lang":"EN","desc":"European news live"},
+    {"name":"ABC News Live","url":"https://www.youtube.com/watch?v=w_Ma8oQLmSM","cat":"News","lang":"EN","desc":"ABC News 24/7"},
+    {"name":"NBC News NOW","url":"https://www.youtube.com/watch?v=XOacA3R3wQ4","cat":"News","lang":"EN","desc":"NBC News live stream"},
+    {"name":"CBS News 24/7","url":"https://www.youtube.com/watch?v=HsfQy6aiRkE","cat":"News","lang":"EN","desc":"CBS News live"},
+    {"name":"Sky News","url":"https://www.youtube.com/watch?v=9Auq9mYxFEE","cat":"News","lang":"EN","desc":"Sky News live"},
+    {"name":"WION Live","url":"https://www.youtube.com/watch?v=3tMDHSAs5Q0","cat":"News","lang":"EN","desc":"World is One News"},
+    {"name":"Bloomberg TV","url":"https://www.youtube.com/watch?v=dp8PhLsUcFE","cat":"News","lang":"EN","desc":"Business & markets live"},
     # MUSIC
-    {"name":"Lofi Girl","url":"https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1","cat":"Music","lang":"EN","desc":"24/7 lofi hip hop radio"},
-    {"name":"Vevo 80s","url":"https://www.youtube.com/embed/g7bNXqBJEOI?autoplay=1","cat":"Music","lang":"EN","desc":"80s music hits"},
-    {"name":"Vevo 90s","url":"https://www.youtube.com/embed/dGXh5QXpR4Y?autoplay=1","cat":"Music","lang":"EN","desc":"90s music hits"},
-    {"name":"Classical Music","url":"https://www.youtube.com/embed/MqynUQrQrRk?autoplay=1","cat":"Music","lang":"EN","desc":"Classical music 24/7"},
-    {"name":"Jazz Radio","url":"https://www.youtube.com/embed/Dx5qFachd3A?autoplay=1","cat":"Music","lang":"EN","desc":"Smooth jazz 24/7"},
-    # NATURE & SCIENCE
-    {"name":"NASA TV","url":"https://www.youtube.com/embed/21X5lGlDOfg?autoplay=1","cat":"Science","lang":"EN","desc":"NASA live stream"},
-    {"name":"Nature Relaxation","url":"https://www.youtube.com/embed/niKbT1hQmkA?autoplay=1","cat":"Nature","lang":"EN","desc":"Scenic nature views"},
-    {"name":"Aquarium 4K","url":"https://www.youtube.com/embed/xTgUAtwqRbg?autoplay=1","cat":"Nature","lang":"EN","desc":"Underwater aquarium"},
-    {"name":"Earth from Space","url":"https://www.youtube.com/embed/86YLFOog4GM?autoplay=1","cat":"Science","lang":"EN","desc":"ISS live stream"},
+    {"name":"Lofi Girl Radio","url":"https://www.youtube.com/watch?v=jfKfPfyJRdk","cat":"Music","lang":"EN","desc":"24/7 lofi hip hop - study/relax"},
+    {"name":"Synthwave Radio","url":"https://www.youtube.com/watch?v=MVPTGgRZq7E","cat":"Music","lang":"EN","desc":"Retro synthwave 24/7"},
+    {"name":"Jazz Relax","url":"https://www.youtube.com/watch?v=Dx5qFachd3A","cat":"Music","lang":"EN","desc":"Smooth jazz music"},
+    {"name":"Classical Music","url":"https://www.youtube.com/watch?v=MqynUQrQrRk","cat":"Music","lang":"EN","desc":"Classical music 24/7"},
+    {"name":"Chillhop Radio","url":"https://www.youtube.com/watch?v=5yx6BWlEVcY","cat":"Music","lang":"EN","desc":"Chill beats to relax"},
+    # NATURE & RELAXATION
+    {"name":"NASA TV Live","url":"https://www.youtube.com/watch?v=21X5lGlDOfg","cat":"Science","lang":"EN","desc":"NASA live stream 24/7"},
+    {"name":"ISS Live Earth","url":"https://www.youtube.com/watch?v=86YLFOog4GM","cat":"Science","lang":"EN","desc":"Earth from Space - ISS live"},
+    {"name":"Nature 4K Scenes","url":"https://www.youtube.com/watch?v=niKbT1hQmkA","cat":"Nature","lang":"EN","desc":"Beautiful nature relaxation"},
+    {"name":"Aquarium 4K","url":"https://www.youtube.com/watch?v=xTgUAtwqRbg","cat":"Nature","lang":"EN","desc":"Underwater aquarium 4K"},
+    {"name":"Fireplace 4K","url":"https://www.youtube.com/watch?v=L_LUpnjgPso","cat":"Nature","lang":"EN","desc":"Cozy fireplace 4K"},
+    {"name":"Ocean Waves","url":"https://www.youtube.com/watch?v=WHPEKLQJ1xw","cat":"Nature","lang":"EN","desc":"Ocean waves relaxing sounds"},
+    {"name":"Rain Sounds","url":"https://www.youtube.com/watch?v=yIQdQ5UYtZU","cat":"Nature","lang":"EN","desc":"Rain sounds for sleep"},
     # ESPANOL
-    {"name":"FRANCE 24 Espanol","url":"https://www.youtube.com/embed/9IBTZd9tAmA?autoplay=1","cat":"News","lang":"ES","desc":"Noticias 24/7 en espanol"},
-    {"name":"DW Espanol","url":"https://www.youtube.com/embed/58AIIjR2bL0?autoplay=1","cat":"News","lang":"ES","desc":"Deutsche Welle en espanol"},
-    {"name":"Euronews Espanol","url":"https://www.youtube.com/embed/UwcDqFwH0wo?autoplay=1","cat":"News","lang":"ES","desc":"Euronews en espanol"},
+    {"name":"FRANCE 24 Espanol","url":"https://www.youtube.com/watch?v=9IBTZd9tAmA","cat":"News","lang":"ES","desc":"Noticias 24/7 en espanol"},
+    {"name":"DW Espanol","url":"https://www.youtube.com/watch?v=58AIIjR2bL0","cat":"News","lang":"ES","desc":"Deutsche Welle en espanol"},
+    {"name":"Euronews Espanol","url":"https://www.youtube.com/watch?v=UwcDqFwH0wo","cat":"News","lang":"ES","desc":"Euronews en espanol"},
+    {"name":"RT en Espanol","url":"https://www.youtube.com/watch?v=6VXpOYj0vF4","cat":"News","lang":"ES","desc":"RT Noticias en espanol"},
     # ENTERTAINMENT
-    {"name":"FailArmy","url":"https://www.youtube.com/embed/VIDEO_ID","cat":"Entertainment","lang":"EN","desc":"Funny videos compilation"},
-    {"name":"Fireplace 4K","url":"https://www.youtube.com/embed/L_LUpnjgPso?autoplay=1","cat":"Nature","lang":"EN","desc":"Cozy fireplace 4K"},
-    {"name":"Ocean Sounds","url":"https://www.youtube.com/embed/WHPEKLQJ1xw?autoplay=1","cat":"Nature","lang":"EN","desc":"Ocean waves relaxing"},
+    {"name":"Funny Fails 24/7","url":"https://www.youtube.com/watch?v=VIDEO_ID","cat":"Entertainment","lang":"EN","desc":"Funny videos compilation"},
 ]
 
 def load_favs():
