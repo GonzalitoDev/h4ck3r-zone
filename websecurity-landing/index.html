@@ -171,6 +171,7 @@ footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;font-
       <a href="#tools" class="nav-btn" style="background:rgba(96,165,250,0.2);color:#60a5fa;font-size:13px">🔧 Tools</a>
       <a href="#foro" class="nav-btn" style="background:var(--purple);font-size:13px">💬 Foro</a>
       <a href="#descargar" class="nav-btn">Descargar</a>
+      <span id="wsStatus" style="font-size:8px;color:var(--dim);margin-left:8px;cursor:default" title="WebSocket Status">🔌</span>
     </div>
   </div>
 </nav>
@@ -1291,6 +1292,21 @@ function draw(){
   requestAnimationFrame(draw);
 }
 draw();
+</script>
+
+<!-- WebSocket Live Status -->
+<script>
+(function(){
+  var status=document.getElementById('wsStatus');
+  if(!status)return;
+  try{
+    var ws=new WebSocket('ws://localhost:9001');
+    ws.onopen=function(){status.style.color='#34d399';status.textContent='🟢 LIVE';status.title='WebSocket Connected'};
+    ws.onclose=function(){status.style.color='#484878';status.textContent='🔌';status.title='WebSocket Offline'};
+    ws.onerror=function(){status.style.color='#f87171';status.textContent='🔴';status.title='WebSocket Error'};
+    setInterval(function(){if(ws.readyState!==1){status.style.color='#484878';status.textContent='🔌'}},5000);
+  }catch(e){status.style.color='#484878';status.textContent='🔌'}
+})();
 </script>
 </body>
 </html>
