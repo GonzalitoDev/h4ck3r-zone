@@ -155,6 +155,22 @@ footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;font-
 .restricted .unlock-btn:hover{background:#ff5252}
 .restricted .hidden-content{display:none}
 .restricted.unlocked .hidden-content{display:block}
+.auth-denied{background:rgba(255,23,68,0.1);color:var(--red)}
+
+/* Loading Screen */
+#loader{position:fixed;inset:0;z-index:9999;background:#010302;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s ease,visibility 0.5s ease}
+#loader.hidden{opacity:0;visibility:hidden;pointer-events:none}
+#loader .logo-text{font-size:32px;font-weight:900;color:var(--accent);font-family:'Courier New',monospace;letter-spacing:3px;text-shadow:0 0 20px var(--accent-glow);animation:glitch 3s infinite}
+#loader .logo-sub{font-size:12px;color:var(--dim);font-family:monospace;margin-top:4px;letter-spacing:2px}
+#loader .loader-bar{width:200px;height:2px;background:var(--border);margin-top:20px;border-radius:1px;overflow:hidden}
+#loader .loader-fill{width:0;height:100%;background:var(--accent);animation:loadFill 1.2s ease forwards;box-shadow:0 0 10px var(--accent-glow)}
+@keyframes loadFill{0%{width:0}50%{width:70%}90%{width:95%}100%{width:100%}}
+@keyframes glitch{0%,100%{text-shadow:1px 0 var(--accent),-1px 0 var(--red)}25%{text-shadow:-1px 0 var(--accent),1px 0 var(--red)}50%{text-shadow:2px 0 var(--accent),-2px 0 var(--red)}75%{text-shadow:-2px 0 var(--accent)}}
+#loader .loader-dots{display:flex;gap:4px;margin-top:8px}
+#loader .dot{width:4px;height:4px;background:var(--accent);border-radius:50%;animation:dotPulse 0.6s infinite alternate}
+#loader .dot:nth-child(2){animation-delay:0.2s}#loader .dot:nth-child(3){animation-delay:0.4s}
+@keyframes dotPulse{to{opacity:0.3;transform:scale(0.7)}}
+
 .restricted.unlocked .lock-form{display:none}
 .restricted .auth-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;margin-top:8px}
 .auth-authorized{background:rgba(0,214,106,0.15);color:var(--green)}
@@ -162,6 +178,15 @@ footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;font-
 </style>
 </head>
 <body>
+
+<!-- LOADING SCREEN -->
+<div id="loader">
+  <div class="logo-text">NEXUS TOOLS</div>
+  <div class="logo-sub">INITIALIZING SYSTEM...</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+</div>
+
 <canvas id="bg"></canvas>
 
 <nav>
@@ -1226,6 +1251,9 @@ function closeSupport(e){if(e.target===document.getElementById('supportModal'))d
 <script>
 // Typewriter
 const words=["Escáner de seguridad","Limpiador de PC","Dashboard cyberpunk","VPN y Proxy","Apps Android APK","Servidores 24/7","Organizador IA","WebSocket","Ciberseguridad","100% gratis"];
+
+// Hide loading screen after page loads
+window.addEventListener('load',function(){setTimeout(function(){document.getElementById('loader').classList.add('hidden')},400)});
 let wi=0,ci=0,isDeleting=false,timer;
 function typeWriter(){
   const el=document.getElementById('typing'),word=words[wi];
