@@ -18,5 +18,10 @@
     "password": "1234",
     "role": "user",
     "joined": "2026-07-23T02:15:32.145693"
+  },
+  "cleopatra": {
+    "password": "1234",
+    "role": "user",
+    "joined": "2026-10-28T03:14:12.939295"
   }
 }
