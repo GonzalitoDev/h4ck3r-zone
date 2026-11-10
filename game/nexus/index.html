@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#070d16"/>
+<meta name="description" content="Nexus Command Center: acceso a la base de datos de Firebase y a las partidas de ACERO Y SAL."/>
+<title>NEXUS · Centro de Mando</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23070d16'/%3E%3Cpath d='M32 8l18 12v24L32 56 14 44V20z' fill='none' stroke='%235ad2f4' stroke-width='4'/%3E%3Cpath d='M22 40l20-20M22 22l20 20' stroke='%23f2b544' stroke-width='4'/%3E%3C/svg%3E"/>
+<link rel="stylesheet" href="nexus.css"/>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true">
+  <div class="grid-layer"></div>
+  <div class="glow"></div>
+</div>
+
+<header class="topbar">
+  <a class="brand" href="../">
+    <div class="brand-mark">N</div>
+    <div class="brand-text"><strong>NEXUS</strong><small>CENTRO DE MANDO</small></div>
+  </a>
+  <div class="top-actions">
+    <span class="db-chip" id="dbChip">FIRESTORE · CONECTANDO</span>
+    <a class="btn primary" href="../">Jugar ACERO Y SAL</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="eyebrow">NEXUS COMMAND CENTER · BASE DE DATOS</div>
+    <h1>Acceso unificado a <span>Firestore</span></h1>
+    <p>Esta página usa el mismo proyecto de Firebase y la misma sesión anónima que el juego. Aquí puedes consultar tu partida en la nube, descargar una copia y restaurarla.</p>
+  </section>
+
+  <section class="status-grid">
+    <article class="card mini">
+      <span class="mini-label">PROYECTO</span>
+      <strong>juego-e0d5f</strong>
+      <small>Firebase / Firestore</small>
+    </article>
+    <article class="card mini">
+      <span class="mini-label">BASE DE DATOS</span>
+      <strong id="dbStatus">Conectando…</strong>
+      <small>colección <code>saves</code></small>
+    </article>
+    <article class="card mini">
+      <span class="mini-label">SESIÓN</span>
+      <strong id="authStatus">Anónima</strong>
+      <small id="uidText">UID: —</small>
+    </article>
+    <article class="card mini">
+      <span class="mini-label">ÚLTIMA SINCRONIZACIÓN</span>
+      <strong id="syncTime">—</strong>
+      <small id="syncSource">sin datos</small>
+    </article>
+  </section>
+
+  <section class="card save-card">
+    <div class="card-head">
+      <div>
+        <div class="eyebrow">PARTIDA EN LA NUBE</div>
+        <h2 id="saveTitle">Buscando partida…</h2>
+      </div>
+      <button class="btn ghost small" id="refreshBtn">Actualizar</button>
+    </div>
+
+    <div id="saveEmpty" class="empty hidden">
+      <p>Todavía no hay una partida guardada en Firebase para esta sesión.</p>
+      <a class="btn primary" href="../">Crear partida en el juego</a>
+    </div>
+
+    <div id="saveData" class="hidden">
+      <div class="stats-row">
+        <div><span>Nivel</span><b id="sLevel">—</b></div>
+        <div><span>Créditos</span><b id="sCredits">—</b></div>
+        <div><span>Operaciones</span><b id="sMissions">—</b></div>
+        <div><span>Buques</span><b id="sFleet">—</b></div>
+        <div><span>Poder naval</span><b id="sPower">—</b></div>
+      </div>
+      <h3>Flota guardada</h3>
+      <div class="fleet-list" id="fleetList"></div>
+      <div class="save-actions">
+        <button class="btn primary" id="downloadBtn">Descargar copia</button>
+        <label class="btn ghost file-btn">
+          Restaurar copia
+          <input type="file" id="importInput" accept="application/json,.json"/>
+        </label>
+        <a class="btn ghost" href="../">Abrir el juego</a>
+      </div>
+      <p class="hint">La copia es un archivo JSON. Restaurarla sobrescribe la partida de esta sesión en Firestore; el juego la cargará al abrirse.</p>
+    </div>
+
+    <div id="errorBox" class="error hidden"></div>
+  </section>
+
+  <section class="card info-card">
+    <h2>Cómo funciona el acceso</h2>
+    <p>El juego y este centro usan la misma Web App de Firebase y la misma sesión anónima. Cada documento vive en <code>saves/{uid}</code> y las reglas de Firestore solo permiten que ese usuario lea y escriba su propio documento.</p>
+    <p>Si abres el juego en este mismo navegador, la sesión se conserva. Para llevar la partida a otro dispositivo, descarga la copia aquí y restáurala desde el centro Nexus en el otro navegador.</p>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>NEXUS · Centro de Mando · <a href="../">ACERO Y SAL</a> · Firestore proyecto <code>juego-e0d5f</code></p>
+</footer>
+
+<script src="../assets/firebase-config.js"></script>
+<script src="../assets/data.js"></script>
+<script src="nexus.js"></script>
+</body>
+</html>

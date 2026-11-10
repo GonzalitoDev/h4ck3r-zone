@@ -152,6 +152,7 @@ function renderHQ(v) {
         <button class="btn ghost" onclick="Game.go('bridge')">Tomar el timón</button>
         <button class="btn ghost" onclick="Game.go('fleet')">Gestionar flota</button>
         <button class="btn ghost" onclick="Game.cloudSync()">Sincronizar nube</button>
+        <button class="btn ghost" onclick="window.location.href='nexus/'">Centro Nexus</button>
         <button class="btn ghost" onclick="Game.go('yard')">Astillero</button>
       </div>
     </section>`;

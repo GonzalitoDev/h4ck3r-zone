@@ -64,6 +64,19 @@ Si algún día la consola muestra que se superó una cuota:
 
 > El guardado en la nube queda vinculado al navegador mediante la sesión anónima. Para llevarlo a otro dispositivo habría que añadir inicio de sesión con Google (siguiente paso opcional).
 
+## Centro de Mando Nexus
+
+La página **Nexus** (`/nexus/`) comparte la misma sesión y la misma base de datos que el juego. Desde ella puedes:
+
+- Ver el estado de conexión con Firestore y el UID de la sesión anónima.
+- Consultar la partida guardada: nivel, créditos, operaciones, flota y poder naval.
+- **Descargar una copia** de la partida en JSON.
+- **Restaurar una copia** en Firestore para usarla en otro navegador.
+
+Enlace directo: https://h4ck3r-zone--juego-e0d5f.us-east4.hosted.app/nexus/
+
+El acceso está protegido por las reglas de `firestore.rules`: cada sesión solo puede leer y escribir su documento `saves/{uid}`.
+
 ## Publicar con Firebase
 
 El proyecto está preparado para las dos opciones:
@@ -106,6 +119,10 @@ npm start
 ```
 game/
   index.html
+  nexus/
+    index.html      Centro de Mando Nexus: partida en la nube, copias y restauración
+    nexus.css
+    nexus.js
   assets/
     data.js            datos de buques, roles, oficiales y operaciones
     firebase-config.js configuración pública de la Web App de Firebase
