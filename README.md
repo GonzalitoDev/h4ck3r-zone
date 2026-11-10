@@ -1,21 +1,21 @@
 # ACERO Y SAL — RPG naval con buques reales
 
-Juego web de rol y combate naval por turnos. Comandas una flota de **58 buques históricos reales**, formas oficiales, mejoras cada nave y completas una campaña de 10 capítulos inspirada en la historia naval.
+Juego web de rol y combate naval por turnos. Comandas una flota de **83 buques históricos reales**, formas oficiales, mejoras cada nave y completas una campaña de 10 capítulos inspirada en la historia naval.
 
 Sitio jugable: [`game/index.html`](game/index.html)
 
 ## Qué incluye
 
-- **58 buques reales** con datos históricos: HMS Victory, USS Monitor, HMS Dreadnought, HMS Hood, Bismarck, USS Iowa, Yamato, USS Enterprise, Akagi, U-96, PT-109, Scharnhorst, Richelieu, Roma, Shōkaku, USS Tang y muchos más.
+- **83 buques reales** con datos históricos: HMS Victory, USS Monitor, HMS Dreadnought, HMS Hood, Bismarck, USS Iowa, Yamato, USS Enterprise, Akagi, U-96, PT-109, Scharnhorst, Richelieu, Roma, Shōkaku, USS Tang, USS Missouri, HMS Vanguard, Jean Bart, USS Alaska y muchos más.
 - **8 roles de combate**: acorazados, portaaviones, cruceros, destructores, submarinos, lanchas torpederas, ironclads y fragatas.
 - **Combate por turnos**: cañoneo, torpedos, maniobras evasivas, reparaciones y una habilidad especial por rol (andanada de precisión, oleada aérea, inmersión, cortina de humo, etc.).
-- **Puente de mando**: pilota tu buque en tiempo real con WASD/flechas, joystick táctil o clic para disparar. Acelera, gira, deja estela, esquiva islas y hunde blancos de práctica para ganar créditos.
-- **Progresión RPG**: nivel de comandante, 7 habilidades, puntos de habilidad, XP por buque, módulos de cañones/blindaje/motores y 13 oficiales históricos con bonus.
+- **Puente de mando**: pilotaje con física naval, telégrafo de máquina, timón progresivo, clima dinámico, torpedos, enemigos que disparan, casco, reparaciones de emergencia y hundimiento.
+- **Progresión RPG**: nivel de comandante, 7 habilidades, puntos de habilidad, XP por buque, módulos de cañones/blindaje/motores y 19 oficiales históricos con bonus.
 - **Campaña narrativa de 10 capítulos** con flotas fijas, jefes históricos, recompensas únicas (buques y oficiales) y desbloqueo progresivo.
 - **19 logros** con recompensas en créditos y XP.
 - **Buscador y filtros** de buques por rol, nación y tier en Astillero y Códice.
 - **Flota y astillero**: compra buques únicos, activa hasta 4 unidades según tu nivel, repara daños y asigna oficiales.
-- **Operaciones dinámicas** con recompensas, operaciones especiales contra buques capitales y guardado automático en `localStorage`.
+- **Operaciones dinámicas** con recompensas, operaciones especiales contra buques capitales y guardado automático local.
 - **Guardado en la nube con Firebase**: autenticación anónima + Firestore. La partida se sincroniza automáticamente y se restaura al recargar.
 - **Códice histórico** con ficha, armamento, desplazamiento, tripulación e historia de cada buque.
 - Interfaz responsive, sonido procedural (sin archivos externos) y funcionamiento 100% estático.
@@ -38,6 +38,9 @@ En **Puente** puedes tomar el timón y manejar el buque con física naval:
 - El telégrafo va de **ATRÁS TODA** a **AVANTE FLANCO**, pasando por PARADO, DESPACIO, MEDIA y TODA.
 - `A` / `←` y `D` / `→` mueven el timón de forma progresiva (hasta ±35°). Al soltar, el timón vuelve al centro.
 - `Espacio` dispara una andanada por ambas bandas; clic en el mar dispara hacia ese punto.
+- `T` lanza una salva de torpedos; `R` ejecuta reparaciones de emergencia.
+- El clima cambia entre despejado, lluvia, niebla y tormenta, afectando corriente, visibilidad y puntería enemiga.
+- Los enemigos disparan de verdad: vigila el **casco** y repara antes de hundirte.
 - En móvil usa el joystick (máquina y timón analógicos) y el botón **FUEGO**.
 - El buque tiene **inercia, deriva y radio de giro reales**: los acorazados aceleran y giran mucho más lento que un destructor.
 - El HUD muestra **velocidad, rumbo, ángulo de timón, telégrafo, corriente y aviso de VARADO**.
@@ -92,8 +95,8 @@ El acceso está protegido por las reglas de `firestore.rules`: cada sesión solo
 Descarga el paquete desde [Releases](https://github.com/GonzalitoDev/h4ck3r-zone/releases) y instálalo:
 
 ```bash
-wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.1.0_all.deb
-sudo apt install ./acero-y-sal_1.1.0_all.deb
+wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.2.0_all.deb
+sudo apt install ./acero-y-sal_1.2.0_all.deb
 ```
 
 Después búscalo en el menú como **ACERO Y SAL**. El lanzador sirve el juego localmente en `http://127.0.0.1:8787/` y abre el navegador.

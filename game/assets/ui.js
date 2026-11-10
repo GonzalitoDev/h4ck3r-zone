@@ -70,7 +70,7 @@ function renderMenu(v) {
           <button class="btn ${state ? 'ghost' : 'primary'}" onclick="Game.scrollStarters()">Nueva campaña</button>
           <button class="btn ghost" onclick="Game.howTo()">Cómo se juega</button>
         </div>
-        <div class="hero-note">58 buques reales · 10 capítulos · 19 logros · guardado en Firebase</div>
+        <div class="hero-note">83 buques reales · 10 capítulos · 19 logros · guardado en Firebase</div>
       </div>
       <div class="starter-head" id="starters">
         <h2>Elige tu buque insignia</h2>

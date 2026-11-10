@@ -1,6 +1,6 @@
 {
   "name": "acero-y-sal",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "ACERO Y SAL: RPG naval por turnos con buques reales",
   "type": "module",

@@ -789,6 +789,51 @@ body {
 }
 .fire-btn:active { background: rgba(242, 181, 68, 0.38); }
 
+.aux-btn {
+  position: absolute;
+  right: 18px;
+  width: 92px;
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid var(--line2);
+  background: rgba(8, 20, 32, 0.6);
+  color: var(--accent2);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 1px;
+  touch-action: none;
+  cursor: pointer;
+  backdrop-filter: blur(3px);
+}
+#bridgeTorp { bottom: 130px; }
+#bridgeRepair { bottom: 190px; color: var(--good); border-color: rgba(87, 214, 141, 0.45); }
+.aux-btn:active { background: rgba(90, 210, 244, 0.2); }
+
+.bridge-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(4, 8, 14, 0.55);
+  backdrop-filter: blur(3px);
+}
+.bridge-overlay-card {
+  width: min(420px, 100%);
+  text-align: center;
+  background: linear-gradient(180deg, rgba(16, 33, 51, 0.98), rgba(8, 17, 28, 0.98));
+  border: 1px solid rgba(229, 72, 77, 0.5);
+  border-radius: 16px;
+  padding: 1.2rem;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+}
+.bridge-overlay-card h2 { margin: 0.2rem 0 0.4rem; letter-spacing: 4px; color: var(--bad); }
+.bridge-overlay-card p { color: var(--muted); font-size: 0.8rem; line-height: 1.55; }
+.overlay-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.8rem; }
+
 @media (pointer: coarse), (max-width: 900px) {
   .touch-controls { display: block; }
   .bridge-help { display: none; }
@@ -823,6 +868,7 @@ body {
   .bridge-hud { top: 8px; left: 8px; right: 8px; gap: 0.25rem; }
   .hud-chip { font-size: 0.46rem; padding: 0.16rem 0.42rem; }
   .hud-chip b { font-size: 0.56rem; }
+  .hud-chip.optional { display: none; }
   .hud-bar { width: 46px; }
   .bridge-select { max-width: 170px; }
 }

@@ -26,6 +26,13 @@ const BRIDGE_TELEGRAPH = [
   { label: 'AVANTE FLANCO', frac: 1 }
 ];
 
+const BRIDGE_WEATHER = [
+  { name: 'Despejado', rain: false, fog: false, current: 1.0, enemyAcc: 1.0, range: 580 },
+  { name: 'Lluvia', rain: true, fog: false, current: 1.5, enemyAcc: 0.8, range: 500 },
+  { name: 'Niebla', rain: false, fog: true, current: 0.9, enemyAcc: 0.55, range: 360 },
+  { name: 'Tormenta', rain: true, fog: false, current: 2.3, enemyAcc: 0.6, range: 440 }
+];
+
 function nearestOrderIndex(frac) {
   let best = 2;
   let dist = Infinity;
@@ -109,17 +116,34 @@ function renderBridge(v) {
           '<span class="hud-chip">RUMBO <b id="hudHeading">090° E</b></span>' +
           '<span class="hud-chip">TIMÓN <b id="hudRudder">0°</b></span>' +
           '<span class="hud-chip">TELEGRAFO <b id="hudTelegraph">PARADO</b></span>' +
+          '<span class="hud-chip">CASCO <b id="hudHull">100%</b></span>' +
           '<span class="hud-chip">CAÑÓN <b id="hudStatus">LISTO</b></span>' +
+          '<span class="hud-chip">TORPEDOS <b id="hudTorp">LISTOS</b></span>' +
+          '<span class="hud-chip">REPARAR <b id="hudRepair">LISTO</b></span>' +
+          '<span class="hud-chip">CLIMA <b id="hudWeather">DESPEJADO</b></span>' +
           '<span class="hud-chip">CORRIENTE <b id="hudCurrent">0,0 kn</b></span>' +
-          '<span class="hud-chip">PUNTOS <b id="hudScore">0</b></span>' +
-          '<span class="hud-chip">BLANCOS <b id="hudSunk">0</b></span>' +
-          '<span class="hud-chip">PRÁCTICA <b id="hudReward">0/10</b></span>' +
+          '<span class="hud-chip optional">PUNTOS <b id="hudScore">0</b></span>' +
+          '<span class="hud-chip optional">BLANCOS <b id="hudSunk">0</b></span>' +
+          '<span class="hud-chip optional">PRÁCTICA <b id="hudReward">0/10</b></span>' +
           '<span class="hud-chip warn" id="hudGround" style="display:none">VARADO</span>' +
         '</div>' +
-        '<div class="bridge-help">W/S orden de máquina · A/D timón · Espacio andanada · Clic disparar</div>' +
+        '<div class="bridge-help">W/S telégrafo · A/D timón · Espacio andanada · T torpedos · R reparar · Clic disparar</div>' +
         '<div class="touch-controls">' +
           '<div class="joystick" id="bridgeJoy"><div class="joy-knob" id="bridgeKnob"></div></div>' +
+          '<button class="aux-btn" id="bridgeTorp">TORPEDO</button>' +
+          '<button class="aux-btn" id="bridgeRepair">REPARAR</button>' +
           '<button class="fire-btn" id="bridgeFire">FUEGO</button>' +
+        '</div>' +
+        '<div class="bridge-overlay hidden" id="bridgeOverlay">' +
+          '<div class="bridge-overlay-card">' +
+            '<div class="eyebrow">PUENTE DE MANDO</div>' +
+            '<h2>BUQUE HUNDIDO</h2>' +
+            '<p>La práctica ha terminado. El buque necesita reparaciones en Flota.</p>' +
+            '<div class="overlay-actions">' +
+              '<button class="btn primary" onclick="Game.bridgeRestart()">Reiniciar práctica</button>' +
+              '<button class="btn ghost" onclick="Game.go(\'fleet\')">Volver a flota</button>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
       '</div>' +
       '<div class="bridge-stats">' +
@@ -148,6 +172,7 @@ function startBridge(entry, stats) {
   const canvas = $('#bridgeCanvas');
   if (!canvas) return;
   const ship = SHIP_MAP[entry.shipId];
+  const maxHp = shipMaxHp(entry);
 
   const b = {
     entry: entry,
@@ -165,6 +190,15 @@ function startBridge(entry, stats) {
     score: 0,
     sunk: 0,
     rewarded: 0,
+    hp: maxHp,
+    maxHp: maxHp,
+    torpCd: 0,
+    repairCd: 0,
+    over: false,
+    hitFlash: 0,
+    lightning: 0,
+    weather: 0,
+    weatherTimer: rand(40, 65),
     obj: {
       x: BRIDGE_WORLD.w / 2,
       y: BRIDGE_WORLD.h / 2,
@@ -183,6 +217,8 @@ function startBridge(entry, stats) {
     cam: { x: BRIDGE_WORLD.w / 2, y: BRIDGE_WORLD.h / 2 },
     targets: [],
     shells: [],
+    enemyShells: [],
+    torpedoes: [],
     particles: [],
     onKeyDown: null,
     onKeyUp: null,
@@ -217,6 +253,8 @@ function bindBridgeInput() {
     if (k === ' ' || k.indexOf('arrow') === 0) e.preventDefault();
     b.keys[k] = true;
     if (k === ' ' && !e.repeat) bridgeBroadside();
+    if (k === 't' && !e.repeat) bridgeTorpedo();
+    if (k === 'r' && !e.repeat) bridgeRepair();
   };
   b.onKeyUp = function (e) {
     b.keys[e.key.toLowerCase()] = false;
@@ -277,6 +315,22 @@ function bindBridgeInput() {
       bridgeBroadside();
     });
   }
+
+  const torp = $('#bridgeTorp');
+  if (torp) {
+    torp.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      bridgeTorpedo();
+    });
+  }
+
+  const repair = $('#bridgeRepair');
+  if (repair) {
+    repair.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      bridgeRepair();
+    });
+  }
 }
 
 /* ---------- mundo ---------- */
@@ -309,7 +363,8 @@ function createTarget(ship) {
     maxHp: hp,
     radius: 26,
     alive: true,
-    respawn: 0
+    respawn: 0,
+    fireCd: rand(1.5, 5)
   };
 }
 
@@ -321,7 +376,7 @@ function spawnBridgeTargets() {
 }
 
 function bridgeBroadside() {
-  if (!bridge || bridge.obj.fireCd > 0) return;
+  if (!bridge || bridge.over || bridge.hp <= 0 || bridge.obj.fireCd > 0) return;
   const b = bridge;
   const a = b.obj.angle;
   const dmg = b.stats.fp * 0.7 + 6;
@@ -333,7 +388,7 @@ function bridgeBroadside() {
 }
 
 function fireBridgeAt(wx, wy) {
-  if (!bridge || bridge.obj.fireCd > 0) return;
+  if (!bridge || bridge.over || bridge.hp <= 0 || bridge.obj.fireCd > 0) return;
   const b = bridge;
   const a = Math.atan2(wy - b.obj.y, wx - b.obj.x);
   spawnBridgeShell(a, b.stats.fp * 1.1 + 8);
@@ -368,6 +423,128 @@ function spawnBridgeShell(angle, dmg) {
     });
   }
 }
+
+function bridgeWeather() {
+  return (bridge && BRIDGE_WEATHER[bridge.weather]) || BRIDGE_WEATHER[0];
+}
+
+function bridgeTorpedo() {
+  if (!bridge || bridge.over) return;
+  if (bridge.stats.torp <= 0) { toast('Este buque no tiene torpedos.'); return; }
+  if (bridge.torpCd > 0) { toast('Torpedos recargando (' + Math.ceil(bridge.torpCd) + ' s).'); return; }
+
+  const b = bridge;
+  const count = b.stats.torp > 70 ? 3 : 2;
+  for (let i = 0; i < count; i++) {
+    const a = b.obj.angle + (i - (count - 1) / 2) * 0.09;
+    b.torpedoes.push({
+      x: b.obj.x + Math.cos(a) * 30,
+      y: b.obj.y + Math.sin(a) * 30,
+      vx: Math.cos(a) * 240,
+      vy: Math.sin(a) * 240,
+      angle: a,
+      life: 7,
+      dmg: b.stats.torp * 2.4 + 12
+    });
+  }
+  b.torpCd = 11;
+  sfx('fire');
+  toast('¡Torpedos al agua!');
+}
+
+function bridgeRepair() {
+  if (!bridge || bridge.over) return;
+  if (bridge.repairCd > 0) { toast('Reparación disponible en ' + Math.ceil(bridge.repairCd) + ' s.'); return; }
+  if (bridge.hp >= bridge.maxHp) { toast('El casco ya está intacto.'); return; }
+
+  const b = bridge;
+  const heal = Math.round(b.maxHp * 0.22);
+  b.hp = Math.min(b.maxHp, b.hp + heal);
+  b.repairCd = 45;
+  for (let i = 0; i < 12; i++) {
+    b.particles.push({
+      x: b.obj.x + rand(-14, 14),
+      y: b.obj.y + rand(-14, 14),
+      vx: rand(-20, 20),
+      vy: rand(-20, 20),
+      life: rand(0.3, 0.7),
+      max: 0.7,
+      size: rand(2, 4),
+      color: '120,255,170'
+    });
+  }
+  sfx('hit');
+  toast('Reparaciones de emergencia: +' + heal + ' casco.');
+}
+
+function spawnEnemyShell(t) {
+  const b = bridge;
+  const w = bridgeWeather();
+  const spread = (1 - w.enemyAcc) * 0.35 + 0.05;
+  const aim = Math.atan2(b.obj.y - t.y, b.obj.x - t.x) + rand(-spread, spread);
+  const speed = 430;
+  b.enemyShells.push({
+    x: t.x + Math.cos(aim) * 24,
+    y: t.y + Math.sin(aim) * 24,
+    vx: Math.cos(aim) * speed,
+    vy: Math.sin(aim) * speed,
+    life: 2.4,
+    dmg: 4 + (t.ship.stats.firepower || 10) * 0.32
+  });
+  for (let i = 0; i < 4; i++) {
+    b.particles.push({
+      x: t.x + Math.cos(aim) * 24,
+      y: t.y + Math.sin(aim) * 24,
+      vx: Math.cos(aim) * rand(8, 30) + rand(-15, 15),
+      vy: Math.sin(aim) * rand(8, 30) + rand(-15, 15),
+      life: rand(0.2, 0.4),
+      max: 0.4,
+      size: rand(1.5, 3),
+      color: '255,150,90'
+    });
+  }
+}
+
+function damageBridge(dmg) {
+  const b = bridge;
+  if (!b || b.over) return;
+  b.hp -= dmg;
+  b.hitFlash = 0.28;
+  for (let i = 0; i < 10; i++) {
+    b.particles.push({
+      x: b.obj.x + rand(-12, 12),
+      y: b.obj.y + rand(-12, 12),
+      vx: rand(-70, 70),
+      vy: rand(-70, 70),
+      life: rand(0.25, 0.6),
+      max: 0.6,
+      size: rand(2, 5),
+      color: i % 2 ? '255,120,80' : '255,220,140'
+    });
+  }
+  sfx('hit');
+  if (b.hp <= 0) {
+    b.hp = 0;
+    sinkBridge();
+  }
+}
+
+function sinkBridge() {
+  const b = bridge;
+  if (!b || b.over) return;
+  b.over = true;
+  b.entry.hp = Math.max(1, Math.round(b.maxHp * 0.2));
+  save();
+  if (typeof checkAchievements === 'function') checkAchievements();
+  const overlay = $('#bridgeOverlay');
+  if (overlay) overlay.classList.remove('hidden');
+  toast('Tu buque se ha hundido. Repáralo en Flota.');
+}
+
+Game.bridgeRestart = function () {
+  Game.go('bridge');
+};
+
 
 function sinkBridgeTarget(t) {
   t.alive = false;
@@ -423,6 +600,22 @@ function updateBridge(dt) {
   const o = b.obj;
   const keys = b.keys;
 
+  if (b.over) return;
+
+  b.weatherTimer -= dt;
+  if (b.weatherTimer <= 0) {
+    let next = b.weather;
+    while (next === b.weather) next = Math.floor(Math.random() * BRIDGE_WEATHER.length);
+    b.weather = next;
+    b.weatherTimer = rand(45, 80);
+    toast('El clima cambia: ' + BRIDGE_WEATHER[next].name + '.');
+  }
+  if (b.torpCd > 0) b.torpCd -= dt;
+  if (b.repairCd > 0) b.repairCd -= dt;
+  if (b.hitFlash > 0) b.hitFlash -= dt;
+  if (b.lightning > 0) b.lightning -= dt;
+  if (BRIDGE_WEATHER[b.weather].rain && Math.random() < dt * 0.06) b.lightning = 0.16;
+
   const up = keys['w'] || keys['arrowup'];
   const down = keys['s'] || keys['arrowdown'];
   const left = keys['a'] || keys['arrowleft'];
@@ -475,9 +668,10 @@ function updateBridge(dt) {
   o.vy = hy * vF + hx * vL;
   o.speed = vF;
 
+  const weather = bridgeWeather();
   const cur = currentAt(b.time);
-  o.x += (o.vx + cur.x) * dt;
-  o.y += (o.vy + cur.y) * dt;
+  o.x += (o.vx + cur.x * weather.current) * dt;
+  o.y += (o.vy + cur.y * weather.current) * dt;
 
   if (o.x < 50) { o.x = 50; o.vx *= 0.2; o.vy *= 0.2; o.speed *= 0.2; o.grounded = 0.9; }
   if (o.x > BRIDGE_WORLD.w - 50) { o.x = BRIDGE_WORLD.w - 50; o.vx *= 0.2; o.vy *= 0.2; o.speed *= 0.2; o.grounded = 0.9; }
@@ -561,6 +755,12 @@ function updateBridge(dt) {
         t.angle = Math.atan2(dy, dx);
       }
     }
+
+    t.fireCd = (t.fireCd || 0) - dt;
+    if (Math.hypot(o.x - t.x, o.y - t.y) < weather.range && t.fireCd <= 0) {
+      spawnEnemyShell(t);
+      t.fireCd = rand(3.2, 6.5);
+    }
   }
 
   for (let i = b.shells.length - 1; i >= 0; i--) {
@@ -610,6 +810,77 @@ function updateBridge(dt) {
     }
   }
 
+  for (let i = b.enemyShells.length - 1; i >= 0; i--) {
+    const s = b.enemyShells[i];
+    s.x += s.vx * dt;
+    s.y += s.vy * dt;
+    s.life -= dt;
+
+    if (Math.hypot(s.x - o.x, s.y - o.y) < 21) {
+      damageBridge(s.dmg);
+      b.enemyShells.splice(i, 1);
+      continue;
+    }
+
+    if (s.life <= 0 || insideIsland(s.x, s.y, 0)) {
+      for (let p = 0; p < 4; p++) {
+        b.particles.push({
+          x: s.x, y: s.y,
+          vx: rand(-45, 45), vy: rand(-45, 45),
+          life: rand(0.2, 0.4), max: 0.4,
+          size: rand(1, 3), color: '230,180,140'
+        });
+      }
+      b.enemyShells.splice(i, 1);
+    }
+  }
+
+  for (let i = b.torpedoes.length - 1; i >= 0; i--) {
+    const tp = b.torpedoes[i];
+    tp.x += tp.vx * dt;
+    tp.y += tp.vy * dt;
+    tp.life -= dt;
+
+    if (Math.random() < dt * 9) {
+      b.particles.push({
+        x: tp.x, y: tp.y,
+        vx: rand(-8, 8), vy: rand(-8, 8),
+        life: rand(0.4, 0.8), max: 0.8,
+        size: rand(1.5, 3), color: '190,235,255'
+      });
+    }
+
+    let hitTarget = null;
+    for (let j = 0; j < b.targets.length; j++) {
+      const t = b.targets[j];
+      if (!t.alive) continue;
+      if (Math.hypot(tp.x - t.x, tp.y - t.y) < t.radius + 8) {
+        hitTarget = t;
+        break;
+      }
+    }
+
+    if (hitTarget) {
+      hitTarget.hp -= tp.dmg;
+      for (let p = 0; p < 16; p++) {
+        b.particles.push({
+          x: tp.x, y: tp.y,
+          vx: rand(-90, 90), vy: rand(-90, 90),
+          life: rand(0.3, 0.8), max: 0.8,
+          size: rand(2, 5), color: p % 2 ? '255,150,70' : '255,230,160'
+        });
+      }
+      if (hitTarget.hp <= 0) sinkBridgeTarget(hitTarget);
+      else sfx('hit');
+      b.torpedoes.splice(i, 1);
+      continue;
+    }
+
+    if (tp.life <= 0 || insideIsland(tp.x, tp.y, 0)) {
+      b.torpedoes.splice(i, 1);
+    }
+  }
+
   for (let i = b.particles.length - 1; i >= 0; i--) {
     const p = b.particles[i];
     p.x += p.vx * dt;
@@ -632,6 +903,7 @@ function drawBridge() {
   const w = b.cssW;
   const h = b.cssH;
   const cam = b.cam;
+  const weather = bridgeWeather();
 
   const sea = ctx.createLinearGradient(0, 0, 0, h);
   sea.addColorStop(0, '#081a2a');
@@ -714,11 +986,73 @@ function drawBridge() {
     ctx.fill();
   }
 
+  for (let i = 0; i < b.enemyShells.length; i++) {
+    const s = b.enemyShells[i];
+    ctx.strokeStyle = 'rgba(255,120,90,0.55)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(s.x - s.vx * 0.03, s.y - s.vy * 0.03);
+    ctx.lineTo(s.x, s.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.fillStyle = '#ff9b7b';
+    ctx.arc(s.x, s.y, 3.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  for (let i = 0; i < b.torpedoes.length; i++) {
+    const tp = b.torpedoes[i];
+    ctx.strokeStyle = 'rgba(205,240,255,0.75)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(tp.x - Math.cos(tp.angle) * 9, tp.y - Math.sin(tp.angle) * 9);
+    ctx.lineTo(tp.x, tp.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.fillStyle = '#dff4ff';
+    ctx.arc(tp.x, tp.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   const o = b.obj;
   const recoil = o.recoil || 0;
   drawShipTop(ctx, o.x - Math.cos(o.angle) * recoil * 2, o.y - Math.sin(o.angle) * recoil * 2, o.angle, b.ship.role, '#f2b544', 1.05);
 
   ctx.restore();
+
+  if (weather.rain) {
+    ctx.strokeStyle = 'rgba(170,205,235,0.28)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 70; i++) {
+      const x = ((i * 137 + b.time * 260) % (w + 80)) - 40;
+      const y = ((i * 83 + b.time * 520) % (h + 80)) - 40;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x - 6, y + 16);
+      ctx.stroke();
+    }
+  }
+  if (weather.fog) {
+    ctx.fillStyle = 'rgba(185,200,215,0.13)';
+    ctx.fillRect(0, 0, w, h);
+    const fog = ctx.createRadialGradient(w / 2, h / 2, 80, w / 2, h / 2, Math.max(w, h) * 0.75);
+    fog.addColorStop(0, 'rgba(185,200,215,0)');
+    fog.addColorStop(1, 'rgba(160,175,190,0.35)');
+    ctx.fillStyle = fog;
+    ctx.fillRect(0, 0, w, h);
+  }
+  if (b.lightning > 0) {
+    ctx.fillStyle = 'rgba(235,245,255,' + (b.lightning * 2.5).toFixed(3) + ')';
+    ctx.fillRect(0, 0, w, h);
+  }
+  if (b.hitFlash > 0) {
+    ctx.fillStyle = 'rgba(229,72,77,' + (b.hitFlash * 1.1).toFixed(3) + ')';
+    ctx.fillRect(0, 0, w, h);
+  }
+  if (b.over) {
+    ctx.fillStyle = 'rgba(4,8,14,0.55)';
+    ctx.fillRect(0, 0, w, h);
+  }
 }
 
 function drawBridgeIslands(ctx) {
@@ -853,6 +1187,10 @@ function updateBridgeHud() {
   const telegraphEl = $('#hudTelegraph');
   const currentEl = $('#hudCurrent');
   const groundEl = $('#hudGround');
+  const hullEl = $('#hudHull');
+  const torpEl = $('#hudTorp');
+  const repairEl = $('#hudRepair');
+  const weatherEl = $('#hudWeather');
   const maxSpeed = 18 + bridge.stats.speed * 2.2;
 
   if (speedEl) {
@@ -869,8 +1207,20 @@ function updateBridgeHud() {
   if (telegraphEl) telegraphEl.textContent = BRIDGE_TELEGRAPH[nearestOrderIndex(o.targetFrac)].label;
   if (currentEl) {
     const cur = currentAt(bridge.time);
-    currentEl.textContent = (Math.hypot(cur.x, cur.y) / 2.2).toFixed(1).replace('.', ',') + ' kn';
+    currentEl.textContent = (Math.hypot(cur.x, cur.y) * bridgeWeather().current / 2.2).toFixed(1).replace('.', ',') + ' kn';
   }
+  if (hullEl) {
+    const pct = Math.max(0, Math.round(bridge.hp / bridge.maxHp * 100));
+    hullEl.textContent = pct + '%';
+    if (hullEl.parentElement) hullEl.parentElement.classList.toggle('warn', pct < 35);
+  }
+  if (torpEl) {
+    torpEl.textContent = bridge.stats.torp <= 0 ? 'SIN TORPEDOS' : bridge.torpCd > 0 ? 'RECARGA ' + Math.ceil(bridge.torpCd) + 's' : 'LISTOS';
+  }
+  if (repairEl) {
+    repairEl.textContent = bridge.repairCd > 0 ? 'RECARGA ' + Math.ceil(bridge.repairCd) + 's' : 'LISTO';
+  }
+  if (weatherEl) weatherEl.textContent = bridgeWeather().name.toUpperCase();
   if (groundEl) groundEl.style.display = o.grounded > 0 ? '' : 'none';
   if (scoreEl) scoreEl.textContent = bridge.score;
   if (sunkEl) sunkEl.textContent = bridge.sunk;

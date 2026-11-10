@@ -441,6 +441,181 @@ const SHIPS = [
     stats: { hp: 480, armor: 66, firepower: 60, torpedo: 0, aa: 0, speed: 16, evade: 8 },
     cost: 1500, unlockLevel: 3,
     history: 'Acorazado insignia del Mediterráneo. Se hundió en 1893 tras ser embestido accidentalmente por el HMS Camperdown.'
+  },
+  {
+    id: 'missouri', name: 'USS Missouri', role: 'battleship', nation: 'Estados Unidos', year: 1944, tier: 4,
+    length: '270 m', displacement: '57.000 t', crew: '2.700', armament: '9x406 mm',
+    stats: { hp: 810, armor: 80, firepower: 97, torpedo: 0, aa: 75, speed: 33, evade: 20 },
+    cost: 4500, unlockLevel: 9,
+    history: 'Acorazado de la clase Iowa. En su cubierta se firmó la rendición de Japón en 1945 y volvió al servicio en la Guerra del Golfo.'
+  },
+  {
+    id: 'newJersey', name: 'USS New Jersey', role: 'battleship', nation: 'Estados Unidos', year: 1943, tier: 4,
+    length: '270 m', displacement: '57.000 t', crew: '2.700', armament: '9x406 mm',
+    stats: { hp: 800, armor: 80, firepower: 96, torpedo: 0, aa: 72, speed: 33, evade: 20 },
+    cost: 4400, unlockLevel: 9,
+    history: 'El acorazado más condecorado de la Armada de EE. UU. Combatió en el Pacífico, Corea y Vietnam antes de convertirse en museo.'
+  },
+  {
+    id: 'vanguard', name: 'HMS Vanguard', role: 'battleship', nation: 'Reino Unido', year: 1946, tier: 4,
+    length: '248 m', displacement: '51.000 t', crew: '1.975', armament: '8x381 mm',
+    stats: { hp: 780, armor: 79, firepower: 92, torpedo: 0, aa: 65, speed: 30, evade: 20 },
+    cost: 4300, unlockLevel: 9,
+    history: 'El último acorazado construido por el Reino Unido. Usó torres de 381 mm heredadas de los cruceros de batalla de la Gran Guerra.'
+  },
+  {
+    id: 'jeanBart', name: 'Jean Bart', role: 'battleship', nation: 'Francia', year: 1940, tier: 4,
+    length: '248 m', displacement: '48.500 t', crew: '1.550', armament: '8x380 mm',
+    stats: { hp: 740, armor: 80, firepower: 92, torpedo: 0, aa: 55, speed: 32, evade: 20 },
+    cost: 4000, unlockLevel: 9,
+    history: 'Acorazado francés de la clase Richelieu. Combatió en Casablanca y fue modernizado tras la guerra con artillería antiaérea.'
+  },
+  {
+    id: 'alaska', name: 'USS Alaska', role: 'battleship', nation: 'Estados Unidos', year: 1944, tier: 4,
+    length: '246 m', displacement: '34.253 t', crew: '1.517', armament: '9x305 mm',
+    stats: { hp: 650, armor: 60, firepower: 82, torpedo: 0, aa: 70, speed: 33, evade: 24 },
+    cost: 3200, unlockLevel: 8,
+    history: 'Considerado un "gran crucero", combinaba cañones de 305 mm con 33 nudos. Fue diseñado para cazar cruceros enemigos.'
+  },
+  {
+    id: 'renown', name: 'HMS Renown', role: 'battleship', nation: 'Reino Unido', year: 1916, tier: 3,
+    length: '242 m', displacement: '32.000 t', crew: '1.200', armament: '6x381 mm',
+    stats: { hp: 620, armor: 56, firepower: 82, torpedo: 0, aa: 40, speed: 32, evade: 24 },
+    cost: 2800, unlockLevel: 6,
+    history: 'Crucero de batalla británico. Participó en la caza del Scharnhorst y del Gneisenau, y escoltó convoyes en el Atlántico.'
+  },
+  {
+    id: 'repulse', name: 'HMS Repulse', role: 'battleship', nation: 'Reino Unido', year: 1916, tier: 3,
+    length: '242 m', displacement: '32.000 t', crew: '1.200', armament: '6x381 mm',
+    stats: { hp: 610, armor: 54, firepower: 80, torpedo: 0, aa: 40, speed: 32, evade: 24 },
+    cost: 2700, unlockLevel: 6,
+    history: 'Crucero de batalla británico. Fue hundido por aviones japoneses junto al Prince of Wales frente a Malasia en 1941.'
+  },
+  {
+    id: 'kirishima', name: 'Kirishima', role: 'battleship', nation: 'Japón', year: 1915, tier: 3,
+    length: '222 m', displacement: '36.600 t', crew: '1.360', armament: '8x356 mm',
+    stats: { hp: 620, armor: 60, firepower: 82, torpedo: 0, aa: 30, speed: 30, evade: 20 },
+    cost: 2600, unlockLevel: 6,
+    history: 'Crucero de batalla japonés. Fue hundido por el USS Washington en la batalla nocturna de Guadalcanal en 1942.'
+  },
+  {
+    id: 'haruna', name: 'Haruna', role: 'battleship', nation: 'Japón', year: 1915, tier: 3,
+    length: '222 m', displacement: '36.600 t', crew: '1.360', armament: '8x356 mm',
+    stats: { hp: 620, armor: 60, firepower: 82, torpedo: 0, aa: 30, speed: 30, evade: 20 },
+    cost: 2500, unlockLevel: 6,
+    history: 'Crucero de batalla japonés, el último de su clase en ser hundido. Fue atacado en su fondeadero de Kure en 1945.'
+  },
+  {
+    id: 'wasp', name: 'USS Wasp (CV-7)', role: 'carrier', nation: 'Estados Unidos', year: 1940, tier: 3,
+    length: '225 m', displacement: '19.900 t', crew: '2.167', armament: '76 aviones embarcados',
+    stats: { hp: 520, armor: 20, firepower: 76, torpedo: 42, aa: 55, speed: 29, evade: 26 },
+    cost: 3200, unlockLevel: 7,
+    history: 'Portaaviones ligero de la Armada de EE. UU. Transportó cazas a Malta y fue hundido por el I-19 en 1942.'
+  },
+  {
+    id: 'formidable', name: 'HMS Formidable', role: 'carrier', nation: 'Reino Unido', year: 1939, tier: 3,
+    length: '240 m', displacement: '23.000 t', crew: '1.200', armament: '36 aviones embarcados',
+    stats: { hp: 570, armor: 35, firepower: 74, torpedo: 40, aa: 60, speed: 30, evade: 24 },
+    cost: 3200, unlockLevel: 7,
+    history: 'Portaaviones blindado de la clase Illustrious. Combatió en el Mediterráneo y en el Pacífico, y sobrevivió a varios ataques kamikaze.'
+  },
+  {
+    id: 'baltimore', name: 'USS Baltimore', role: 'cruiser', nation: 'Estados Unidos', year: 1943, tier: 3,
+    length: '205 m', displacement: '17.000 t', crew: '1.142', armament: '9x203 mm',
+    stats: { hp: 480, armor: 48, firepower: 70, torpedo: 30, aa: 50, speed: 33, evade: 26 },
+    cost: 2400, unlockLevel: 6,
+    history: 'Crucero pesado de la clase Baltimore. Sirvió en el Pacífico y en la Guerra de Corea; su diseño influyó en los cruceros de misiles.'
+  },
+  {
+    id: 'tone', name: 'Tone', role: 'cruiser', nation: 'Japón', year: 1938, tier: 3,
+    length: '201 m', displacement: '15.200 t', crew: '874', armament: '8x203 mm',
+    stats: { hp: 470, armor: 46, firepower: 68, torpedo: 60, aa: 40, speed: 35, evade: 28 },
+    cost: 2300, unlockLevel: 6,
+    history: 'Crucero pesado japonés especializado en reconocimiento con hidroaviones. Participó en Midway y en la campaña de Guadalcanal.'
+  },
+  {
+    id: 'atlanta', name: 'USS Atlanta', role: 'cruiser', nation: 'Estados Unidos', year: 1941, tier: 3,
+    length: '165 m', displacement: '7.400 t', crew: '623', armament: '16x127 mm',
+    stats: { hp: 380, armor: 30, firepower: 62, torpedo: 30, aa: 65, speed: 32, evade: 32 },
+    cost: 1900, unlockLevel: 5,
+    history: 'Crucero antiaéreo de la clase Atlanta. Su batería de 127 mm era devastadora contra aviones; fue hundido en Guadalcanal.'
+  },
+  {
+    id: 'jervis', name: 'HMS Jervis', role: 'destroyer', nation: 'Reino Unido', year: 1939, tier: 3,
+    length: '108 m', displacement: '1.700 t', crew: '183', armament: '6x120 mm y 10 tubos de torpedo',
+    stats: { hp: 250, armor: 16, firepower: 38, torpedo: 74, aa: 28, speed: 36, evade: 55 },
+    cost: 1300, unlockLevel: 4,
+    history: 'Destructor líder de la clase J. Combatió en Narvik, el Mediterráneo y Normandía. Fue el destructor británico más condecorado de la guerra.'
+  },
+  {
+    id: 'johnston', name: 'USS Johnston (DD-557)', role: 'destroyer', nation: 'Estados Unidos', year: 1943, tier: 3,
+    length: '115 m', displacement: '2.100 t', crew: '273', armament: '5x127 mm y 10 tubos de torpedo',
+    stats: { hp: 260, armor: 18, firepower: 42, torpedo: 82, aa: 45, speed: 36, evade: 54 },
+    cost: 1400, unlockLevel: 4,
+    history: 'Destructor que cargó contra la flota japonesa en Samar (1944). Su capitán recibió la Medalla de Honor por su resistencia.'
+  },
+  {
+    id: 'shimakaze', name: 'Shimakaze', role: 'destroyer', nation: 'Japón', year: 1943, tier: 4,
+    length: '129 m', displacement: '2.570 t', crew: '267', armament: '6x127 mm y 15 tubos de torpedo',
+    stats: { hp: 300, armor: 18, firepower: 46, torpedo: 92, aa: 30, speed: 39, evade: 58 },
+    cost: 2000, unlockLevel: 6,
+    history: 'El destructor más rápido de la Segunda Guerra Mundial. Sus 15 tubos de torpedo lo convertían en una amenaza letal.'
+  },
+  {
+    id: 'turbulent', name: 'HMS Turbulent', role: 'submarine', nation: 'Reino Unido', year: 1941, tier: 3,
+    length: '84 m', displacement: '1.090 t', crew: '59', armament: '10 tubos de torpedo',
+    stats: { hp: 230, armor: 10, firepower: 16, torpedo: 90, aa: 6, speed: 15, evade: 34 },
+    cost: 1600, unlockLevel: 5,
+    history: 'Submarino británico de la clase T. Hundió más de 90.000 toneladas en el Mediterráneo antes de desaparecer en 1943.'
+  },
+  {
+    id: 'silversides', name: 'USS Silversides (SS-236)', role: 'submarine', nation: 'Estados Unidos', year: 1941, tier: 3,
+    length: '95 m', displacement: '2.410 t', crew: '80', armament: '24 torpedos',
+    stats: { hp: 250, armor: 14, firepower: 20, torpedo: 90, aa: 8, speed: 20, evade: 34 },
+    cost: 1800, unlockLevel: 5,
+    history: 'Submarino de la clase Gato. Fue uno de los más exitosos del Pacífico y hoy es museo en Michigan.'
+  },
+  {
+    id: 'bogue', name: 'USS Bogue (CVE-9)', role: 'carrier', nation: 'Estados Unidos', year: 1942, tier: 2,
+    length: '151 m', displacement: '16.200 t', crew: '890', armament: '24 aviones embarcados',
+    stats: { hp: 450, armor: 18, firepower: 64, torpedo: 36, aa: 40, speed: 18, evade: 18 },
+    cost: 2200, unlockLevel: 5,
+    history: 'Portaaviones de escolta. Su grupo aéreo hundió más submarinos alemanes que cualquier otra unidad aliada en el Atlántico.'
+  },
+  {
+    id: 'achilles', name: 'HMS Achilles', role: 'cruiser', nation: 'Reino Unido', year: 1933, tier: 3,
+    length: '169 m', displacement: '7.000 t', crew: '550', armament: '8x152 mm',
+    stats: { hp: 380, armor: 34, firepower: 56, torpedo: 30, aa: 30, speed: 32, evade: 30 },
+    cost: 1800, unlockLevel: 4,
+    history: 'Crucero ligero neozelandés. Combatió al Admiral Graf Spee en la batalla del Río de la Plata en 1939.'
+  },
+  {
+    id: 'portland', name: 'USS Portland (CA-33)', role: 'cruiser', nation: 'Estados Unidos', year: 1933, tier: 3,
+    length: '186 m', displacement: '10.000 t', crew: '807', armament: '9x203 mm',
+    stats: { hp: 430, armor: 40, firepower: 62, torpedo: 25, aa: 40, speed: 32, evade: 28 },
+    cost: 2200, unlockLevel: 5,
+    history: 'Crucero pesado presente en el Mar de Coral y Midway. En Guadalcanal escoltó al USS Enterprise y sobrevivió a la campaña.'
+  },
+  {
+    id: 'fubuki', name: 'Fubuki', role: 'destroyer', nation: 'Japón', year: 1928, tier: 2,
+    length: '118 m', displacement: '2.000 t', crew: '219', armament: '6x127 mm y 9 tubos de torpedo',
+    stats: { hp: 250, armor: 16, firepower: 38, torpedo: 76, aa: 20, speed: 38, evade: 54 },
+    cost: 1200, unlockLevel: 4,
+    history: 'Primer destructor japonés de la clase especial. Su diseño revolucionó los destructores y marcó el estándar de la época.'
+  },
+  {
+    id: 'hipper', name: 'Admiral Hipper', role: 'cruiser', nation: 'Alemania', year: 1939, tier: 3,
+    length: '206 m', displacement: '18.600 t', crew: '1.600', armament: '8x203 mm y 12 tubos de torpedo',
+    stats: { hp: 490, armor: 50, firepower: 68, torpedo: 50, aa: 40, speed: 32, evade: 26 },
+    cost: 2300, unlockLevel: 6,
+    history: 'Crucero pesado alemán. Hundió al destructor HMS Glowworm y combatió en la batalla del Mar de Barents en 1942.'
+  },
+  {
+    id: 'furious', name: 'HMS Furious', role: 'carrier', nation: 'Reino Unido', year: 1917, tier: 2,
+    length: '239 m', displacement: '22.000 t', crew: '1.200', armament: '36 aviones embarcados',
+    stats: { hp: 540, armor: 26, firepower: 70, torpedo: 38, aa: 50, speed: 30, evade: 22 },
+    cost: 3000, unlockLevel: 6,
+    history: 'Uno de los primeros portaaviones de la Royal Navy. Sus aviones atacaron al Tirpitz en 1944 y participaron en la campaña de Noruega.'
   }
 ];
 
@@ -512,6 +687,36 @@ const OFFICERS = [
     id: 'horton', name: 'Max Horton', title: 'Comandante de submarinos',
     bonus: 'repair', value: 0.40, cost: 1800, unlockLevel: 4,
     desc: 'Reparaciones +40%. Sus tripulaciones sobreviven a lo imposible.'
+  },
+  {
+    id: 'somerville', name: 'James Somerville', title: 'Comandante de la Fuerza H',
+    bonus: 'accuracy', value: 0.07, cost: 2200, unlockLevel: 6,
+    desc: 'Puntería +7%. Coordina ataques rápidos con precisión desde el Mediterráneo.'
+  },
+  {
+    id: 'fraser', name: 'Bruce Fraser', title: 'Comandante de la Home Fleet',
+    bonus: 'damage', value: 0.12, cost: 2600, unlockLevel: 7,
+    desc: 'Daño +12%. Su mando firme convierte cada salva en un golpe decisivo.'
+  },
+  {
+    id: 'nagumo', name: 'Chūichi Nagumo', title: 'Almirante de portaaviones',
+    bonus: 'accuracy', value: 0.06, cost: 2400, unlockLevel: 6,
+    desc: 'Puntería +6%. Sincroniza oleadas aéreas con la artillería naval.'
+  },
+  {
+    id: 'admFletcher', name: 'Frank Jack Fletcher', title: 'Comandante de la Fuerza 17',
+    bonus: 'evade', value: 0.12, cost: 2100, unlockLevel: 5,
+    desc: 'Evasión +12%. Mantiene la flota fuera del alcance enemigo.'
+  },
+  {
+    id: 'kinkaid', name: 'Thomas Kinkaid', title: 'Comandante del Séptimo Ejército',
+    bonus: 'armor', value: 0.12, cost: 2300, unlockLevel: 6,
+    desc: 'Blindaje efectivo +12%. Prepara la flota para resistir el combate cercano.'
+  },
+  {
+    id: 'wanklyn', name: 'David Wanklyn', title: 'Comandante del HMS Upholder',
+    bonus: 'torpedo', value: 0.20, cost: 2200, unlockLevel: 5,
+    desc: 'Daño de torpedo +20%. El as de los submarinos británicos en el Mediterráneo.'
   }
 ];
 
