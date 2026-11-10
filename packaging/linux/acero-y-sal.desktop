@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=ACERO Y SAL
+Comment=RPG naval por turnos con buques reales
+Exec=/opt/acero-y-sal/launch.sh
+Icon=acero-y-sal
+Terminal=false
+Categories=Game;StrategyGame;
+StartupNotify=true

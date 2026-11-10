@@ -27,12 +27,15 @@ npx serve game
 
 En el juego: elige buque insignia, ve a **Operaciones**, despliega tu flota y combate por turnos. Repara en **Flota** y compra unidades en **Astillero**.
 
-En **Puente** puedes tomar el timón y manejar el buque libremente:
+En **Puente** puedes tomar el timón y manejar el buque con física naval:
 
-- `W` / `↑` acelerar, `S` / `↓` reducir o dar atrás.
-- `A` / `←` y `D` / `→` girar.
+- `W` / `↑` sube un paso el telégrafo de máquina; `S` / `↓` lo baja.
+- El telégrafo va de **ATRÁS TODA** a **AVANTE FLANCO**, pasando por PARADO, DESPACIO, MEDIA y TODA.
+- `A` / `←` y `D` / `→` mueven el timón de forma progresiva (hasta ±35°). Al soltar, el timón vuelve al centro.
 - `Espacio` dispara una andanada por ambas bandas; clic en el mar dispara hacia ese punto.
-- En móvil usa el joystick y el botón **FUEGO**.
+- En móvil usa el joystick (máquina y timón analógicos) y el botón **FUEGO**.
+- El buque tiene **inercia, deriva y radio de giro reales**: los acorazados aceleran y giran mucho más lento que un destructor.
+- El HUD muestra **velocidad, rumbo, ángulo de timón, telégrafo, corriente y aviso de VARADO**.
 - Cada blanco hundido otorga puntos y hasta 10 recompensas de práctica de 15 créditos por sesión.
 
 ## Base de datos en Firebase
@@ -76,6 +79,50 @@ La página **Nexus** (`/nexus/`) comparte la misma sesión y la misma base de da
 Enlace directo: https://h4ck3r-zone--juego-e0d5f.us-east4.hosted.app/nexus/
 
 El acceso está protegido por las reglas de `firestore.rules`: cada sesión solo puede leer y escribir su documento `saves/{uid}`.
+
+## Instalar en Linux Mint
+
+### Opción A: paquete .deb
+
+Descarga el paquete desde [Releases](https://github.com/GonzalitoDev/h4ck3r-zone/releases) y instálalo:
+
+```bash
+wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.0.0_all.deb
+sudo apt install ./acero-y-sal_1.0.0_all.deb
+```
+
+Después búscalo en el menú como **ACERO Y SAL**. El lanzador sirve el juego localmente en `http://127.0.0.1:8787/` y abre el navegador.
+
+Dependencias instaladas automáticamente: `python3`, `curl` y `xdg-utils`.
+
+### Opción B: instalación de usuario (sin root)
+
+```bash
+git clone https://github.com/GonzalitoDev/h4ck3r-zone.git
+cd h4ck3r-zone
+bash packaging/linux/install-user.sh
+```
+
+Crea el lanzador en el menú y los archivos en `~/.local/share/acero-y-sal`.
+
+### Desinstalar
+
+```bash
+sudo apt remove acero-y-sal
+# o, si usaste la instalación de usuario:
+rm -rf ~/.local/share/acero-y-sal ~/.local/share/applications/acero-y-sal.desktop ~/.local/share/icons/hicolor/scalable/apps/acero-y-sal.svg
+```
+
+### Construir el .deb
+
+En Linux Mint/Ubuntu:
+
+```bash
+bash packaging/linux/build-deb.sh
+# genera dist/acero-y-sal_<version>_all.deb
+```
+
+También se compila automáticamente en GitHub Actions al publicar un tag `v*` y adjunta el `.deb` al release.
 
 ## Publicar con Firebase
 
@@ -137,6 +184,8 @@ server.mjs             servidor estático para App Hosting
 firebase.json          Firebase Hosting + Firestore + App Hosting
 firestore.rules        reglas de seguridad de la base de datos
 apphosting.yaml        configuración de Cloud Run
+packaging/linux/       lanzador, icono, .desktop, instalador y build-deb.sh
+.github/workflows/     compilación automática del paquete .deb
 ```
 
 ## Nota

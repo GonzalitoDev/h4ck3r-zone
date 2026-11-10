@@ -681,6 +681,7 @@ body {
   backdrop-filter: blur(4px);
 }
 .hud-chip b { color: var(--accent); font-size: 0.64rem; letter-spacing: 0.5px; }
+.hud-chip.warn { color: var(--bad); border-color: rgba(229, 72, 77, 0.55); }
 .hud-bar { width: 70px; height: 6px; border-radius: 6px; background: #0a1a2a; border: 1px solid var(--line); overflow: hidden; }
 .hud-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent2), var(--good)); }
 

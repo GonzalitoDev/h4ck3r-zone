@@ -16,6 +16,43 @@ const BRIDGE_TARGET_POOL = SHIPS.filter(function (s) {
   return s.tier <= 3 && s.role !== 'carrier' && s.role !== 'frigate';
 });
 
+const BRIDGE_TELEGRAPH = [
+  { label: 'ATRÁS TODA', frac: -0.45 },
+  { label: 'ATRÁS', frac: -0.22 },
+  { label: 'PARADO', frac: 0 },
+  { label: 'AVANTE DESPACIO', frac: 0.22 },
+  { label: 'AVANTE MEDIA', frac: 0.5 },
+  { label: 'AVANTE TODA', frac: 0.78 },
+  { label: 'AVANTE FLANCO', frac: 1 }
+];
+
+function nearestOrderIndex(frac) {
+  let best = 2;
+  let dist = Infinity;
+  for (let i = 0; i < BRIDGE_TELEGRAPH.length; i++) {
+    const d = Math.abs(BRIDGE_TELEGRAPH[i].frac - frac);
+    if (d < dist) { dist = d; best = i; }
+  }
+  return best;
+}
+
+function shipMass(ship) {
+  const n = parseInt(String(ship.displacement || '').replace(/[^\d]/g, ''), 10);
+  return n || 5000;
+}
+
+function currentAt(time) {
+  return {
+    x: Math.sin(time * 0.05) * 2.2 + 1.4,
+    y: Math.cos(time * 0.037) * 1.6 + 0.7
+  };
+}
+
+function compassLabel(bearing) {
+  const points = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
+  return points[Math.round(bearing / 45) % 8];
+}
+
 let bridge = null;
 let bridgeShipUid = null;
 
@@ -69,13 +106,17 @@ function renderBridge(v) {
         '<canvas id="bridgeCanvas"></canvas>' +
         '<div class="bridge-hud">' +
           '<span class="hud-chip">VELOCIDAD <b id="hudSpeed">0 kn</b></span>' +
+          '<span class="hud-chip">RUMBO <b id="hudHeading">090° E</b></span>' +
+          '<span class="hud-chip">TIMÓN <b id="hudRudder">0°</b></span>' +
+          '<span class="hud-chip">TELEGRAFO <b id="hudTelegraph">PARADO</b></span>' +
+          '<span class="hud-chip">CAÑÓN <b id="hudStatus">LISTO</b></span>' +
+          '<span class="hud-chip">CORRIENTE <b id="hudCurrent">0,0 kn</b></span>' +
           '<span class="hud-chip">PUNTOS <b id="hudScore">0</b></span>' +
           '<span class="hud-chip">BLANCOS <b id="hudSunk">0</b></span>' +
           '<span class="hud-chip">PRÁCTICA <b id="hudReward">0/10</b></span>' +
-          '<span class="hud-chip">CAÑÓN <b id="hudStatus">LISTO</b></span>' +
-          '<span class="hud-chip">MÁQUINA <span class="hud-bar"><i id="hudThrottle"></i></span></span>' +
+          '<span class="hud-chip warn" id="hudGround" style="display:none">VARADO</span>' +
         '</div>' +
-        '<div class="bridge-help">W/S acelerar · A/D girar · Espacio andanada · Clic disparar</div>' +
+        '<div class="bridge-help">W/S orden de máquina · A/D timón · Espacio andanada · Clic disparar</div>' +
         '<div class="touch-controls">' +
           '<div class="joystick" id="bridgeJoy"><div class="joy-knob" id="bridgeKnob"></div></div>' +
           '<button class="fire-btn" id="bridgeFire">FUEGO</button>' +
@@ -84,10 +125,12 @@ function renderBridge(v) {
       '<div class="bridge-stats">' +
         '<span>Clase <b>' + SHIP_ROLES[ship.role].label + '</b></span>' +
         '<span>Velocidad máx. <b>' + Math.round(stats.speed) + ' nudos</b></span>' +
+        '<span>Eslora <b>' + ship.length + '</b></span>' +
+        '<span>Desplazamiento <b>' + ship.displacement + '</b></span>' +
         '<span>Fuego <b>' + Math.round(stats.fp) + '</b></span>' +
         '<span>Blindaje <b>' + Math.round(stats.armor) + '</b></span>' +
         '<span>Nivel <b>' + entry.level + '</b></span>' +
-        '<span>Controles <b>teclado / táctil</b></span>' +
+        '<span>Controles <b>telégrafo / timón</b></span>' +
       '</div>' +
     '</section>';
 
@@ -126,11 +169,17 @@ function startBridge(entry, stats) {
       x: BRIDGE_WORLD.w / 2,
       y: BRIDGE_WORLD.h / 2,
       angle: -Math.PI / 2,
+      vx: 0,
+      vy: 0,
       speed: 0,
-      throttle: 0,
+      targetFrac: 0,
+      orderIndex: 2,
       rudder: 0,
-      fireCd: 0
+      fireCd: 0,
+      recoil: 0,
+      grounded: 0
     },
+    orderTimer: 0,
     cam: { x: BRIDGE_WORLD.w / 2, y: BRIDGE_WORLD.h / 2 },
     targets: [],
     shells: [],
@@ -378,30 +427,61 @@ function updateBridge(dt) {
   const left = keys['a'] || keys['arrowleft'];
   const right = keys['d'] || keys['arrowright'];
 
-  if (up) o.throttle += dt * 1.15;
-  if (down) o.throttle -= dt * 1.35;
-  if (b.joyY && Math.abs(b.joyY) > 0.08) o.throttle = clamp(-b.joyY, -0.6, 1);
-  o.throttle = clamp(o.throttle, -0.4, 1);
+  if (b.orderTimer > 0) b.orderTimer -= dt;
 
-  let rudder = (right ? 1 : 0) - (left ? 1 : 0);
-  if (b.joyX && Math.abs(b.joyX) > 0.08) rudder = b.joyX;
-  o.rudder = rudder;
+  if (Math.abs(b.joyY) > 0.12) {
+    o.targetFrac = clamp(-b.joyY, -0.45, 1);
+    o.orderIndex = nearestOrderIndex(o.targetFrac);
+  } else if (b.orderTimer <= 0 && (up || down)) {
+    if (up) o.orderIndex = Math.min(BRIDGE_TELEGRAPH.length - 1, o.orderIndex + 1);
+    if (down) o.orderIndex = Math.max(0, o.orderIndex - 1);
+    o.targetFrac = BRIDGE_TELEGRAPH[o.orderIndex].frac;
+    b.orderTimer = 0.45;
+  }
 
-  const maxSpeed = 22 + b.stats.speed * 2.2;
-  const targetSpeed = o.throttle * maxSpeed;
-  o.speed += (targetSpeed - o.speed) * Math.min(1, dt * 1.15);
+  let rudderOrder = (right ? 1 : 0) - (left ? 1 : 0);
+  if (Math.abs(b.joyX) > 0.1) rudderOrder = b.joyX;
+  const rudderSpeed = Math.abs(rudderOrder) > 0.01 ? 1.25 : 0.85;
+  o.rudder += clamp(rudderOrder - o.rudder, -rudderSpeed * dt, rudderSpeed * dt);
+  o.rudder = clamp(o.rudder, -1, 1);
 
-  const spdFactor = clamp(Math.abs(o.speed) / maxSpeed, 0.08, 1);
-  const dir = o.speed < -1 ? -1 : 1;
-  o.angle += o.rudder * (0.18 + spdFactor * 1.15) * dt * dir;
+  const mass = shipMass(b.ship);
+  const lengthM = parseFloat(b.ship.length) || 120;
+  const accel = clamp(16 / Math.pow(mass / 2500, 0.45), 2.2, 16);
+  const decel = accel * 1.55;
+  const maxSpeed = 18 + b.stats.speed * 2.2;
 
-  o.x += Math.cos(o.angle) * o.speed * dt;
-  o.y += Math.sin(o.angle) * o.speed * dt;
+  const hx = Math.cos(o.angle);
+  const hy = Math.sin(o.angle);
+  let vF = o.vx * hx + o.vy * hy;
+  let vL = -o.vx * hy + o.vy * hx;
 
-  if (o.x < 50) { o.x = 50; o.speed *= 0.4; }
-  if (o.x > BRIDGE_WORLD.w - 50) { o.x = BRIDGE_WORLD.w - 50; o.speed *= 0.4; }
-  if (o.y < 50) { o.y = 50; o.speed *= 0.4; }
-  if (o.y > BRIDGE_WORLD.h - 50) { o.y = BRIDGE_WORLD.h - 50; o.speed *= 0.4; }
+  const targetF = o.targetFrac * maxSpeed;
+  const dv = targetF - vF;
+  const rate = Math.abs(targetF) > Math.abs(vF) ? accel : decel;
+  const step = rate * dt;
+  vF += clamp(dv, -step, step);
+  vF *= Math.exp(-0.02 * dt);
+  vL *= Math.exp(-2.4 * dt);
+
+  const speedFactor = clamp(Math.abs(vF) / maxSpeed, 0, 1);
+  const lenFactor = Math.pow(lengthM / 100, 0.5);
+  const maxTurn = 0.42 / lenFactor;
+  const dir = vF < -1 ? -1 : 1;
+  o.angle += o.rudder * maxTurn * Math.pow(speedFactor, 0.7) * dt * dir;
+
+  o.vx = hx * vF - hy * vL;
+  o.vy = hy * vF + hx * vL;
+  o.speed = vF;
+
+  const cur = currentAt(b.time);
+  o.x += (o.vx + cur.x) * dt;
+  o.y += (o.vy + cur.y) * dt;
+
+  if (o.x < 50) { o.x = 50; o.vx *= 0.2; o.vy *= 0.2; o.speed *= 0.2; o.grounded = 0.9; }
+  if (o.x > BRIDGE_WORLD.w - 50) { o.x = BRIDGE_WORLD.w - 50; o.vx *= 0.2; o.vy *= 0.2; o.speed *= 0.2; o.grounded = 0.9; }
+  if (o.y < 50) { o.y = 50; o.vx *= 0.2; o.vy *= 0.2; o.speed *= 0.2; o.grounded = 0.9; }
+  if (o.y > BRIDGE_WORLD.h - 50) { o.y = BRIDGE_WORLD.h - 50; o.vx *= 0.2; o.vy *= 0.2; o.speed *= 0.2; o.grounded = 0.9; }
 
   for (let i = 0; i < BRIDGE_ISLANDS.length; i++) {
     const isl = BRIDGE_ISLANDS[i];
@@ -412,9 +492,14 @@ function updateBridge(dt) {
     if (d < min) {
       o.x = isl.x + dx / d * min;
       o.y = isl.y + dy / d * min;
-      o.speed *= 0.35;
+      o.vx *= 0.15;
+      o.vy *= 0.15;
+      o.speed *= 0.15;
+      o.grounded = 1.1;
     }
   }
+
+  if (o.grounded > 0) o.grounded -= dt;
 
   if (o.fireCd > 0) o.fireCd -= dt;
   if (o.recoil > 0) o.recoil = Math.max(0, o.recoil - dt * 4);
@@ -431,6 +516,22 @@ function updateBridge(dt) {
       max: 1.5,
       size: rand(2, 5),
       color: '180,225,255'
+    });
+  }
+
+  if (Math.abs(o.speed) > maxSpeed * 0.55 && Math.random() < dt * 22) {
+    const bowX = o.x + Math.cos(o.angle) * 26;
+    const bowY = o.y + Math.sin(o.angle) * 26;
+    const spread = rand(-1, 1);
+    b.particles.push({
+      x: bowX + Math.cos(o.angle + Math.PI / 2) * spread * 8,
+      y: bowY + Math.sin(o.angle + Math.PI / 2) * spread * 8,
+      vx: Math.cos(o.angle) * rand(8, 28) + Math.cos(o.angle + Math.PI / 2) * spread * 20,
+      vy: Math.sin(o.angle) * rand(8, 28) + Math.sin(o.angle + Math.PI / 2) * spread * 20,
+      life: rand(0.35, 0.8),
+      max: 0.8,
+      size: rand(1.5, 3.5),
+      color: '215,240,255'
     });
   }
 
@@ -559,6 +660,19 @@ function drawBridge() {
   }
   ctx.stroke();
 
+  ctx.strokeStyle = 'rgba(120,190,230,0.055)';
+  ctx.lineWidth = 1.2;
+  const waveGap = 180;
+  for (let wy = Math.floor(top / waveGap) * waveGap; wy <= bottom; wy += waveGap) {
+    ctx.beginPath();
+    let first = true;
+    for (let wx = Math.floor(left / 60) * 60; wx <= right; wx += 60) {
+      const yy = wy + Math.sin(wx * 0.012 + b.time * 0.9 + wy * 0.004) * 10;
+      if (first) { ctx.moveTo(wx, yy); first = false; } else { ctx.lineTo(wx, yy); }
+    }
+    ctx.stroke();
+  }
+
   ctx.strokeStyle = 'rgba(90,210,244,0.22)';
   ctx.lineWidth = 2;
   ctx.strokeRect(0, 0, BRIDGE_WORLD.w, BRIDGE_WORLD.h);
@@ -609,6 +723,17 @@ function drawBridge() {
 function drawBridgeIslands(ctx) {
   for (let i = 0; i < BRIDGE_ISLANDS.length; i++) {
     const isl = BRIDGE_ISLANDS[i];
+
+    ctx.beginPath();
+    ctx.arc(isl.x, isl.y, isl.r + 62, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(55,130,150,0.07)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(isl.x, isl.y, isl.r + 28, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(130,220,220,0.12)';
+    ctx.lineWidth = 10;
+    ctx.stroke();
+
     ctx.beginPath();
     for (let a = 0; a <= 28; a++) {
       const ang = a / 28 * Math.PI * 2;
@@ -722,14 +847,32 @@ function updateBridgeHud() {
   const sunkEl = $('#hudSunk');
   const rewardEl = $('#hudReward');
   const statusEl = $('#hudStatus');
-  const throttleEl = $('#hudThrottle');
+  const headingEl = $('#hudHeading');
+  const rudderEl = $('#hudRudder');
+  const telegraphEl = $('#hudTelegraph');
+  const currentEl = $('#hudCurrent');
+  const groundEl = $('#hudGround');
+  const maxSpeed = 18 + bridge.stats.speed * 2.2;
+
   if (speedEl) {
-    const maxSpeed = 22 + bridge.stats.speed * 2.2;
     speedEl.textContent = Math.round(Math.abs(o.speed) / maxSpeed * bridge.stats.speed) + ' kn';
   }
+  if (headingEl) {
+    const bearing = (o.angle * 180 / Math.PI + 90 + 360) % 360;
+    headingEl.textContent = String(Math.round(bearing)).padStart(3, '0') + '° ' + compassLabel(bearing);
+  }
+  if (rudderEl) {
+    const deg = Math.round(o.rudder * 35);
+    rudderEl.textContent = (deg >= 0 ? '+' : '') + deg + '°';
+  }
+  if (telegraphEl) telegraphEl.textContent = BRIDGE_TELEGRAPH[nearestOrderIndex(o.targetFrac)].label;
+  if (currentEl) {
+    const cur = currentAt(bridge.time);
+    currentEl.textContent = (Math.hypot(cur.x, cur.y) / 2.2).toFixed(1).replace('.', ',') + ' kn';
+  }
+  if (groundEl) groundEl.style.display = o.grounded > 0 ? '' : 'none';
   if (scoreEl) scoreEl.textContent = bridge.score;
   if (sunkEl) sunkEl.textContent = bridge.sunk;
   if (rewardEl) rewardEl.textContent = bridge.rewarded + '/10';
   if (statusEl) statusEl.textContent = o.fireCd > 0 ? 'RECARGANDO' : 'LISTO';
-  if (throttleEl) throttleEl.style.width = clamp((o.throttle + 0.4) / 1.4 * 100, 0, 100) + '%';
 }

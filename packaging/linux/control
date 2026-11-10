@@ -1,0 +1,14 @@
+Package: acero-y-sal
+Version: @VERSION@
+Section: games
+Priority: optional
+Architecture: all
+Installed-Size: @INSTALLED_SIZE@
+Depends: python3, curl, xdg-utils
+Maintainer: GonzalitoDev <91691281+GonzalitoDev@users.noreply.github.com>
+Homepage: https://github.com/GonzalitoDev/h4ck3r-zone
+Description: ACERO Y SAL - RPG naval por turnos con buques reales
+ Juego de rol naval con 28 buques historicos, combate por turnos,
+ pilotaje en tiempo real con fisica naval, guardado en Firebase y
+ Centro de Mando Nexus. Instala un lanzador en el menu y sirve el
+ juego localmente en el puerto 8787.

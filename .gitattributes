@@ -1,0 +1,13 @@
+* text=auto
+*.exe binary
+*.apk binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.wav binary
+*.mp4 binary
+*.zip binary
+*.sh text eol=lf
+*.desktop text eol=lf
+*.rules text eol=lf
+*.yaml text eol=lf
