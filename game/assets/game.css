@@ -609,6 +609,131 @@ body {
 }
 .toast.show { transform: translate(-50%, 0); opacity: 1; }
 
+/* ---------- puente de mando ---------- */
+
+.bridge-select {
+  background: #08131f;
+  color: var(--ink);
+  border: 1px solid var(--line2);
+  border-radius: 9px;
+  padding: 0.5rem 0.6rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  outline: none;
+  max-width: 220px;
+}
+.bridge-select:focus { border-color: var(--accent2); }
+
+.bridge-wrap {
+  position: relative;
+  border: 1px solid var(--line2);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #05111d;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+#bridgeCanvas {
+  display: block;
+  width: 100%;
+  height: clamp(360px, 62vh, 640px);
+  touch-action: none;
+  cursor: crosshair;
+}
+.bridge-hud {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  pointer-events: none;
+}
+.hud-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(6, 16, 26, 0.72);
+  border: 1px solid rgba(90, 210, 244, 0.22);
+  border-radius: 20px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.5rem;
+  letter-spacing: 1px;
+  color: var(--dim);
+  backdrop-filter: blur(4px);
+}
+.hud-chip b { color: var(--accent); font-size: 0.64rem; letter-spacing: 0.5px; }
+.hud-bar { width: 70px; height: 6px; border-radius: 6px; background: #0a1a2a; border: 1px solid var(--line); overflow: hidden; }
+.hud-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent2), var(--good)); }
+
+.bridge-help {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  font-size: 0.6rem;
+  letter-spacing: 0.6px;
+  color: rgba(190, 215, 235, 0.65);
+  background: rgba(6, 16, 26, 0.6);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 0.25rem 0.7rem;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.bridge-stats { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.7rem; }
+.bridge-stats span { font-size: 0.6rem; color: var(--muted); border: 1px solid var(--line); border-radius: 8px; padding: 0.3rem 0.55rem; background: rgba(0, 0, 0, 0.15); }
+.bridge-stats b { color: var(--accent2); }
+
+.touch-controls { display: none; }
+.joystick {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  width: 118px;
+  height: 118px;
+  border-radius: 50%;
+  border: 2px solid rgba(90, 210, 244, 0.4);
+  background: rgba(8, 20, 32, 0.5);
+  touch-action: none;
+  backdrop-filter: blur(3px);
+}
+.joy-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 50px;
+  height: 50px;
+  margin: -25px 0 0 -25px;
+  border-radius: 50%;
+  background: rgba(90, 210, 244, 0.28);
+  border: 2px solid var(--accent2);
+  pointer-events: none;
+}
+.fire-btn {
+  position: absolute;
+  right: 18px;
+  bottom: 28px;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: rgba(242, 181, 68, 0.14);
+  color: var(--accent);
+  font-family: inherit;
+  font-weight: 800;
+  letter-spacing: 2px;
+  font-size: 0.72rem;
+  touch-action: none;
+  cursor: pointer;
+}
+.fire-btn:active { background: rgba(242, 181, 68, 0.38); }
+
+@media (pointer: coarse), (max-width: 900px) {
+  .touch-controls { display: block; }
+  .bridge-help { display: none; }
+}
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 900px) {
@@ -634,4 +759,10 @@ body {
   .combat-card { width: 138px; }
   .actions { grid-template-columns: 1fr; }
   .btn.action.special { grid-column: auto; }
+  #bridgeCanvas { height: 56vh; min-height: 340px; }
+  .bridge-hud { top: 8px; left: 8px; right: 8px; gap: 0.25rem; }
+  .hud-chip { font-size: 0.46rem; padding: 0.16rem 0.42rem; }
+  .hud-chip b { font-size: 0.56rem; }
+  .hud-bar { width: 46px; }
+  .bridge-select { max-width: 170px; }
 }

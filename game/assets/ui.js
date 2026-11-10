@@ -13,7 +13,7 @@ function renderHeader() {
   const cm = state.commander;
   const need = xpNeedCommander(cm.level);
   const xpPct = clamp(Math.round(cm.xp / need * 100), 0, 100);
-  const navs = [['hq', 'Mando'], ['fleet', 'Flota'], ['ops', 'Operaciones'], ['yard', 'Astillero'], ['codex', 'Códice']];
+  const navs = [['hq', 'Mando'], ['fleet', 'Flota'], ['ops', 'Operaciones'], ['bridge', 'Puente'], ['yard', 'Astillero'], ['codex', 'Códice']];
 
   bar.innerHTML = `
     <div class="brand" onclick="Game.go('hq')">
@@ -34,11 +34,13 @@ function renderHeader() {
 
 function render() {
   renderHeader();
+  if (state && state.view !== 'bridge' && typeof stopBridge === 'function') stopBridge();
   const v = $('#view');
   if (!state) { renderMenu(v); return; }
   if (state.view === 'hq') renderHQ(v);
   else if (state.view === 'fleet') renderFleet(v);
   else if (state.view === 'ops') renderOps(v);
+  else if (state.view === 'bridge') renderBridge(v);
   else if (state.view === 'yard') renderYard(v);
   else if (state.view === 'codex') renderCodex(v);
   else if (state.view === 'battle') renderBattle(v);
@@ -141,6 +143,7 @@ function renderHQ(v) {
       </div>
       <div class="quick-actions">
         <button class="btn primary" onclick="Game.go('ops')">Ir a operaciones</button>
+        <button class="btn ghost" onclick="Game.go('bridge')">Tomar el timón</button>
         <button class="btn ghost" onclick="Game.go('fleet')">Gestionar flota</button>
         <button class="btn ghost" onclick="Game.go('yard')">Astillero</button>
       </div>
@@ -219,6 +222,7 @@ function fleetCard(e) {
     <div class="card-actions">
       <button class="btn small ${e.active ? 'ghost' : 'primary'}" onclick="Game.toggleActive('${e.uid}')">${e.active ? 'Pasar a reserva' : 'Activar'}</button>
       <button class="btn small ghost" onclick="Game.repair('${e.uid}')">${rCost > 0 ? 'Reparar ' + fmt(rCost) + ' cr' : 'Casco completo'}</button>
+      <button class="btn small ghost" onclick="Game.bridgeWith('${e.uid}')">Tomar el timón</button>
       <button class="btn small ghost" onclick="Game.shipDetails('${s.id}')">Ficha</button>
     </div>
   </article>`;
@@ -228,6 +232,11 @@ function fleetCard(e) {
 
 Game.go = function (view) {
   if (!state) { render(); return; }
+  if (battle && !battle.over && view !== 'battle') {
+    if (!confirm('Si sales ahora abandonarás el combate en curso. ¿Continuar?')) return;
+    battle = null;
+  }
+  if (view !== 'bridge' && typeof stopBridge === 'function') stopBridge();
   if (view === 'ops') ensureOps();
   state.view = view;
   save();

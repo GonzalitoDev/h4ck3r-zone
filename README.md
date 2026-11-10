@@ -9,6 +9,7 @@ Sitio jugable: [`game/index.html`](game/index.html)
 - **28 buques reales** con datos históricos: HMS Victory, USS Monitor, HMS Dreadnought, HMS Hood, Bismarck, USS Iowa, Yamato, USS Enterprise, Akagi, U-96, PT-109 y más.
 - **8 roles de combate**: acorazados, portaaviones, cruceros, destructores, submarinos, lanchas torpederas, ironclads y fragatas.
 - **Combate por turnos**: cañoneo, torpedos, maniobras evasivas, reparaciones y una habilidad especial por rol (andanada de precisión, oleada aérea, inmersión, cortina de humo, etc.).
+- **Puente de mando**: pilota tu buque en tiempo real con WASD/flechas, joystick táctil o clic para disparar. Acelera, gira, deja estela, esquiva islas y hunde blancos de práctica para ganar créditos.
 - **Progresión RPG**: nivel de comandante, 5 habilidades, puntos de habilidad, XP por buque, módulos de cañones/blindaje/motores y 7 oficiales históricos con bonus.
 - **Flota y astillero**: compra buques únicos, activa hasta 4 unidades según tu nivel, repara daños y asigna oficiales.
 - **Operaciones dinámicas** con recompensas, operaciones especiales contra buques capitales y guardado automático en `localStorage`.
@@ -24,6 +25,14 @@ npx serve game
 ```
 
 En el juego: elige buque insignia, ve a **Operaciones**, despliega tu flota y combate por turnos. Repara en **Flota** y compra unidades en **Astillero**.
+
+En **Puente** puedes tomar el timón y manejar el buque libremente:
+
+- `W` / `↑` acelerar, `S` / `↓` reducir o dar atrás.
+- `A` / `←` y `D` / `→` girar.
+- `Espacio` dispara una andanada por ambas bandas; clic en el mar dispara hacia ese punto.
+- En móvil usa el joystick y el botón **FUEGO**.
+- Cada blanco hundido otorga puntos y hasta 10 recompensas de práctica de 15 créditos por sesión.
 
 ## Publicar con Firebase
 
@@ -72,6 +81,7 @@ game/
     core.js      estado, guardado, estadísticas y gráficos SVG
     ui.js        cabecera, menú, mando, flota y modales
     screens.js   operaciones, astillero y códice
+    bridge.js    puente de mando: pilotaje, físicas, islas y cañones
     battle.js    motor de combate, resultados e inicio
     game.css     estilos
 server.mjs       servidor estático para App Hosting
