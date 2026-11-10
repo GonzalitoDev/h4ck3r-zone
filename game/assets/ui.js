@@ -14,6 +14,11 @@ function renderHeader() {
   const need = xpNeedCommander(cm.level);
   const xpPct = clamp(Math.round(cm.xp / need * 100), 0, 100);
   const navs = [['hq', 'Mando'], ['fleet', 'Flota'], ['ops', 'Operaciones'], ['bridge', 'Puente'], ['yard', 'Astillero'], ['codex', 'Códice']];
+  const cloudState = window.GameCloud ? window.GameCloud.state : 'local';
+  const cloudLabel = cloudState === 'online' ? 'NUBE · ON'
+    : cloudState === 'connecting' ? 'NUBE · ...'
+    : cloudState === 'error' ? 'NUBE · ERROR'
+    : 'NUBE · LOCAL';
 
   bar.innerHTML = `
     <div class="brand" onclick="Game.go('hq')">
@@ -27,6 +32,7 @@ function renderHeader() {
       <div class="res"><span class="res-label">MISIONES</span><span class="res-val">${state.missionsWon}</span></div>
     </div>
     <button class="sound-btn" onclick="Game.toggleSound()" title="Activar o desactivar sonido">${soundOn ? 'SONIDO ON' : 'SONIDO OFF'}</button>
+    <button class="cloud-chip ${cloudState}" onclick="Game.cloudSync()" title="Sincronizar la partida con Firebase">${cloudLabel}</button>
     <nav class="nav">
       ${navs.map(n => `<button class="${state.view === n[0] ? 'active' : ''}" onclick="Game.go('${n[0]}')">${n[1]}</button>`).join('')}
     </nav>`;
@@ -145,6 +151,7 @@ function renderHQ(v) {
         <button class="btn primary" onclick="Game.go('ops')">Ir a operaciones</button>
         <button class="btn ghost" onclick="Game.go('bridge')">Tomar el timón</button>
         <button class="btn ghost" onclick="Game.go('fleet')">Gestionar flota</button>
+        <button class="btn ghost" onclick="Game.cloudSync()">Sincronizar nube</button>
         <button class="btn ghost" onclick="Game.go('yard')">Astillero</button>
       </div>
     </section>`;

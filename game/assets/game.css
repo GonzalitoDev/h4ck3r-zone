@@ -129,6 +129,22 @@ body {
 }
 .sound-btn:hover { border-color: var(--accent2); color: var(--accent2); }
 
+.cloud-chip {
+  background: transparent;
+  border: 1px solid var(--line2);
+  color: var(--dim);
+  font-family: inherit;
+  font-size: 0.55rem;
+  letter-spacing: 1.2px;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.cloud-chip:hover { filter: brightness(1.2); }
+.cloud-chip.online { color: var(--good); border-color: rgba(87, 214, 141, 0.45); }
+.cloud-chip.connecting { color: var(--accent); border-color: rgba(242, 181, 68, 0.4); }
+.cloud-chip.error { color: var(--bad); border-color: rgba(229, 72, 77, 0.45); }
+
 .nav { display: flex; gap: 0.25rem; flex-wrap: wrap; width: 100%; }
 .nav button {
   background: transparent;

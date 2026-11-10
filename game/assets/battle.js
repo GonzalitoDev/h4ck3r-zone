@@ -554,4 +554,6 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') Game.closeModal();
   });
+
+  if (typeof initCloud === 'function') initCloud();
 });

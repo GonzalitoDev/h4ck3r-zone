@@ -21,6 +21,9 @@
       }
     ]
   },
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "apphosting": {
     "backendId": "h4ck3r-zone",
     "rootDir": "/",

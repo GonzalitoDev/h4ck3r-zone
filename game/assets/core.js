@@ -134,7 +134,15 @@ function repairCost(entry) {
 }
 
 function save() {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) { /* sin almacenamiento */ }
+  try {
+    if (state) state.savedAt = Date.now();
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch (e) { /* sin almacenamiento local */ }
+  if (typeof scheduleCloudSave === 'function') scheduleCloudSave();
+}
+
+function replaceState(next) {
+  state = next;
 }
 
 function load() {
