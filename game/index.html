@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#070d16"/>
+<meta name="description" content="Acero y Sal: RPG naval por turnos con buques reales. Comanda tu flota, forma oficiales y gana operaciones históricas."/>
+<title>ACERO Y SAL — RPG Naval</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23070d16'/%3E%3Cpath d='M8 44h48l-6 10H14z' fill='%23f2b544'/%3E%3Cpath d='M32 10v26M32 14l14 8-14 8z' fill='%235ad2f4'/%3E%3C/svg%3E"/>
+<link rel="stylesheet" href="assets/game.css"/>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true">
+  <div class="grid-layer"></div>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <div class="scan"></div>
+</div>
+
+<header id="topbar" class="topbar hidden"></header>
+
+<main id="view" class="view"></main>
+
+<footer class="footer">
+  <p>ACERO Y SAL · RPG naval de buques reales · Datos históricos aproximados, valores de combate abstractos.</p>
+</footer>
+
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-card" id="modalCard"></div>
+</div>
+<div id="toast" class="toast" role="status"></div>
+
+<script src="assets/data.js"></script>
+<script src="assets/core.js"></script>
+<script src="assets/ui.js"></script>
+<script src="assets/screens.js"></script>
+<script src="assets/battle.js"></script>
+</body>
+</html>

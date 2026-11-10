@@ -10,6 +10,8 @@ __pycache__/
 .env
 *.log
 .vercel
+.firebase/
+firebase-debug.log*
 dist/
 build/
 .wrangler/

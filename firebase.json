@@ -1,0 +1,57 @@
+{
+  "hosting": {
+    "public": "game",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css|svg|png|jpg)",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=3600" }
+        ]
+      },
+      {
+        "source": "**/*.html",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache" }
+        ]
+      }
+    ]
+  },
+  "apphosting": {
+    "backendId": "h4ck3r-zone",
+    "rootDir": "/",
+    "ignore": [
+      "node_modules",
+      ".git",
+      ".github",
+      ".vercel",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "**/*.exe",
+      "**/*.apk",
+      "**/*.idsig",
+      "**/*.class",
+      "**/*.dex",
+      "**/*.keystore",
+      "**/__pycache__/**",
+      "cyber-*/**",
+      "nexus-*/**",
+      "websecurity-landing/**",
+      "number-info/**",
+      "vuln-log/**",
+      "net-guard/**",
+      "data/**",
+      "docs/**",
+      "media/**",
+      "scripts/**",
+      "bot/**",
+      "build/**",
+      "web/**",
+      "src/**"
+    ]
+  }
+}
