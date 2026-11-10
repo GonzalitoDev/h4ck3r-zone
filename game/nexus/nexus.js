@@ -90,6 +90,10 @@ function renderSave(save, savedAt, updatedAt) {
   el('sLevel').textContent = cm.level || 1;
   el('sCredits').textContent = fmt(cm.credits);
   el('sMissions').textContent = fmt(save.missionsWon || 0);
+  const cleared = (save.campaign && save.campaign.cleared) ? Object.keys(save.campaign.cleared).length : 0;
+  el('sCampaign').textContent = cleared + '/' + (typeof CAMPAIGN !== 'undefined' ? CAMPAIGN.length : 10);
+  el('sAchievements').textContent = (save.achievements || []).length + '/' + (typeof ACHIEVEMENTS !== 'undefined' ? ACHIEVEMENTS.length : 19);
+  el('sSunk').textContent = fmt((save.stats && save.stats.sunk) || 0);
   el('sFleet').textContent = fleet.length;
   el('sPower').textContent = fmt(fleetPower(save));
 

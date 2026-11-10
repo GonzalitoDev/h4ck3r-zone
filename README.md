@@ -1,16 +1,19 @@
 # ACERO Y SAL — RPG naval con buques reales
 
-Juego web de rol y combate naval por turnos. Comandas una flota de **28 buques históricos reales**, formas oficiales, mejoras cada nave y completas operaciones inspiradas en la historia naval.
+Juego web de rol y combate naval por turnos. Comandas una flota de **58 buques históricos reales**, formas oficiales, mejoras cada nave y completas una campaña de 10 capítulos inspirada en la historia naval.
 
 Sitio jugable: [`game/index.html`](game/index.html)
 
 ## Qué incluye
 
-- **28 buques reales** con datos históricos: HMS Victory, USS Monitor, HMS Dreadnought, HMS Hood, Bismarck, USS Iowa, Yamato, USS Enterprise, Akagi, U-96, PT-109 y más.
+- **58 buques reales** con datos históricos: HMS Victory, USS Monitor, HMS Dreadnought, HMS Hood, Bismarck, USS Iowa, Yamato, USS Enterprise, Akagi, U-96, PT-109, Scharnhorst, Richelieu, Roma, Shōkaku, USS Tang y muchos más.
 - **8 roles de combate**: acorazados, portaaviones, cruceros, destructores, submarinos, lanchas torpederas, ironclads y fragatas.
 - **Combate por turnos**: cañoneo, torpedos, maniobras evasivas, reparaciones y una habilidad especial por rol (andanada de precisión, oleada aérea, inmersión, cortina de humo, etc.).
 - **Puente de mando**: pilota tu buque en tiempo real con WASD/flechas, joystick táctil o clic para disparar. Acelera, gira, deja estela, esquiva islas y hunde blancos de práctica para ganar créditos.
-- **Progresión RPG**: nivel de comandante, 5 habilidades, puntos de habilidad, XP por buque, módulos de cañones/blindaje/motores y 7 oficiales históricos con bonus.
+- **Progresión RPG**: nivel de comandante, 7 habilidades, puntos de habilidad, XP por buque, módulos de cañones/blindaje/motores y 13 oficiales históricos con bonus.
+- **Campaña narrativa de 10 capítulos** con flotas fijas, jefes históricos, recompensas únicas (buques y oficiales) y desbloqueo progresivo.
+- **19 logros** con recompensas en créditos y XP.
+- **Buscador y filtros** de buques por rol, nación y tier en Astillero y Códice.
 - **Flota y astillero**: compra buques únicos, activa hasta 4 unidades según tu nivel, repara daños y asigna oficiales.
 - **Operaciones dinámicas** con recompensas, operaciones especiales contra buques capitales y guardado automático en `localStorage`.
 - **Guardado en la nube con Firebase**: autenticación anónima + Firestore. La partida se sincroniza automáticamente y se restaura al recargar.
@@ -26,6 +29,8 @@ npx serve game
 ```
 
 En el juego: elige buque insignia, ve a **Operaciones**, despliega tu flota y combate por turnos. Repara en **Flota** y compra unidades en **Astillero**.
+
+La pestaña **Campaña** ofrece 10 capítulos con historia, flotas fijas y recompensas exclusivas. **Mando** muestra los logros y las 7 habilidades del comandante.
 
 En **Puente** puedes tomar el timón y manejar el buque con física naval:
 
@@ -87,8 +92,8 @@ El acceso está protegido por las reglas de `firestore.rules`: cada sesión solo
 Descarga el paquete desde [Releases](https://github.com/GonzalitoDev/h4ck3r-zone/releases) y instálalo:
 
 ```bash
-wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.0.0_all.deb
-sudo apt install ./acero-y-sal_1.0.0_all.deb
+wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.1.0_all.deb
+sudo apt install ./acero-y-sal_1.1.0_all.deb
 ```
 
 Después búscalo en el menú como **ACERO Y SAL**. El lanzador sirve el juego localmente en `http://127.0.0.1:8787/` y abre el navegador.

@@ -379,6 +379,7 @@ function sinkBridgeTarget(t) {
     state.commander.credits += 15;
     bridge.score += 150;
     save();
+    if (typeof checkAchievements === 'function') checkAchievements();
     renderHeader();
     toast('Blanco hundido: +15 créditos (' + bridge.rewarded + '/10).');
   } else {

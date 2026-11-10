@@ -311,7 +311,7 @@ body {
 .codex-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 .ops-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 
-.starter-card, .catalog-card, .codex-card, .officer-card, .panel, .ship-card, .op-card {
+.starter-card, .catalog-card, .codex-card, .officer-card, .panel, .ship-card, .op-card, .campaign-card {
   background: linear-gradient(180deg, rgba(16, 33, 51, 0.88), rgba(10, 20, 33, 0.92));
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -450,6 +450,47 @@ body {
 .officer-title { color: var(--dim); font-size: 0.6rem; letter-spacing: 0.6px; }
 .officer-body p { color: var(--muted); font-size: 0.7rem; line-height: 1.5; margin: 0.3rem 0; }
 .officer-body .price-row { margin-top: auto; }
+
+/* ---------- campaña ---------- */
+
+.campaign-progress { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1rem; }
+.campaign-progress .bar { flex: 1; }
+.campaign-progress span { font-size: 0.66rem; color: var(--muted); white-space: nowrap; }
+.campaign-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0.9rem; }
+.campaign-card { padding: 1rem; display: flex; flex-direction: column; gap: 0.45rem; position: relative; overflow: hidden; }
+.campaign-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--accent2); opacity: 0.5; }
+.campaign-card.boss::before { background: var(--danger); opacity: 0.9; }
+.campaign-card.locked { opacity: 0.55; }
+.campaign-card.done { opacity: 0.72; }
+.camp-top { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+.camp-num { font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; color: var(--accent); border: 1px solid rgba(242, 181, 68, 0.4); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+.campaign-card h3 { margin: 0; font-size: 1rem; }
+.camp-desc { margin: 0; color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+.campaign-card blockquote { margin: 0.1rem 0; padding: 0.4rem 0.6rem; border-left: 2px solid var(--line2); color: var(--muted); font-size: 0.72rem; line-height: 1.5; font-style: italic; }
+.camp-rewards { font-size: 0.64rem; color: var(--accent); margin-top: auto; padding-top: 0.3rem; }
+.campaign-card .btn { margin-top: 0.3rem; }
+
+/* ---------- logros ---------- */
+
+.achievements { margin-top: 0.9rem; }
+.ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.5rem; max-height: 360px; overflow-y: auto; padding-right: 0.2rem; }
+.ach { display: flex; gap: 0.5rem; border: 1px solid var(--line); border-radius: 9px; padding: 0.5rem; background: rgba(0, 0, 0, 0.14); opacity: 0.55; }
+.ach.on { opacity: 1; border-color: rgba(87, 214, 141, 0.35); background: rgba(87, 214, 141, 0.05); }
+.ach-badge { width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line2); color: var(--dim); font-size: 0.7rem; }
+.ach.on .ach-badge { color: var(--good); border-color: rgba(87, 214, 141, 0.5); }
+.ach-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.ach-text strong { font-size: 0.72rem; }
+.ach-text span { font-size: 0.6rem; color: var(--muted); line-height: 1.4; }
+.ach-text small { font-size: 0.52rem; color: var(--accent); letter-spacing: 0.5px; }
+
+/* ---------- filtros ---------- */
+
+.filter-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; margin: 0 0 0.8rem; }
+.filter-input, .filter-select { background: #08131f; color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 0.42rem 0.55rem; font-family: inherit; font-size: 0.68rem; outline: none; min-width: 0; }
+.filter-input { flex: 1; min-width: 150px; }
+.filter-input:focus, .filter-select:focus { border-color: var(--accent2); }
+.filter-count { font-size: 0.6rem; color: var(--dim); margin-left: auto; }
+.filtered-out { display: none !important; }
 
 /* ---------- combate ---------- */
 

@@ -154,8 +154,13 @@ function load() {
     s.officers = s.officers || [];
     s.ops = s.ops || [];
     s.missionsWon = s.missionsWon || 0;
+    s.achievements = s.achievements || [];
+    s.campaign = s.campaign || { cleared: {} };
+    s.campaign.cleared = s.campaign.cleared || {};
+    s.stats = Object.assign({ sunk: 0, specials: 0, bossWins: 0, kills: {} }, s.stats || {});
+    s.stats.kills = s.stats.kills || {};
     s.commander.skills = Object.assign(
-      { artilleria: 0, navegacion: 0, ingenieria: 0, liderazgo: 0, tactica: 0 },
+      { artilleria: 0, navegacion: 0, ingenieria: 0, liderazgo: 0, tactica: 0, logistica: 0, inteligencia: 0 },
       s.commander.skills || {}
     );
     s.fleet.forEach(function (e) {

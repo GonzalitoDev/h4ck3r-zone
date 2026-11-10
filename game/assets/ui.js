@@ -13,7 +13,7 @@ function renderHeader() {
   const cm = state.commander;
   const need = xpNeedCommander(cm.level);
   const xpPct = clamp(Math.round(cm.xp / need * 100), 0, 100);
-  const navs = [['hq', 'Mando'], ['fleet', 'Flota'], ['ops', 'Operaciones'], ['bridge', 'Puente'], ['yard', 'Astillero'], ['codex', 'Códice']];
+  const navs = [['hq', 'Mando'], ['fleet', 'Flota'], ['ops', 'Operaciones'], ['campaign', 'Campaña'], ['bridge', 'Puente'], ['yard', 'Astillero'], ['codex', 'Códice']];
   const cloudState = window.GameCloud ? window.GameCloud.state : 'local';
   const cloudLabel = cloudState === 'online' ? 'NUBE · ON'
     : cloudState === 'connecting' ? 'NUBE · ...'
@@ -46,6 +46,7 @@ function render() {
   if (state.view === 'hq') renderHQ(v);
   else if (state.view === 'fleet') renderFleet(v);
   else if (state.view === 'ops') renderOps(v);
+  else if (state.view === 'campaign') renderCampaign(v);
   else if (state.view === 'bridge') renderBridge(v);
   else if (state.view === 'yard') renderYard(v);
   else if (state.view === 'codex') renderCodex(v);
@@ -69,7 +70,7 @@ function renderMenu(v) {
           <button class="btn ${state ? 'ghost' : 'primary'}" onclick="Game.scrollStarters()">Nueva campaña</button>
           <button class="btn ghost" onclick="Game.howTo()">Cómo se juega</button>
         </div>
-        <div class="hero-note">28 buques reales · 8 roles · combate táctico · guardado automático</div>
+        <div class="hero-note">58 buques reales · 10 capítulos · 19 logros · guardado en Firebase</div>
       </div>
       <div class="starter-head" id="starters">
         <h2>Elige tu buque insignia</h2>
@@ -100,7 +101,9 @@ const SKILL_DEFS = [
   { key: 'navegacion', name: 'Navegación', desc: 'Evasión +1,5 y puntería +0,4% por rango.' },
   { key: 'ingenieria', name: 'Ingeniería', desc: 'Reparaciones de emergencia +6% por rango.' },
   { key: 'liderazgo', name: 'Liderazgo', desc: 'Daño recibido −1,5% por rango.' },
-  { key: 'tactica', name: 'Táctica', desc: 'Probabilidad de crítico +1,2% e iniciativa por rango.' }
+  { key: 'tactica', name: 'Táctica', desc: 'Probabilidad de crítico +1,2% e iniciativa por rango.' },
+  { key: 'logistica', name: 'Logística', desc: 'Créditos de operaciones +5% por rango.' },
+  { key: 'inteligencia', name: 'Inteligencia', desc: 'Experiencia obtenida +3% por rango.' }
 ];
 
 function renderHQ(v) {
@@ -128,6 +131,7 @@ function renderHQ(v) {
             <div><span>Puntos de habilidad</span><strong>${cm.points}</strong></div>
             <div><span>Buques activos</span><strong>${activeShips().length}/${slots()}</strong></div>
             <div><span>Operaciones ganadas</span><strong>${state.missionsWon}</strong></div>
+            <div><span>Campaña</span><strong>${typeof campaignCount === 'function' ? campaignCount(state) : 0}/${typeof CAMPAIGN !== 'undefined' ? CAMPAIGN.length : 0}</strong></div>
             <div><span>Oficiales contratados</span><strong>${state.officers.length}/${OFFICERS.length}</strong></div>
           </div>
           <p class="lore">Tu misión: mantener abiertas las rutas marítimas y neutralizar cualquier amenaza en el teatro de operaciones. Cada victoria acerca a tu flota a la supremacía naval.</p>
@@ -147,8 +151,20 @@ function renderHQ(v) {
           }).join('')}
         </article>
       </div>
+      <article class="panel achievements">
+        <div class="panel-head"><h3>Logros</h3><span class="badge">${state.achievements.length}/${ACHIEVEMENTS.length}</span></div>
+        <div class="ach-grid">
+          ${ACHIEVEMENTS.map(function (a) {
+            const on = state.achievements.indexOf(a.id) !== -1;
+            return '<div class="ach ' + (on ? 'on' : '') + '"><div class="ach-badge">' + (on ? '✓' : '·') + '</div>' +
+              '<div class="ach-text"><strong>' + a.name + '</strong><span>' + a.desc + '</span>' +
+              '<small>+' + fmt(a.reward.credits) + ' cr · +' + fmt(a.reward.xp) + ' XP</small></div></div>';
+          }).join('')}
+        </div>
+      </article>
       <div class="quick-actions">
         <button class="btn primary" onclick="Game.go('ops')">Ir a operaciones</button>
+        <button class="btn ghost" onclick="Game.go('campaign')">Campaña</button>
         <button class="btn ghost" onclick="Game.go('bridge')">Tomar el timón</button>
         <button class="btn ghost" onclick="Game.go('fleet')">Gestionar flota</button>
         <button class="btn ghost" onclick="Game.cloudSync()">Sincronizar nube</button>
@@ -236,6 +252,41 @@ function fleetCard(e) {
   </article>`;
 }
 
+/* ---------- logros ---------- */
+
+function checkAchievements() {
+  if (!state) return [];
+  state.stats = state.stats || { sunk: 0, specials: 0, bossWins: 0, kills: {} };
+  state.stats.kills = state.stats.kills || {};
+  state.achievements = state.achievements || [];
+  const unlocked = [];
+  let changed = true;
+  let guard = 0;
+
+  while (changed && guard++ < 10) {
+    changed = false;
+    for (let i = 0; i < ACHIEVEMENTS.length; i++) {
+      const a = ACHIEVEMENTS[i];
+      if (state.achievements.indexOf(a.id) !== -1) continue;
+      let ok = false;
+      try { ok = !!a.check(state); } catch (e) { ok = false; }
+      if (!ok) continue;
+      state.achievements.push(a.id);
+      if (a.reward.credits) state.commander.credits += a.reward.credits;
+      if (a.reward.xp && typeof addCommanderXp === 'function') addCommanderXp(a.reward.xp);
+      unlocked.push(a);
+      changed = true;
+    }
+  }
+
+  if (unlocked.length) {
+    save();
+    if (typeof renderHeader === 'function') renderHeader();
+  }
+  return unlocked;
+}
+window.checkAchievements = checkAchievements;
+
 /* ---------- acciones ---------- */
 
 Game.go = function (view) {
@@ -257,13 +308,16 @@ Game.newGame = function (starterId) {
     version: 1,
     commander: {
       level: 1, xp: 0, credits: 1400, points: 2,
-      skills: { artilleria: 0, navegacion: 0, ingenieria: 0, liderazgo: 0, tactica: 0 }
+      skills: { artilleria: 0, navegacion: 0, ingenieria: 0, liderazgo: 0, tactica: 0, logistica: 0, inteligencia: 0 }
     },
     fleet: [makeEntry(starterId, true)],
     officers: [],
     missionsWon: 0,
     ops: [],
     lastResult: null,
+    achievements: [],
+    campaign: { cleared: {} },
+    stats: { sunk: 0, specials: 0, bossWins: 0, kills: {} },
     view: 'hq'
   };
   save();
@@ -290,6 +344,7 @@ Game.upSkill = function (key) {
   cm.points--;
   cm.skills[key]++;
   tapSound();
+  checkAchievements();
   save();
   render();
 };
@@ -302,6 +357,7 @@ Game.upgrade = function (uid, key) {
   state.commander.credits -= cost;
   e.modules[key]++;
   tapSound();
+  checkAchievements();
   save();
   render();
   toast(MOD_LABEL[key] + ' mejorado a nivel ' + e.modules[key] + '.');
@@ -372,6 +428,7 @@ Game.buyShip = function (id) {
   state.commander.credits -= s.cost;
   state.fleet.push(makeEntry(id, activeShips().length < slots()));
   tapSound();
+  checkAchievements();
   save();
   render();
   toast(s.name + ' se une a la flota.');
@@ -385,6 +442,7 @@ Game.buyOfficer = function (id) {
   state.commander.credits -= o.cost;
   state.officers.push(id);
   tapSound();
+  checkAchievements();
   save();
   render();
   toast(o.name + ' se incorpora a tu estado mayor.');

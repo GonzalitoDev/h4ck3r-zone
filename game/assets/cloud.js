@@ -107,6 +107,8 @@ async function pullCloud() {
     const remoteTime = Number(data.savedAt || remote.savedAt || 0);
     const localTime = (typeof state !== 'undefined' && state) ? Number(state.savedAt || 0) : 0;
 
+    if (typeof battle !== 'undefined' && battle && !battle.over) return;
+
     if (typeof state === 'undefined' || !state || remoteTime > localTime + 500) {
       remote.savedAt = remoteTime;
       remote.view = 'hq';

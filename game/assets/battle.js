@@ -61,6 +61,12 @@ function checkKill(c) {
     c.alive = false;
     blog(c.ship.name + ' se hunde.', 'kill');
     sfx('hit');
+    if (typeof state !== 'undefined' && state && c.side === 'enemy') {
+      state.stats = state.stats || { sunk: 0, specials: 0, bossWins: 0, kills: {} };
+      state.stats.kills = state.stats.kills || {};
+      state.stats.sunk = (state.stats.sunk || 0) + 1;
+      state.stats.kills[c.ship.role] = (state.stats.kills[c.ship.role] || 0) + 1;
+    }
   }
 }
 
@@ -192,6 +198,10 @@ function useSpecial(attacker, target) {
   if (attacker.cd > 0) return false;
   const sp = SHIP_ROLES[attacker.ship.role].special;
   attacker.cd = sp.cd;
+  if (attacker.side === 'player' && typeof state !== 'undefined' && state) {
+    state.stats = state.stats || { sunk: 0, specials: 0, bossWins: 0, kills: {} };
+    state.stats.specials = (state.stats.specials || 0) + 1;
+  }
   sfx('fire');
 
   if (sp.kind === 'precision') {
@@ -252,9 +262,7 @@ function enemyAct() {
 
 /* ---------- punto de entrada al combate ---------- */
 
-Game.deploy = function (opId) {
-  const op = state.ops.find(o => o.id === opId);
-  if (!op || op.done) return;
+function deployOperation(op) {
   const active = activeShips();
   if (!active.length) { toast('Activa al menos un buque en Flota.'); return; }
 
@@ -280,6 +288,47 @@ Game.deploy = function (opId) {
   applyRoundStart();
   render();
   setTimeout(nextTurn, 260);
+}
+
+Game.deploy = function (opId) {
+  const op = state.ops.find(o => o.id === opId);
+  if (!op || op.done) return;
+  deployOperation(op);
+};
+
+function campaignUnlocked(index) {
+  if (!state || !state.campaign || !state.campaign.cleared) return false;
+  if (index === 0) return true;
+  return !!state.campaign.cleared[index - 1];
+}
+window.campaignUnlocked = campaignUnlocked;
+
+Game.startCampaign = function (index) {
+  if (!state) return;
+  const c = CAMPAIGN[index];
+  if (!c) return;
+  if (state.campaign && state.campaign.cleared && state.campaign.cleared[index]) {
+    toast('Ese capítulo ya está completado.');
+    return;
+  }
+  if (!campaignUnlocked(index)) {
+    toast('Completa el capítulo anterior para desbloquear este.');
+    return;
+  }
+  if (!activeShips().length) {
+    toast('Activa al menos un buque en Flota.');
+    return;
+  }
+  deployOperation({
+    id: 'camp' + index,
+    campaignIndex: index,
+    name: 'Capítulo ' + c.chapter + ' · ' + c.name,
+    desc: c.desc,
+    level: c.level,
+    enemyIds: c.enemyIds.slice(),
+    done: false,
+    boss: !!c.boss
+  });
 };
 
 Game.act = function (kind) {
@@ -378,7 +427,10 @@ function finishBattle(victory) {
     shipXp: 0,
     levelUps: [],
     notes: [],
-    ships: []
+    ships: [],
+    campaign: op.campaignIndex != null,
+    campaignIndex: op.campaignIndex != null ? op.campaignIndex : null,
+    chapter: op.campaignIndex != null ? CAMPAIGN[op.campaignIndex].chapter : ''
   };
   battle.player.forEach(c => {
     result.ships.push({ name: c.ship.name, hp: c.hp, max: c.maxHp, alive: c.alive });
@@ -386,13 +438,27 @@ function finishBattle(victory) {
 
   if (victory) {
     const base = op.enemyIds.reduce((sum, id) => sum + SHIP_MAP[id].cost, 0);
-    let credits = Math.round(base * 0.2 + op.level * 50);
-    let xp = 60 + op.level * 35;
-    if (op.boss) {
-      credits = Math.round(credits * 1.8);
-      xp = Math.round(xp * 1.5);
-      result.notes.push('Recompensa de operación especial aplicada.');
+    let credits;
+    let xp;
+
+    if (op.campaignIndex != null && CAMPAIGN[op.campaignIndex]) {
+      const camp = CAMPAIGN[op.campaignIndex];
+      credits = (camp.rewards && camp.rewards.credits) || Math.round(base * 0.2 + op.level * 50);
+      xp = (camp.rewards && camp.rewards.xp) || (60 + op.level * 35);
+    } else {
+      credits = Math.round(base * 0.2 + op.level * 50);
+      xp = 60 + op.level * 35;
+      if (op.boss) {
+        credits = Math.round(credits * 1.8);
+        xp = Math.round(xp * 1.5);
+        result.notes.push('Recompensa de operación especial aplicada.');
+      }
     }
+
+    const sk = state.commander.skills;
+    credits = Math.round(credits * (1 + 0.05 * (sk.logistica || 0)));
+    xp = Math.round(xp * (1 + 0.03 * (sk.inteligencia || 0)));
+
     state.commander.credits += credits;
     result.credits = credits;
     result.commanderXp = xp;
@@ -409,6 +475,40 @@ function finishBattle(victory) {
       addShipXp(c.entry, Math.round(shipXp * (c.alive ? 1 : 0.5)));
       if (c.entry.level > prev) result.levelUps.push(c.ship.name + ' alcanzó el nivel ' + c.entry.level + '.');
     });
+
+    state.stats = state.stats || { sunk: 0, specials: 0, bossWins: 0, kills: {} };
+    if (op.boss) state.stats.bossWins = (state.stats.bossWins || 0) + 1;
+
+    if (op.campaignIndex != null && CAMPAIGN[op.campaignIndex]) {
+      const camp = CAMPAIGN[op.campaignIndex];
+      state.campaign = state.campaign || { cleared: {} };
+      state.campaign.cleared[op.campaignIndex] = true;
+      result.notes.push('Capítulo ' + camp.chapter + ' completado.');
+
+      if (camp.rewards && camp.rewards.ship) {
+        const shipId = camp.rewards.ship;
+        if (state.fleet.some(e => e.shipId === shipId)) {
+          const refund = Math.round(SHIP_MAP[shipId].cost * 0.6);
+          state.commander.credits += refund;
+          result.notes.push('Buque repetido (' + SHIP_MAP[shipId].name + '): +' + fmt(refund) + ' créditos.');
+        } else {
+          state.fleet.push(makeEntry(shipId, activeShips().length < slots()));
+          result.notes.push('Nuevo buque desbloqueado: ' + SHIP_MAP[shipId].name + '.');
+        }
+      }
+
+      if (camp.rewards && camp.rewards.officer) {
+        const officerId = camp.rewards.officer;
+        if (state.officers.indexOf(officerId) !== -1) {
+          state.commander.credits += 800;
+          result.notes.push('Oficial repetido: +800 créditos.');
+        } else {
+          state.officers.push(officerId);
+          result.notes.push('Nuevo oficial: ' + OFFICER_MAP[officerId].name + '.');
+        }
+      }
+    }
+
     state.missionsWon++;
     op.done = true;
   } else {
@@ -417,6 +517,11 @@ function finishBattle(victory) {
     result.credits = credits;
     result.notes.push('La flota fue recuperada con daños graves. Repara los buques antes de volver al combate.');
   }
+
+  const unlocked = checkAchievements();
+  unlocked.forEach(a => {
+    result.notes.push('Logro desbloqueado: ' + a.name + ' (+' + fmt(a.reward.credits) + ' créditos, +' + fmt(a.reward.xp) + ' XP).');
+  });
 
   state.lastResult = result;
   battle = null;
@@ -530,7 +635,9 @@ function renderResult(v) {
       ${r.levelUps.length ? `<div class="panel"><h3>Ascensos</h3>${r.levelUps.map(x => `<p class="good">${x}</p>`).join('')}</div>` : ''}
       ${r.notes.length ? `<div class="panel"><h3>Informe</h3>${r.notes.map(x => `<p>${x}</p>`).join('')}</div>` : ''}
       <div class="quick-actions">
-        <button class="btn primary" onclick="Game.go('ops')">Volver a operaciones</button>
+        ${r.campaign
+          ? '<button class="btn primary" onclick="Game.go(\'campaign\')">Volver a la campaña</button>'
+          : '<button class="btn primary" onclick="Game.go(\'ops\')">Volver a operaciones</button>'}
         <button class="btn ghost" onclick="Game.go('fleet')">Reparar flota</button>
         <button class="btn ghost" onclick="Game.go('hq')">Mando</button>
       </div>
@@ -544,6 +651,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (saved) {
     state = saved;
     state.view = 'hq';
+    if (typeof checkAchievements === 'function') checkAchievements();
   }
   render();
 

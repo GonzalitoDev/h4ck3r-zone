@@ -231,6 +231,216 @@ const SHIPS = [
     stats: { hp: 580, armor: 26, firepower: 74, torpedo: 40, aa: 58, speed: 30, evade: 24 },
     cost: 3500, unlockLevel: 7,
     history: 'Portaaviones británico clave en la caza del Bismarck: sus Swordfish danaron el timón del acorazado alemán.'
+  },
+  {
+    id: 'seydlitz', name: 'SMS Seydlitz', role: 'battleship', nation: 'Alemania', year: 1913, tier: 2,
+    length: '200 m', displacement: '28.550 t', crew: '1.068', armament: '10x280 mm',
+    stats: { hp: 500, armor: 50, firepower: 76, torpedo: 20, aa: 0, speed: 28, evade: 24 },
+    cost: 1900, unlockLevel: 5,
+    history: 'Crucero de batalla alemán que resistió graves daños en Jutlandia. Su regreso a puerto con más de 5.000 toneladas de agua a bordo es legendario.'
+  },
+  {
+    id: 'derfflinger', name: 'SMS Derfflinger', role: 'battleship', nation: 'Alemania', year: 1914, tier: 2,
+    length: '210 m', displacement: '26.600 t', crew: '1.112', armament: '8x305 mm',
+    stats: { hp: 520, armor: 52, firepower: 80, torpedo: 20, aa: 0, speed: 26, evade: 22 },
+    cost: 2000, unlockLevel: 5,
+    history: 'Apodado "el perro de hierro" por su resistencia en Jutlandia. Hundió al HMS Queen Mary con una salva en la santabárbara.'
+  },
+  {
+    id: 'queenElizabeth', name: 'HMS Queen Elizabeth', role: 'battleship', nation: 'Reino Unido', year: 1915, tier: 2,
+    length: '196 m', displacement: '33.000 t', crew: '950', armament: '8x381 mm',
+    stats: { hp: 600, armor: 72, firepower: 82, torpedo: 0, aa: 20, speed: 24, evade: 14 },
+    cost: 2400, unlockLevel: 5,
+    history: 'Primer acorazado rápido de la Royal Navy. Su clase combinó cañones de 381 mm y 24 nudos, marcando un nuevo estándar.'
+  },
+  {
+    id: 'arizona', name: 'USS Arizona', role: 'battleship', nation: 'Estados Unidos', year: 1916, tier: 2,
+    length: '185 m', displacement: '31.400 t', crew: '1.512', armament: '12x356 mm',
+    stats: { hp: 580, armor: 74, firepower: 80, torpedo: 0, aa: 20, speed: 21, evade: 12 },
+    cost: 2200, unlockLevel: 5,
+    history: 'Acorazado de la clase Pennsylvania. Se hundió en Pearl Harbor el 7 de diciembre de 1941 y hoy es un memorial.'
+  },
+  {
+    id: 'princeOfWales', name: 'HMS Prince of Wales', role: 'battleship', nation: 'Reino Unido', year: 1941, tier: 4,
+    length: '227 m', displacement: '43.786 t', crew: '1.500', armament: '10x356 mm',
+    stats: { hp: 700, armor: 78, firepower: 88, torpedo: 0, aa: 60, speed: 28, evade: 18 },
+    cost: 3400, unlockLevel: 7,
+    history: 'Combatió al Bismarck junto al Hood y llevó a Churchill a Terranova. Fue hundido por aviones japoneses junto al Repulse en 1941.'
+  },
+  {
+    id: 'kingGeorgeV', name: 'HMS King George V', role: 'battleship', nation: 'Reino Unido', year: 1940, tier: 4,
+    length: '227 m', displacement: '42.000 t', crew: '1.422', armament: '10x356 mm',
+    stats: { hp: 720, armor: 80, firepower: 86, torpedo: 0, aa: 55, speed: 28, evade: 18 },
+    cost: 3500, unlockLevel: 8,
+    history: 'Buque insignia de la Home Fleet. Participó en la caza final del Bismarck y en la escolta de convoyes del Ártico.'
+  },
+  {
+    id: 'rodney', name: 'HMS Rodney', role: 'battleship', nation: 'Reino Unido', year: 1927, tier: 4,
+    length: '216 m', displacement: '41.000 t', crew: '1.640', armament: '9x406 mm',
+    stats: { hp: 700, armor: 76, firepower: 90, torpedo: 0, aa: 40, speed: 23, evade: 14 },
+    cost: 3200, unlockLevel: 7,
+    history: 'Acorazado de la clase Nelson. Junto al King George V redujo al Bismarck a un casco ardiendo en 1941.'
+  },
+  {
+    id: 'scharnhorst', name: 'Scharnhorst', role: 'battleship', nation: 'Alemania', year: 1939, tier: 4,
+    length: '235 m', displacement: '38.700 t', crew: '1.968', armament: '9x280 mm',
+    stats: { hp: 690, armor: 74, firepower: 82, torpedo: 0, aa: 45, speed: 31, evade: 22 },
+    cost: 3400, unlockLevel: 7,
+    history: 'Crucero de batalla alemán que hundió al portaaviones HMS Glorious. Fue hundido en la batalla de North Cape en 1943.'
+  },
+  {
+    id: 'gneisenau', name: 'Gneisenau', role: 'battleship', nation: 'Alemania', year: 1938, tier: 4,
+    length: '235 m', displacement: '38.100 t', crew: '1.840', armament: '9x280 mm',
+    stats: { hp: 680, armor: 72, firepower: 80, torpedo: 0, aa: 45, speed: 31, evade: 22 },
+    cost: 3300, unlockLevel: 7,
+    history: 'Gemelo del Scharnhorst. Participó en la Operación Cerberus, el audaz paso por el Canal de la Mancha en 1942.'
+  },
+  {
+    id: 'vittorioVeneto', name: 'Vittorio Veneto', role: 'battleship', nation: 'Italia', year: 1940, tier: 4,
+    length: '238 m', displacement: '45.963 t', crew: '1.830', armament: '9x381 mm',
+    stats: { hp: 710, armor: 76, firepower: 88, torpedo: 0, aa: 50, speed: 30, evade: 20 },
+    cost: 3500, unlockLevel: 8,
+    history: 'Acorazado de la clase Littorio. Combatió en Matapan y estuvo a punto de ser alcanzado por un torpedo aéreo británico.'
+  },
+  {
+    id: 'roma', name: 'Roma', role: 'battleship', nation: 'Italia', year: 1942, tier: 4,
+    length: '240 m', displacement: '45.963 t', crew: '1.920', armament: '9x381 mm',
+    stats: { hp: 730, armor: 78, firepower: 90, torpedo: 0, aa: 55, speed: 30, evade: 20 },
+    cost: 3700, unlockLevel: 8,
+    history: 'Uno de los acorazados más modernos de Italia. Fue hundido por bombas guiadas Fritz X alemanas en 1943.'
+  },
+  {
+    id: 'richelieu', name: 'Richelieu', role: 'battleship', nation: 'Francia', year: 1940, tier: 4,
+    length: '248 m', displacement: '48.500 t', crew: '1.550', armament: '8x380 mm',
+    stats: { hp: 720, armor: 80, firepower: 92, torpedo: 0, aa: 50, speed: 30, evade: 20 },
+    cost: 3700, unlockLevel: 8,
+    history: 'Acorazado francés con toda su artillería principal montada en dos torres cuádruples a proa. Sirvió con los Aliados desde 1943.'
+  },
+  {
+    id: 'washington', name: 'USS Washington', role: 'battleship', nation: 'Estados Unidos', year: 1941, tier: 4,
+    length: '222 m', displacement: '45.500 t', crew: '1.772', armament: '9x406 mm',
+    stats: { hp: 730, armor: 78, firepower: 90, torpedo: 0, aa: 60, speed: 28, evade: 18 },
+    cost: 3600, unlockLevel: 8,
+    history: 'Acorazado de la clase North Carolina. En 1942 hundió al acorazado japonés Kirishima en la batalla nocturna de Guadalcanal.'
+  },
+  {
+    id: 'northCarolina', name: 'USS North Carolina', role: 'battleship', nation: 'Estados Unidos', year: 1941, tier: 4,
+    length: '222 m', displacement: '45.500 t', crew: '2.339', armament: '9x406 mm',
+    stats: { hp: 720, armor: 77, firepower: 88, torpedo: 0, aa: 65, speed: 28, evade: 18 },
+    cost: 3500, unlockLevel: 8,
+    history: 'Primer acorazado rápido de la clase North Carolina. Escoltó portaaviones y participó en casi todas las campañas del Pacífico.'
+  },
+  {
+    id: 'shokaku', name: 'Shōkaku', role: 'carrier', nation: 'Japón', year: 1941, tier: 4,
+    length: '257 m', displacement: '32.000 t', crew: '1.660', armament: '84 aviones embarcados',
+    stats: { hp: 590, armor: 24, firepower: 84, torpedo: 48, aa: 55, speed: 34, evade: 26 },
+    cost: 3800, unlockLevel: 8,
+    history: 'Portaaviones japonés de la clase Shōkaku. Atacó Pearl Harbor, combatió en el Mar de Coral y fue hundido en Filipinas en 1944.'
+  },
+  {
+    id: 'zuikaku', name: 'Zuikaku', role: 'carrier', nation: 'Japón', year: 1941, tier: 4,
+    length: '257 m', displacement: '32.000 t', crew: '1.660', armament: '84 aviones embarcados',
+    stats: { hp: 590, armor: 24, firepower: 84, torpedo: 48, aa: 55, speed: 34, evade: 26 },
+    cost: 3800, unlockLevel: 8,
+    history: 'Último portaaviones japonés veterano de Pearl Harbor en ser hundido, durante la batalla del Cabo Engaño en 1944.'
+  },
+  {
+    id: 'yorktown', name: 'USS Yorktown (CV-5)', role: 'carrier', nation: 'Estados Unidos', year: 1937, tier: 4,
+    length: '251 m', displacement: '25.500 t', crew: '2.170', armament: '90 aviones embarcados',
+    stats: { hp: 610, armor: 30, firepower: 82, torpedo: 44, aa: 60, speed: 34, evade: 26 },
+    cost: 3800, unlockLevel: 8,
+    history: 'Portaaviones de la clase Yorktown. Dañado en el Mar de Coral, se reparó en 72 horas para luchar en Midway, donde fue hundido.'
+  },
+  {
+    id: 'illustrious', name: 'HMS Illustrious', role: 'carrier', nation: 'Reino Unido', year: 1940, tier: 3,
+    length: '230 m', displacement: '23.000 t', crew: '1.200', armament: '36 aviones embarcados',
+    stats: { hp: 580, armor: 35, firepower: 76, torpedo: 42, aa: 60, speed: 30, evade: 24 },
+    cost: 3400, unlockLevel: 7,
+    history: 'Portaaviones británico con cubierta blindada. Resistió graves impactos de bombas en el Mediterráneo y escoltó convoyes a Malta.'
+  },
+  {
+    id: 'samuelRoberts', name: 'USS Samuel B. Roberts (DE-413)', role: 'destroyer', nation: 'Estados Unidos', year: 1944, tier: 3,
+    length: '93 m', displacement: '1.837 t', crew: '224', armament: '2x127 mm y 3 tubos de torpedo',
+    stats: { hp: 230, armor: 12, firepower: 32, torpedo: 80, aa: 30, speed: 28, evade: 56 },
+    cost: 900, unlockLevel: 4,
+    history: 'Destructor de escolta que se enfrentó a acorazados japoneses en Samar (1944). La "destructora que peleó como un acorazado".'
+  },
+  {
+    id: 'haida', name: 'HMCS Haida', role: 'destroyer', nation: 'Canadá', year: 1943, tier: 3,
+    length: '115 m', displacement: '2.500 t', crew: '261', armament: '6x120 mm y 8 tubos de torpedo',
+    stats: { hp: 280, armor: 18, firepower: 42, torpedo: 80, aa: 35, speed: 36, evade: 54 },
+    cost: 1500, unlockLevel: 4,
+    history: 'Destructor tribal de la Marina Real Canadiense. Hundió más tonelaje enemigo que cualquier otro buque canadiense; hoy es museo.'
+  },
+  {
+    id: 'blyskawica', name: 'ORP Błyskawica', role: 'destroyer', nation: 'Polonia', year: 1937, tier: 3,
+    length: '114 m', displacement: '2.400 t', crew: '192', armament: '7x120 mm y 6 tubos de torpedo',
+    stats: { hp: 270, armor: 16, firepower: 40, torpedo: 78, aa: 30, speed: 39, evade: 56 },
+    cost: 1500, unlockLevel: 4,
+    history: 'El "Relámpago" polaco escapó a Gran Bretaña en 1939 y combatió en Narvik. Es uno de los destructores mejor conservados del mundo.'
+  },
+  {
+    id: 'campbeltown', name: 'HMS Campbeltown', role: 'destroyer', nation: 'Reino Unido', year: 1942, tier: 2,
+    length: '95 m', displacement: '1.190 t', crew: '150', armament: '4x102 mm',
+    stats: { hp: 210, armor: 10, firepower: 28, torpedo: 0, aa: 15, speed: 25, evade: 40 },
+    cost: 700, unlockLevel: 3,
+    history: 'Destructor cargado de explosivos que embistió la esclusa de Saint-Nazaire en 1942, inutilizando el dique seco alemán.'
+  },
+  {
+    id: 'tang', name: 'USS Tang (SS-306)', role: 'submarine', nation: 'Estados Unidos', year: 1943, tier: 3,
+    length: '95 m', displacement: '1.830 t', crew: '87', armament: '24 torpedos',
+    stats: { hp: 240, armor: 12, firepower: 20, torpedo: 94, aa: 8, speed: 20, evade: 36 },
+    cost: 1800, unlockLevel: 5,
+    history: 'Submarino más exitoso de la Armada de EE. UU. en la Segunda Guerra Mundial: hundió 33 buques antes de perderse en 1944.'
+  },
+  {
+    id: 'upholder', name: 'HMS Upholder', role: 'submarine', nation: 'Reino Unido', year: 1940, tier: 3,
+    length: '77 m', displacement: '1.400 t', crew: '55', armament: '10 tubos de torpedo',
+    stats: { hp: 230, armor: 12, firepower: 16, torpedo: 90, aa: 6, speed: 18, evade: 34 },
+    cost: 1600, unlockLevel: 4,
+    history: 'Submarino británico más exitoso del Mediterráneo. Al mando de David Wanklyn hundió numerosos transportes del Eje.'
+  },
+  {
+    id: 'i19', name: 'I-19', role: 'submarine', nation: 'Japón', year: 1940, tier: 3,
+    length: '108 m', displacement: '3.660 t', crew: '100', armament: '6 tubos de torpedo y 1 hidroavión',
+    stats: { hp: 250, armor: 14, firepower: 18, torpedo: 92, aa: 8, speed: 24, evade: 32 },
+    cost: 1700, unlockLevel: 5,
+    history: 'Submarino japonés que lanzó la salva más devastadora de la guerra: un solo torpedo alcanzó al USS Wasp y otro al USS O\'Brien.'
+  },
+  {
+    id: 'hermione', name: 'Hermione', role: 'frigate', nation: 'Francia', year: 1779, tier: 1,
+    length: '44 m', displacement: '1.166 t', crew: '250', armament: '32 cañones',
+    stats: { hp: 220, armor: 20, firepower: 44, torpedo: 0, aa: 0, speed: 12, evade: 12 },
+    cost: 650, unlockLevel: 1,
+    history: 'Fragata francesa que llevó al marqués de Lafayette a América en 1780. Una réplica navega hoy desde Rochefort.'
+  },
+  {
+    id: 'alabama1862', name: 'CSS Alabama', role: 'cruiser', nation: 'Estados Confederados', year: 1862, tier: 1,
+    length: '67 m', displacement: '1.100 t', crew: '145', armament: '8 cañones',
+    stats: { hp: 230, armor: 12, firepower: 40, torpedo: 0, aa: 0, speed: 13, evade: 18 },
+    cost: 700, unlockLevel: 2,
+    history: 'Corsario confederado que capturó o hundió más de 60 mercantes de la Unión. Fue hundido por el USS Kearsarge en 1864.'
+  },
+  {
+    id: 'olympia', name: 'USS Olympia', role: 'cruiser', nation: 'Estados Unidos', year: 1892, tier: 2,
+    length: '104 m', displacement: '5.870 t', crew: '411', armament: '8x203 mm',
+    stats: { hp: 400, armor: 40, firepower: 54, torpedo: 10, aa: 0, speed: 21, evade: 18 },
+    cost: 1200, unlockLevel: 3,
+    history: 'Crucero protegido y buque insignia del comodoro Dewey en la batalla de Manila Bay (1898).'
+  },
+  {
+    id: 'aurora', name: 'Aurora', role: 'cruiser', nation: 'Rusia', year: 1900, tier: 2,
+    length: '127 m', displacement: '6.731 t', crew: '570', armament: '8x152 mm',
+    stats: { hp: 410, armor: 38, firepower: 52, torpedo: 10, aa: 0, speed: 19, evade: 16 },
+    cost: 1200, unlockLevel: 3,
+    history: 'Crucero protegido ruso. El disparo de su cañón de proa en 1917 anunció el asalto al Palacio de Invierno.'
+  },
+  {
+    id: 'victoria1887', name: 'HMS Victoria', role: 'ironclad', nation: 'Reino Unido', year: 1887, tier: 2,
+    length: '103 m', displacement: '10.470 t', crew: '583', armament: '2x413 mm',
+    stats: { hp: 480, armor: 66, firepower: 60, torpedo: 0, aa: 0, speed: 16, evade: 8 },
+    cost: 1500, unlockLevel: 3,
+    history: 'Acorazado insignia del Mediterráneo. Se hundió en 1893 tras ser embestido accidentalmente por el HMS Camperdown.'
   }
 ];
 
@@ -269,9 +479,39 @@ const OFFICERS = [
     desc: 'Reparaciones de emergencia +35%. Sus ingenieros trabajan bajo cualquier fuego.'
   },
   {
-    id: 'spruance', name: 'Raymond Spruance', title: 'Tactico de Midway',
+    id: 'spruance', name: 'Raymond Spruance', title: 'Táctico de Midway',
     bonus: 'evade', value: 0.08, cost: 1900, unlockLevel: 4,
-    desc: 'Evasion +8%. Anticipa la maniobra enemiga y coloca la flota en ventaja.'
+    desc: 'Evasión +8%. Anticipa la maniobra enemiga y coloca la flota en ventaja.'
+  },
+  {
+    id: 'jellicoe', name: 'John Jellicoe', title: 'Comandante de la Grand Fleet',
+    bonus: 'armor', value: 0.10, cost: 2000, unlockLevel: 5,
+    desc: 'Blindaje efectivo +10%. Mantiene la línea de batalla firme bajo fuego.'
+  },
+  {
+    id: 'scheer', name: 'Reinhard Scheer', title: 'Almirante de la Flota de Alta Mar',
+    bonus: 'evade', value: 0.10, cost: 2100, unlockLevel: 5,
+    desc: 'Evasión +10%. Rompe el cerco enemigo con maniobras audaces.'
+  },
+  {
+    id: 'halsey', name: 'William Halsey', title: 'Comandante del Tercer Grupo de Trabajo',
+    bonus: 'damage', value: 0.10, cost: 2500, unlockLevel: 6,
+    desc: 'Daño +10%. Agresividad y velocidad en cada ataque.'
+  },
+  {
+    id: 'mitscher', name: 'Marc Mitscher', title: 'Táctico de portaaviones',
+    bonus: 'accuracy', value: 0.07, cost: 2300, unlockLevel: 6,
+    desc: 'Puntería +7%. Coordina ataques aéreos y navales con precisión.'
+  },
+  {
+    id: 'vian', name: 'Philip Vian', title: 'Comandante de destructores',
+    bonus: 'torpedo', value: 0.18, cost: 2000, unlockLevel: 5,
+    desc: 'Daño de torpedo +18%. Especialista en ataques nocturnos.'
+  },
+  {
+    id: 'horton', name: 'Max Horton', title: 'Comandante de submarinos',
+    bonus: 'repair', value: 0.40, cost: 1800, unlockLevel: 4,
+    desc: 'Reparaciones +40%. Sus tripulaciones sobreviven a lo imposible.'
   }
 ];
 
@@ -299,3 +539,110 @@ const BOSS_OPS = [
 ];
 
 const STARTERS = ['fletcher', 'belfast', 'u96'];
+
+/* ---------- campaña narrativa ---------- */
+
+const CAMPAIGN = [
+  {
+    id: 'c01', chapter: 'I', name: 'Primera patrulla', level: 1,
+    desc: 'Una lancha enemiga hostiga a los pesqueros de la costa. Es tu primera misión de guerra.',
+    narrative: 'El almirante te entrega el mando con una sola orden: "Mantén la ruta abierta". El mar está en calma, pero la guerra ya ha comenzado.',
+    enemyIds: ['pt109'], boss: false,
+    rewards: { credits: 260, xp: 80 }
+  },
+  {
+    id: 'c02', chapter: 'II', name: 'El duelo de los ironclads', level: 2,
+    desc: 'Dos viejos blindados bloquean el estuario y amenazan el puerto aliado.',
+    narrative: 'El humo de los ironclads se alza sobre la niebla. Sus cascos de hierro parecen invulnerables, pero todo buque tiene un punto débil.',
+    enemyIds: ['monitor', 'virginia'], boss: false,
+    rewards: { credits: 400, xp: 120, officer: 'cunningham' }
+  },
+  {
+    id: 'c03', chapter: 'III', name: 'Cazadores del Pacífico', level: 3,
+    desc: 'Dos cruceros enemigos atacan el tráfico mercante en aguas abiertas.',
+    narrative: 'La inteligencia ha detectado dos cruceros hostiles. Debes alcanzarlos antes de que desaparezcan entre las islas.',
+    enemyIds: ['olympia', 'aurora'], boss: false,
+    rewards: { credits: 550, xp: 160, ship: 'aurora' }
+  },
+  {
+    id: 'c04', chapter: 'IV', name: 'Aguas del Atlántico', level: 4,
+    desc: 'La flota de alta mar envía dos cruceros de batalla para romper el bloqueo.',
+    narrative: 'Los cruceros de batalla alemanes son rápidos y están bien protegidos. La línea de batalla aliada se prepara para el impacto.',
+    enemyIds: ['seydlitz', 'derfflinger'], boss: false,
+    rewards: { credits: 700, xp: 200, officer: 'scheer' }
+  },
+  {
+    id: 'c05', chapter: 'V', name: 'El Mediterráneo en llamas', level: 5,
+    desc: 'Dos acorazados enemigos escoltan un convoy de suministros vital.',
+    narrative: 'El calor del Mediterráneo y el humo de los cañones se mezclan. Si el convoy llega a puerto, la campaña se prolongará meses.',
+    enemyIds: ['queenElizabeth', 'arizona'], boss: false,
+    rewards: { credits: 900, xp: 250, officer: 'jellicoe' }
+  },
+  {
+    id: 'c06', chapter: 'VI', name: 'Los gemelos de acero', level: 6,
+    desc: 'El Scharnhorst y el Gneisenau han roto el bloqueo. Debes detenerlos.',
+    narrative: 'Los dos cruceros de batalla alemanes avanzan en línea. Su artillería es rápida y su velocidad, endiablada. No habrá segunda oportunidad.',
+    enemyIds: ['scharnhorst', 'gneisenau'], boss: true,
+    rewards: { credits: 1200, xp: 320, ship: 'scharnhorst' }
+  },
+  {
+    id: 'c07', chapter: 'VII', name: 'Tormenta sobre el Pacífico', level: 7,
+    desc: 'Dos portaaviones japoneses lanzan una ofensiva sobre la flota aliada.',
+    narrative: 'Las cubiertas de vuelo enemigas lanzan oleadas tras oleadas. La defensa antiaérea y la elección del momento lo decidirán todo.',
+    enemyIds: ['akagi', 'shokaku'], boss: false,
+    rewards: { credits: 1500, xp: 380, officer: 'mitscher' }
+  },
+  {
+    id: 'c08', chapter: 'VIII', name: 'La flota del Duce', level: 8,
+    desc: 'La Regia Marina concentra dos acorazados modernos para cortar el Mediterráneo.',
+    narrative: 'Los acorazados italianos son rápidos y están armados con cañones de 381 mm. El control del Mediterráneo está en juego.',
+    enemyIds: ['vittorioVeneto', 'roma'], boss: true,
+    rewards: { credits: 1800, xp: 450, officer: 'halsey' }
+  },
+  {
+    id: 'c09', chapter: 'IX', name: 'El mayor acorazado', level: 9,
+    desc: 'El Yamato y el Nagato bloquean el avance final. Es el duelo de titanes.',
+    narrative: 'Nunca has visto un buque tan grande. Sus cañones de 460 mm pueden hundirte de un solo impacto. La historia se escribirá hoy.',
+    enemyIds: ['yamato', 'nagato'], boss: true,
+    rewards: { credits: 2200, xp: 520, ship: 'yamato' }
+  },
+  {
+    id: 'c10', chapter: 'X', name: 'ACERO FINAL', level: 10,
+    desc: 'La flota enemiga reúne al Yamato, al Bismarck y al Enterprise para su última ofensiva.',
+    narrative: 'Todo el teatro de operaciones converge en una sola batalla. Tu flota, tus oficiales y tu experiencia son la última línea de defensa.',
+    enemyIds: ['yamato', 'bismarck', 'enterprise'], boss: true,
+    rewards: { credits: 3000, xp: 800, ship: 'iowa', officer: 'nimitz' }
+  }
+];
+
+/* ---------- logros ---------- */
+
+function campaignCount(s) {
+  return (s.campaign && s.campaign.cleared) ? Object.keys(s.campaign.cleared).length : 0;
+}
+
+function killed(s, role) {
+  return (s.stats && s.stats.kills && s.stats.kills[role]) || 0;
+}
+
+const ACHIEVEMENTS = [
+  { id: 'first_win', name: 'Primera victoria', desc: 'Gana tu primera operación.', reward: { credits: 150, xp: 50 }, check: function (s) { return (s.missionsWon || 0) >= 1; } },
+  { id: 'wins_5', name: 'Veterano', desc: 'Gana 5 operaciones.', reward: { credits: 250, xp: 80 }, check: function (s) { return (s.missionsWon || 0) >= 5; } },
+  { id: 'wins_10', name: 'Comandante de guerra', desc: 'Gana 10 operaciones.', reward: { credits: 400, xp: 140 }, check: function (s) { return (s.missionsWon || 0) >= 10; } },
+  { id: 'wins_25', name: 'Leyenda naval', desc: 'Gana 25 operaciones.', reward: { credits: 900, xp: 300 }, check: function (s) { return (s.missionsWon || 0) >= 25; } },
+  { id: 'fleet_5', name: 'Escuadrón', desc: 'Reúne 5 buques en tu flota.', reward: { credits: 250, xp: 60 }, check: function (s) { return (s.fleet || []).length >= 5; } },
+  { id: 'fleet_10', name: 'Flota de batalla', desc: 'Reúne 10 buques en tu flota.', reward: { credits: 600, xp: 160 }, check: function (s) { return (s.fleet || []).length >= 10; } },
+  { id: 'level_5', name: 'Capitán de corbeta', desc: 'Alcanza el nivel 5 de comandante.', reward: { credits: 300, xp: 60 }, check: function (s) { return (s.commander && s.commander.level) >= 5; } },
+  { id: 'level_10', name: 'Almirante', desc: 'Alcanza el nivel 10 de comandante.', reward: { credits: 800, xp: 200 }, check: function (s) { return (s.commander && s.commander.level) >= 10; } },
+  { id: 'officers_3', name: 'Estado mayor', desc: 'Contrata 3 oficiales.', reward: { credits: 300, xp: 70 }, check: function (s) { return (s.officers || []).length >= 3; } },
+  { id: 'officers_7', name: 'Círculo de almirantes', desc: 'Contrata 7 oficiales.', reward: { credits: 700, xp: 180 }, check: function (s) { return (s.officers || []).length >= 7; } },
+  { id: 'sink_10', name: 'Cazador', desc: 'Hunde 10 buques enemigos.', reward: { credits: 300, xp: 90 }, check: function (s) { return (s.stats && s.stats.sunk || 0) >= 10; } },
+  { id: 'sink_50', name: 'Azote de los mares', desc: 'Hunde 50 buques enemigos.', reward: { credits: 900, xp: 300 }, check: function (s) { return (s.stats && s.stats.sunk || 0) >= 50; } },
+  { id: 'specials_20', name: 'Maestro de maniobras', desc: 'Usa 20 habilidades especiales.', reward: { credits: 400, xp: 120 }, check: function (s) { return (s.stats && s.stats.specials || 0) >= 20; } },
+  { id: 'campaign_5', name: 'Media campaña', desc: 'Completa 5 capítulos de la campaña.', reward: { credits: 700, xp: 200 }, check: function (s) { return campaignCount(s) >= 5; } },
+  { id: 'campaign_10', name: 'Acero final', desc: 'Completa toda la campaña.', reward: { credits: 2000, xp: 600 }, check: function (s) { return campaignCount(s) >= 10; } },
+  { id: 'boss_win', name: 'Matagigantes', desc: 'Gana una operación especial.', reward: { credits: 500, xp: 150 }, check: function (s) { return (s.stats && s.stats.bossWins || 0) >= 1; } },
+  { id: 'rich_15000', name: 'Magnate naval', desc: 'Acumula 15.000 créditos.', reward: { credits: 300, xp: 100 }, check: function (s) { return (s.commander && s.commander.credits) >= 15000; } },
+  { id: 'carrier_3', name: 'Cazaportaviones', desc: 'Hunde 3 portaaviones enemigos.', reward: { credits: 600, xp: 180 }, check: function (s) { return killed(s, 'carrier') >= 3; } },
+  { id: 'battleship_5', name: 'Rompeblindajes', desc: 'Hunde 5 acorazados enemigos.', reward: { credits: 700, xp: 220 }, check: function (s) { return killed(s, 'battleship') >= 5; } }
+];

@@ -111,6 +111,72 @@ function opCard(op) {
   </article>`;
 }
 
+/* ---------- campaña ---------- */
+
+function renderCampaign(v) {
+  if (!state) return;
+  const cleared = (state.campaign && state.campaign.cleared) ? state.campaign.cleared : {};
+  const done = campaignCount(state);
+  const active = activeShips();
+  const pct = Math.round(done / CAMPAIGN.length * 100);
+
+  v.innerHTML = `
+    <section class="screen">
+      <div class="screen-head">
+        <div><div class="eyebrow">CAMPAÑA HISTÓRICA</div><h2>ACERO FINAL</h2></div>
+        <div class="head-actions">
+          <span class="tag">${done}/${CAMPAIGN.length} CAPÍTULOS</span>
+          <button class="btn ghost" onclick="Game.go('ops')">Operaciones libres</button>
+        </div>
+      </div>
+      <div class="campaign-progress">
+        <div class="bar"><i style="width:${pct}%"></i></div>
+        <span>${pct}% de la campaña completada</span>
+      </div>
+      <div class="fleet-strip">
+        ${active.length
+          ? active.map(e => `<span class="ship-chip">${SHIP_MAP[e.shipId].name}<b>Nv.${e.level}</b></span>`).join('')
+          : '<span class="warn">No hay buques activos. Ve a Flota y activa al menos uno.</span>'}
+      </div>
+      <div class="campaign-grid">${CAMPAIGN.map((c, i) => campaignCard(c, i, cleared)).join('')}</div>
+    </section>`;
+}
+
+function campaignCard(c, i, cleared) {
+  const completed = !!cleared[i];
+  const unlocked = typeof campaignUnlocked === 'function' ? campaignUnlocked(i) : i === 0;
+  const active = activeShips().length > 0;
+  const rw = c.rewards || {};
+  const rewards = [];
+  if (rw.credits) rewards.push('+' + fmt(rw.credits) + ' créditos');
+  if (rw.xp) rewards.push('+' + fmt(rw.xp) + ' XP');
+  if (rw.ship && SHIP_MAP[rw.ship]) rewards.push('Buque: ' + SHIP_MAP[rw.ship].name);
+  if (rw.officer && OFFICER_MAP[rw.officer]) rewards.push('Oficial: ' + OFFICER_MAP[rw.officer].name);
+
+  const enemies = c.enemyIds.map(function (id) {
+    const s = SHIP_MAP[id];
+    return `<span class="enemy-chip">${s.name}<b>${SHIP_ROLES[s.role].label}</b></span>`;
+  }).join('');
+
+  return `<article class="campaign-card ${completed ? 'done' : ''} ${!unlocked ? 'locked' : ''} ${c.boss ? 'boss' : ''}">
+    <div class="camp-top">
+      <span class="camp-num">${c.chapter}</span>
+      <span class="tag">NIVEL ${c.level}</span>
+      ${c.boss ? '<span class="tag danger">ESPECIAL</span>' : ''}
+      ${completed ? '<span class="tag ok">COMPLETADO</span>' : ''}
+      ${!unlocked ? '<span class="tag">BLOQUEADO</span>' : ''}
+    </div>
+    <h3>${c.name}</h3>
+    <p class="camp-desc">${c.desc}</p>
+    <blockquote>${c.narrative}</blockquote>
+    <div class="enemy-list">${enemies}</div>
+    <div class="camp-rewards">${rewards.join(' · ')}</div>
+    <button class="btn ${completed ? 'ghost' : unlocked ? 'primary' : 'ghost'} full" ${completed || !unlocked || !active ? 'disabled' : ''} onclick="Game.startCampaign(${i})">
+      ${completed ? 'Completado' : !unlocked ? 'Bloqueado' : active ? 'Iniciar capítulo' : 'Sin flota activa'}
+    </button>
+  </article>`;
+}
+
 /* ---------- astillero ---------- */
 
 function renderYard(v) {
@@ -124,7 +190,8 @@ function renderYard(v) {
         <div class="head-actions"><span class="tag">${fmt(state.commander.credits)} CRÉDITOS</span></div>
       </div>
       <p class="hint">Buques reales de la historia naval. Cada unidad es única: no puedes comprar dos veces el mismo buque.</p>
-      <div class="catalog-grid">
+      ${filterBar('yard')}
+      <div class="catalog-grid" id="yardGrid">
         ${SHIPS.slice().sort((a, b) => a.tier - b.tier || a.cost - b.cost).map(s => {
           const isOwned = !!owned[s.id];
           const locked = state.commander.level < s.unlockLevel;
@@ -133,7 +200,7 @@ function renderYard(v) {
           if (isOwned) label = 'En tu flota';
           else if (locked) label = 'Nivel ' + s.unlockLevel;
           else if (poor) label = 'Créditos insuficientes';
-          return `<article class="catalog-card ${isOwned ? 'owned' : ''}">
+          return `<article class="catalog-card ${isOwned ? 'owned' : ''}" data-ship="${s.id}" data-name="${s.name.toLowerCase()}" data-role="${s.role}" data-nation="${s.nation}" data-tier="${s.tier}">
             ${shipSVG(s.role, 120)}
             <div class="catalog-body">
               <div class="catalog-top"><h3>${s.name}</h3><span class="tag">T${s.tier}</span></div>
@@ -176,7 +243,70 @@ function renderYard(v) {
     </section>`;
 }
 
-/* ---------- códice ---------- */
+/* ---------- filtros ---------- */
+
+function filterBar(prefix) {
+  const nations = Array.from(new Set(SHIPS.map(s => s.nation))).sort();
+  return `<div class="filter-bar">
+    <input class="filter-input" id="${prefix}Search" placeholder="Buscar buque…" oninput="Game.filterShips('${prefix}')"/>
+    <select class="filter-select" id="${prefix}Role" onchange="Game.filterShips('${prefix}')">
+      <option value="">Todos los roles</option>
+      ${Object.keys(SHIP_ROLES).map(r => `<option value="${r}">${SHIP_ROLES[r].label}</option>`).join('')}
+    </select>
+    <select class="filter-select" id="${prefix}Nation" onchange="Game.filterShips('${prefix}')">
+      <option value="">Todas las naciones</option>
+      ${nations.map(n => `<option value="${n}">${n}</option>`).join('')}
+    </select>
+    <select class="filter-select" id="${prefix}Tier" onchange="Game.filterShips('${prefix}')">
+      <option value="">Todos los niveles</option>
+      <option value="1">Tier 1</option>
+      <option value="2">Tier 2</option>
+      <option value="3">Tier 3</option>
+      <option value="4">Tier 4</option>
+    </select>
+    <button class="btn tiny ghost" onclick="Game.resetFilters('${prefix}')">Limpiar</button>
+    <span class="filter-count" id="${prefix}Count"></span>
+  </div>`;
+}
+
+Game.filterShips = function (prefix) {
+  const grid = $('#' + prefix + 'Grid');
+  if (!grid) return;
+  const search = $('#' + prefix + 'Search');
+  const role = $('#' + prefix + 'Role');
+  const nation = $('#' + prefix + 'Nation');
+  const tier = $('#' + prefix + 'Tier');
+  const norm = function (value) {
+    const s = String(value || '').toLowerCase();
+    return s.normalize ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : s;
+  };
+  const q = search ? norm(search.value.trim()) : '';
+  const r = role ? role.value : '';
+  const n = nation ? nation.value : '';
+  const t = tier ? tier.value : '';
+  const cards = grid.querySelectorAll('[data-ship]');
+  let shown = 0;
+
+  cards.forEach(function (card) {
+    const ok = (!q || norm(card.getAttribute('data-name')).indexOf(q) !== -1) &&
+      (!r || card.getAttribute('data-role') === r) &&
+      (!n || card.getAttribute('data-nation') === n) &&
+      (!t || card.getAttribute('data-tier') === t);
+    card.classList.toggle('filtered-out', !ok);
+    if (ok) shown++;
+  });
+
+  const count = $('#' + prefix + 'Count');
+  if (count) count.textContent = shown + (shown === 1 ? ' buque' : ' buques');
+};
+
+Game.resetFilters = function (prefix) {
+  ['Search', 'Role', 'Nation', 'Tier'].forEach(function (suffix) {
+    const el = $('#' + prefix + suffix);
+    if (el) el.value = '';
+  });
+  Game.filterShips(prefix);
+};
 
 function renderCodex(v) {
   v.innerHTML = `
@@ -186,8 +316,9 @@ function renderCodex(v) {
         <div class="head-actions"><span class="tag">${SHIPS.length} BUQUES REALES</span></div>
       </div>
       <p class="hint">Datos históricos aproximados. Los valores de combate son una abstracción jugable basada en sus características reales.</p>
-      <div class="codex-grid">
-        ${SHIPS.map(s => `<article class="codex-card" onclick="Game.shipDetails('${s.id}')">
+      ${filterBar('codex')}
+      <div class="codex-grid" id="codexGrid">
+        ${SHIPS.map(s => `<article class="codex-card" data-ship="${s.id}" data-name="${s.name.toLowerCase()}" data-role="${s.role}" data-nation="${s.nation}" data-tier="${s.tier}" onclick="Game.shipDetails('${s.id}')">
           ${shipSVG(s.role, 130)}
           <h3>${s.name}</h3>
           <div class="tags"><span class="tag">${SHIP_ROLES[s.role].label}</span><span class="tag">${s.year}</span></div>
