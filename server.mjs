@@ -2,7 +2,9 @@ import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
-import admin from 'firebase-admin';
+import { initializeApp, applicationDefault } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
 
 const { Pool } = pg;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -19,12 +21,12 @@ let adminApp = null;
 
 function getAdminServices() {
   if (!adminApp) {
-    adminApp = admin.initializeApp({
-      credential: admin.credential.applicationDefault(),
+    adminApp = initializeApp({
+      credential: applicationDefault(),
       projectId: FIREBASE_PROJECT_ID
     });
   }
-  return { auth: admin.auth(), db: admin.firestore() };
+  return { auth: getAuth(adminApp), db: getFirestore(adminApp) };
 }
 
 function userSummary(user) {
