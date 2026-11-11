@@ -10,13 +10,19 @@
       {
         "source": "**/*.@(js|css|svg|png|jpg)",
         "headers": [
-          { "key": "Cache-Control", "value": "public, max-age=3600" }
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600"
+          }
         ]
       },
       {
         "source": "**/*.html",
         "headers": [
-          { "key": "Cache-Control", "value": "no-cache" }
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
         ]
       }
     ]
@@ -55,6 +61,7 @@
       "build/**",
       "web/**",
       "src/**"
-    ]
+    ],
+    "alwaysDeployFromSource": true
   }
 }
