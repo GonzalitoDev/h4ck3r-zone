@@ -132,6 +132,10 @@ function renderAdmin() {
 
   updateCloudStatus();
   populateSelects();
+  if (!window.__dbAutoChecked) {
+    window.__dbAutoChecked = true;
+    setTimeout(function () { adminDbStatus(); }, 600);
+  }
 
   const summary = document.getElementById('summary');
   const noSave = document.getElementById('noSave');
@@ -274,6 +278,127 @@ window.adminCreateBase = function () {
   replaceState(baseState());
   persist('Partida base creada.');
 };
+
+/* ---------- PostgreSQL ---------- */
+
+function escapeDb(value) {
+  if (value === null || value === undefined) return '<span class="db-null">NULL</span>';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .slice(0, 240);
+}
+
+async function adminApi(url, options) {
+  if (!(window.isAdminAccount && window.isAdminAccount())) throw new Error('Inicia sesión con la cuenta de propietario.');
+  if (!window.GameCloud || !window.GameCloud.user) throw new Error('Sin sesión de Firebase.');
+  const token = await window.GameCloud.user.getIdToken();
+  const headers = Object.assign({}, options && options.headers, { Authorization: 'Bearer ' + token });
+  const res = await fetch(url, Object.assign({}, options, { headers }));
+  const data = await res.json().catch(function () { return {}; });
+  if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+  return data;
+}
+
+function renderDbRows(columns, rows) {
+  if (!rows || !rows.length) return '<p class="db-empty">Sin filas.</p>';
+  let html = '<table class="db-table"><thead><tr>';
+  columns.forEach(function (c) { html += '<th>' + escapeDb(c) + '</th>'; });
+  html += '</tr></thead><tbody>';
+  rows.forEach(function (row) {
+    html += '<tr>';
+    columns.forEach(function (c) { html += '<td>' + escapeDb(row[c]) + '</td>'; });
+    html += '</tr>';
+  });
+  return html + '</tbody></table>';
+}
+
+async function adminDbStatus() {
+  const statusEl = document.getElementById('dbStatus');
+  const browserEl = document.getElementById('dbBrowser');
+  if (!statusEl) return;
+  statusEl.textContent = 'Comprobando conexión…';
+  if (browserEl) browserEl.classList.add('hidden');
+  try {
+    const data = await adminApi('/api/db/status');
+    if (!data.configured) {
+      statusEl.innerHTML = 'PostgreSQL no configurado. Crea una base en <strong>Neon</strong> o <strong>Supabase</strong> y guarda <code>DATABASE_URL</code> como secreto de App Hosting.';
+      return;
+    }
+    if (!data.connected) {
+      statusEl.textContent = 'Configurado pero sin conexión: ' + (data.error || 'error desconocido');
+      return;
+    }
+    statusEl.innerHTML = 'Conectado a <code>' + escapeDb(data.database) + '</code><br><span class="tiny">' + escapeDb(data.version) + '</span>';
+    if (browserEl) browserEl.classList.remove('hidden');
+    await adminLoadTables();
+  } catch (e) {
+    statusEl.textContent = e.message;
+  }
+}
+
+async function adminLoadTables() {
+  const tablesEl = document.getElementById('dbTables');
+  if (!tablesEl) return;
+  tablesEl.innerHTML = 'Cargando tablas…';
+  try {
+    const data = await adminApi('/api/db/tables');
+    window.__adminDbTables = data.tables || [];
+    if (!window.__adminDbTables.length) {
+      tablesEl.innerHTML = '<span class="db-empty">Sin tablas.</span>';
+      return;
+    }
+    tablesEl.innerHTML = window.__adminDbTables.map(function (t, index) {
+      return '<button class="db-table-btn" onclick="adminLoadTable(' + index + ')">' + escapeDb(t.table_schema + '.' + t.table_name) + '</button>';
+    }).join('');
+  } catch (e) {
+    tablesEl.innerHTML = '<span class="db-error">' + escapeDb(e.message) + '</span>';
+  }
+}
+
+async function adminLoadTable(index) {
+  const table = window.__adminDbTables && window.__adminDbTables[index];
+  const contentEl = document.getElementById('dbContent');
+  if (!table || !contentEl) return;
+  contentEl.textContent = 'Cargando…';
+  try {
+    const data = await adminApi(
+      '/api/db/tables/' + encodeURIComponent(table.table_schema) + '/' + encodeURIComponent(table.table_name) + '?limit=100'
+    );
+    contentEl.innerHTML = '<div class="db-title">' + escapeDb(data.schema + '.' + data.table) + ' <span class="tiny">(' + data.rows.length + ' filas, límite ' + data.limit + ')</span></div>' +
+      renderDbRows(data.columns, data.rows);
+  } catch (e) {
+    contentEl.innerHTML = '<div class="db-error">' + escapeDb(e.message) + '</div>';
+  }
+}
+
+async function adminRunQuery() {
+  const sqlEl = document.getElementById('dbSql');
+  const outEl = document.getElementById('dbQueryResult');
+  if (!sqlEl || !outEl) return;
+  const sql = sqlEl.value.trim();
+  if (!sql) { outEl.innerHTML = '<div class="db-error">Escribe una consulta.</div>'; return; }
+  outEl.textContent = 'Ejecutando…';
+  try {
+    const data = await adminApi('/api/db/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sql: sql })
+    });
+    outEl.innerHTML = '<div class="db-title">Resultado <span class="tiny">(' + (data.rowCount || 0) + ' filas)</span></div>' +
+      renderDbRows(data.columns || [], data.rows || []);
+  } catch (e) {
+    outEl.innerHTML = '<div class="db-error">' + escapeDb(e.message) + '</div>';
+  }
+}
+
+window.adminDbStatus = adminDbStatus;
+window.adminLoadTables = adminLoadTables;
+window.adminLoadTable = adminLoadTable;
+window.adminRunQuery = adminRunQuery;
 
 document.addEventListener('DOMContentLoaded', function () {
   const saved = load();

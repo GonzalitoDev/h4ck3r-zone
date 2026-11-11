@@ -87,6 +87,64 @@ select { flex: 1; min-width: 130px; }
 
 .quick { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 
+/* ---------- PostgreSQL ---------- */
+
+.db-panel { margin-top: 0.9rem; }
+.db-status { color: var(--muted); font-size: 0.76rem; line-height: 1.6; }
+.db-layout { display: grid; grid-template-columns: 230px 1fr; gap: 0.6rem; margin-top: 0.6rem; }
+.db-tables { display: flex; flex-direction: column; gap: 0.25rem; max-height: 340px; overflow: auto; }
+.db-table-btn {
+  text-align: left;
+  background: #08131f;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--accent2);
+  font-family: inherit;
+  font-size: 0.68rem;
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+  word-break: break-all;
+}
+.db-table-btn:hover { border-color: var(--accent2); background: rgba(90, 210, 244, 0.06); }
+.db-content {
+  border: 1px solid var(--line);
+  background: #08131f;
+  border-radius: 8px;
+  padding: 0.4rem;
+  overflow: auto;
+  max-height: 340px;
+  min-height: 64px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.68rem;
+}
+.db-title { color: var(--accent); font-size: 0.68rem; margin-bottom: 0.35rem; }
+.db-table { border-collapse: collapse; width: 100%; font-size: 0.64rem; }
+.db-table th, .db-table td { border: 1px solid var(--line); padding: 0.28rem 0.4rem; text-align: left; vertical-align: top; white-space: nowrap; max-width: 280px; overflow: hidden; text-overflow: ellipsis; }
+.db-table th { color: var(--dim); background: rgba(0, 0, 0, 0.2); position: sticky; top: 0; }
+.db-table td { color: var(--ink); }
+.db-null { color: var(--dim); font-style: italic; }
+.db-empty { color: var(--dim); font-size: 0.7rem; }
+.db-error { color: #ff9b9b; font-size: 0.7rem; }
+.db-query { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.7rem; }
+.db-query textarea {
+  width: 100%;
+  min-height: 84px;
+  resize: vertical;
+  background: #08131f;
+  color: var(--accent2);
+  border: 1px solid var(--line2);
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.72rem;
+  outline: none;
+}
+.db-query textarea:focus { border-color: var(--accent2); }
+
+@media (max-width: 760px) {
+  .db-layout { grid-template-columns: 1fr; }
+}
+
 .notice { margin-top: 0.9rem; border-radius: 9px; padding: 0.65rem 0.75rem; font-size: 0.76rem; border: 1px solid rgba(229, 72, 77, 0.5); background: rgba(229, 72, 77, 0.08); color: #ff9b9b; }
 .notice.success { border-color: rgba(87, 214, 141, 0.5); background: rgba(87, 214, 141, 0.08); color: #8ef0b6; }
 

@@ -16,6 +16,7 @@ Sitio jugable: [`game/index.html`](game/index.html)
 - **19 logros** con recompensas en créditos y XP.
 - **Cofres de bronce, plata, oro y legendario** con monedas y buques exclusivos.
 - **Panel de administración privado** en `/admin/` para gestionar créditos, buques, oficiales, cofres y progreso.
+- **PostgreSQL opcional** (Neon/Supabase) con visor de tablas y consultas `SELECT` en el panel admin.
 - **Buscador y filtros** de buques por rol, nación y tier en Astillero y Códice.
 - **Flota y astillero**: compra buques únicos, activa hasta 4 unidades según tu nivel, repara daños y asigna oficiales.
 - **Operaciones dinámicas** con recompensas, operaciones especiales contra buques capitales y guardado automático local.
@@ -80,6 +81,38 @@ Si algún día la consola muestra que se superó una cuota:
 
 > Con una cuenta de email, la partida se sincroniza entre dispositivos iniciando sesión. Como invitado, queda ligada al navegador.
 
+## PostgreSQL opcional (Neon/Supabase)
+
+El panel `/admin/` incluye un visor de PostgreSQL: estado de conexión, lista de tablas, vista de filas y consultas `SELECT` de solo lectura. El servidor Express verifica el token de Firebase y solo permite el acceso a la cuenta `window.ADMIN_EMAIL`.
+
+1. Crea una base PostgreSQL gratuita en [Neon](https://neon.tech) o [Supabase](https://supabase.com).
+2. Copia la cadena de conexión (con `sslmode=require`).
+3. Guárdala como secreto de App Hosting:
+   ```bash
+   firebase apphosting:secrets:set DATABASE_URL --project juego-e0d5f
+   ```
+4. Descomenta el bloque `env` de `apphosting.yaml`:
+   ```yaml
+   env:
+     - variable: DATABASE_URL
+       secret: DATABASE_URL
+   ```
+5. Despliega:
+   ```bash
+   firebase deploy --only apphosting
+   ```
+
+Abre `/admin/`, inicia sesión con la cuenta de propietario, desbloquea el panel y usa **Base de datos SQL**. Si `DATABASE_URL` no está configurada, el visor muestra las instrucciones.
+
+Seguridad:
+
+- Solo el token de Firebase de la cuenta admin supera la verificación del servidor.
+- Las tablas se leen con identificadores validados y las consultas se ejecutan en una transacción `READ ONLY` con timeout.
+- Se recomienda usar un usuario de PostgreSQL de solo lectura para `DATABASE_URL`.
+- La cadena de conexión nunca se envía al navegador.
+
+> El `.deb` de Linux Mint sirve la versión estática con Python y no ejecuta el servidor Node; el visor PostgreSQL está disponible en la web de App Hosting o ejecutando `npm start` con `DATABASE_URL`.
+
 ## Cuentas de usuario
 
 - Se juega como **invitado** por defecto.
@@ -109,8 +142,8 @@ El acceso está protegido por las reglas de `firestore.rules`: cada sesión solo
 Descarga el paquete desde [Releases](https://github.com/GonzalitoDev/h4ck3r-zone/releases) y instálalo:
 
 ```bash
-wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.4.1_all.deb
-sudo apt install ./acero-y-sal_1.4.1_all.deb
+wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.5.0_all.deb
+sudo apt install ./acero-y-sal_1.5.0_all.deb
 ```
 
 Después búscalo en el menú como **ACERO Y SAL**. El lanzador sirve el juego localmente en `http://127.0.0.1:8787/` y abre el navegador.
@@ -162,6 +195,7 @@ El propietario tiene un panel privado en `/admin/` para:
 - Añadir o quitar créditos, cambiar nivel y puntos de habilidad.
 - Añadir cualquier buque (incluidos los exclusivos), oficiales y cofres.
 - Desbloquear la campaña, marcar logros, reparar la flota y guardar en Firebase.
+- Visor de PostgreSQL: estado, tablas, filas y consultas `SELECT` de solo lectura.
 
 El panel actúa sobre la partida del usuario con el que hayas iniciado sesión en el juego. Inicia sesión con tu cuenta de propietario antes de abrir `/admin/`.
 
@@ -237,7 +271,7 @@ game/
     bridge.js          puente de mando: pilotaje, físicas, clima y combate
     battle.js          motor de combate, resultados e inicio
     game.css           estilos
-server.mjs             servidor estático para App Hosting
+server.mjs             servidor Express + API PostgreSQL para App Hosting
 firebase.json          Firebase Hosting + Firestore + App Hosting
 firestore.rules        reglas de seguridad de la base de datos
 apphosting.yaml        configuración de Cloud Run

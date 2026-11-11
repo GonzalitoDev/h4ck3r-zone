@@ -116,6 +116,29 @@
       </article>
     </div>
 
+    <section class="panel db-panel">
+      <div class="panel-head">
+        <h3>Base de datos SQL · PostgreSQL</h3>
+        <div class="quick">
+          <button class="btn small ghost" onclick="adminDbStatus()">Comprobar conexión</button>
+          <button class="btn small ghost" onclick="adminLoadTables()">Actualizar tablas</button>
+        </div>
+      </div>
+      <div id="dbStatus" class="db-status">Sin comprobar. Pulsa «Comprobar conexión».</div>
+      <div id="dbBrowser" class="db-browser hidden">
+        <div class="db-layout">
+          <div id="dbTables" class="db-tables"></div>
+          <div id="dbContent" class="db-content">Selecciona una tabla.</div>
+        </div>
+        <div class="db-query">
+          <textarea id="dbSql" placeholder="SELECT * FROM tabla LIMIT 50;"></textarea>
+          <button class="btn small primary" onclick="adminRunQuery()">Ejecutar SELECT</button>
+          <div id="dbQueryResult" class="db-content"></div>
+        </div>
+      </div>
+      <p class="tiny">Solo lectura. Requiere la variable <code>DATABASE_URL</code> configurada como secreto de App Hosting (Neon o Supabase).</p>
+    </section>
+
     <div id="notice" class="notice hidden"></div>
   </section>
 </main>
