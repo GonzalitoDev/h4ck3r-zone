@@ -10,3 +10,5 @@ window.FIREBASE_CONFIG = {
   projectId: 'juego-e0d5f',
   storageBucket: 'juego-e0d5f.firebasestorage.app'
 };
+
+window.ADMIN_EMAIL = 'willirexpilowey@gmail.com';

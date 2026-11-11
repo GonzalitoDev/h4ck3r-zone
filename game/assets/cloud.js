@@ -27,8 +27,14 @@ function setCloudState(next, error) {
 }
 window.setCloudState = setCloudState;
 
-function authErrorMessage(error) {
-  const code = (error && error.code) || '';
+function isAdminAccount() {
+  const user = cloud.user;
+  return !!(user && !user.isAnonymous && user.email && window.ADMIN_EMAIL &&
+    user.email.toLowerCase() === String(window.ADMIN_EMAIL).toLowerCase());
+}
+window.isAdminAccount = isAdminAccount;
+
+function authErrorMessage(error) {  const code = (error && error.code) || '';
   if (code.indexOf('email-already-in-use') !== -1) return 'Ese email ya está registrado. Inicia sesión.';
   if (code.indexOf('invalid-email') !== -1) return 'El email no es válido.';
   if (code.indexOf('weak-password') !== -1) return 'La contraseña debe tener al menos 6 caracteres.';

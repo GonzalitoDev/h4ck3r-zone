@@ -109,8 +109,8 @@ El acceso está protegido por las reglas de `firestore.rules`: cada sesión solo
 Descarga el paquete desde [Releases](https://github.com/GonzalitoDev/h4ck3r-zone/releases) y instálalo:
 
 ```bash
-wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.4.0_all.deb
-sudo apt install ./acero-y-sal_1.4.0_all.deb
+wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.4.1_all.deb
+sudo apt install ./acero-y-sal_1.4.1_all.deb
 ```
 
 Después búscalo en el menú como **ACERO Y SAL**. El lanzador sirve el juego localmente en `http://127.0.0.1:8787/` y abre el navegador.
@@ -157,13 +157,15 @@ Los cofres se consiguen en operaciones (especialmente jefes), campaña y logros.
 
 ## Panel de administración
 
-El propietario tiene un panel privado en `/admin/` (no está enlazado en el juego) para:
+El propietario tiene un panel privado en `/admin/` para:
 
 - Añadir o quitar créditos, cambiar nivel y puntos de habilidad.
 - Añadir cualquier buque (incluidos los exclusivos), oficiales y cofres.
 - Desbloquear la campaña, marcar logros, reparar la flota y guardar en Firebase.
 
 El panel actúa sobre la partida del usuario con el que hayas iniciado sesión en el juego. Inicia sesión con tu cuenta de propietario antes de abrir `/admin/`.
+
+El botón **ADMIN** solo aparece cuando la cuenta activa coincide con `window.ADMIN_EMAIL` (configurado en `game/assets/firebase-config.js`). Los usuarios normales no ven el botón y, si abren `/admin/`, reciben una pantalla de **acceso restringido**. Además, el panel pide su propia contraseña.
 
 El acceso está protegido por una contraseña almacenada como hash SHA-256 en `game/admin/admin-config.js`. Para cambiarla, genera un hash nuevo:
 

@@ -162,6 +162,20 @@ body {
 }
 .account-chip:hover { border-color: var(--accent2); filter: brightness(1.15); }
 
+.admin-chip {
+  background: rgba(229, 72, 77, 0.1);
+  border: 1px solid rgba(229, 72, 77, 0.6);
+  color: var(--bad);
+  font-family: inherit;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.admin-chip:hover { background: rgba(229, 72, 77, 0.22); }
+
 .nav { display: flex; gap: 0.25rem; flex-wrap: wrap; width: 100%; }
 .nav button {
   background: transparent;

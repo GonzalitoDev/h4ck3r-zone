@@ -40,6 +40,10 @@ function sha256(text) {
 function adminUnlock() {
   const input = document.getElementById('adminPass');
   const pass = input ? input.value : '';
+  if (!(window.isAdminAccount && window.isAdminAccount())) {
+    showGateError('Inicia sesión en el juego con la cuenta de propietario.');
+    return;
+  }
   if (!pass) { showGateError('Introduce la contraseña.'); return; }
   if (!crypto.subtle) { showGateError('Este navegador no permite validar la contraseña.'); return; }
   sha256(pass).then(function (hash) {
@@ -108,9 +112,20 @@ function populateSelects() {
 }
 
 function renderAdmin() {
-  const unlocked = sessionStorage.getItem('aceroAdmin') === '1';
   const gate = document.getElementById('gate');
   const dashboard = document.getElementById('dashboard');
+  const restricted = document.getElementById('restricted');
+  const adminAccount = !!(window.isAdminAccount && window.isAdminAccount());
+
+  if (!adminAccount) {
+    if (gate) gate.classList.add('hidden');
+    if (dashboard) dashboard.classList.add('hidden');
+    if (restricted) restricted.classList.remove('hidden');
+    return;
+  }
+
+  if (restricted) restricted.classList.add('hidden');
+  const unlocked = sessionStorage.getItem('aceroAdmin') === '1';
   if (gate) gate.classList.toggle('hidden', unlocked);
   if (dashboard) dashboard.classList.toggle('hidden', !unlocked);
   if (!unlocked) return;

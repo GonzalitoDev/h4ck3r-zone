@@ -38,6 +38,7 @@ function renderHeader() {
     <button class="sound-btn" onclick="Game.toggleSound()" title="Activar o desactivar sonido">${soundOn ? 'SONIDO ON' : 'SONIDO OFF'}</button>
     <button class="cloud-chip ${cloudState}" onclick="Game.cloudSync()" title="Sincronizar la partida con Firebase">${cloudLabel}</button>
     <button class="account-chip" onclick="Game.showAccount()" title="Cuenta de usuario">${accountShort}</button>
+    ${window.isAdminAccount && window.isAdminAccount() ? '<button class="admin-chip" onclick="window.location.href=\'admin/\'">ADMIN</button>' : ''}
     <nav class="nav">
       ${navs.map(n => `<button class="${state.view === n[0] ? 'active' : ''}" onclick="Game.go('${n[0]}')">${n[1]}</button>`).join('')}
     </nav>`;
@@ -518,6 +519,7 @@ Game.showAccount = function () {
       <div class="modal-actions">
         <button class="btn primary" onclick="Game.cloudSync()">Sincronizar ahora</button>
         <button class="btn ghost" onclick="window.location.href='nexus/'">Centro Nexus</button>
+        ${window.isAdminAccount && window.isAdminAccount() ? '<button class="btn danger" onclick="window.location.href=\'admin/\'">Panel admin</button>' : ''}
         <button class="btn danger" onclick="Game.authLogout()">Cerrar sesión</button>
       </div>
     `);

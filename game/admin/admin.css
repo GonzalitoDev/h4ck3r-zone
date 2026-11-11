@@ -46,6 +46,8 @@ h1, h2, h3 { margin-top: 0; }
 .gate-card { width: min(460px, 100%); background: linear-gradient(180deg, rgba(25, 18, 24, 0.96), rgba(10, 14, 22, 0.98)); border: 1px solid rgba(229, 72, 77, 0.4); border-radius: 16px; padding: 1.4rem; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5); }
 .gate-card h1 { margin: 0.3rem 0 0.5rem; font-size: 1.6rem; letter-spacing: 1px; }
 .gate-card p { color: var(--muted); font-size: 0.82rem; line-height: 1.55; }
+.gate-card.restricted { border-color: rgba(242, 181, 68, 0.45); }
+.gate-card.restricted h1 { color: var(--accent); }
 .gate-card input { width: 100%; margin: 0.5rem 0 0.7rem; }
 .tiny { font-size: 0.62rem !important; color: var(--dim) !important; margin-top: 0.8rem; }
 
