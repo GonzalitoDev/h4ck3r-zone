@@ -208,13 +208,22 @@ async function initNexus() {
     nexus.db = mods[2].getFirestore(app);
     nexus.fs = mods[2];
 
-    const cred = await mods[1].signInAnonymously(nexus.auth);
-    nexus.uid = cred.user.uid;
+    if (typeof nexus.auth.authStateReady === 'function') {
+      await nexus.auth.authStateReady();
+    }
+    let user = nexus.auth.currentUser;
+    if (!user) {
+      const cred = await mods[1].signInAnonymously(nexus.auth);
+      user = cred.user;
+    }
+
+    nexus.uid = user.uid;
     nexus.docRef = nexus.fs.doc(nexus.db, 'saves', nexus.uid);
 
     setChip('FIRESTORE · ONLINE', 'online');
     el('dbStatus').textContent = 'Conectada';
-    el('authStatus').textContent = 'Anónima';
+    el('authStatus').textContent = user.isAnonymous ? 'Anónima' : (user.email || 'Cuenta');
+    el('authStatus').title = user.isAnonymous ? 'Sesión de invitado' : 'Cuenta con email';
     el('uidText').textContent = 'UID: ' + shortUid(nexus.uid);
     el('uidText').title = nexus.uid;
 

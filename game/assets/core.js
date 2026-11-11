@@ -1,6 +1,15 @@
 'use strict';
 
-const SAVE_KEY = 'acero-y-sal-v1';
+const BASE_SAVE_KEY = 'acero-y-sal-v1';
+let SAVE_KEY = BASE_SAVE_KEY;
+
+function setSaveKey(uid, isAnonymous) {
+  SAVE_KEY = isAnonymous ? BASE_SAVE_KEY : BASE_SAVE_KEY + ':user:' + uid;
+}
+
+function clearGuestSave() {
+  try { localStorage.removeItem(BASE_SAVE_KEY); } catch (e) { /* sin almacenamiento */ }
+}
 const SOUND_KEY = 'acero-y-sal-sound';
 
 let state = null;

@@ -19,6 +19,9 @@ function renderHeader() {
     : cloudState === 'connecting' ? 'NUBE · ...'
     : cloudState === 'error' ? 'NUBE · ERROR'
     : 'NUBE · LOCAL';
+  const accountUser = window.GameCloud ? window.GameCloud.user : null;
+  const accountLabel = accountUser && !accountUser.isAnonymous ? (accountUser.email || 'CUENTA') : 'INVITADO';
+  const accountShort = accountLabel.length > 20 ? accountLabel.slice(0, 18) + '…' : accountLabel;
 
   bar.innerHTML = `
     <div class="brand" onclick="Game.go('hq')">
@@ -34,6 +37,7 @@ function renderHeader() {
     </div>
     <button class="sound-btn" onclick="Game.toggleSound()" title="Activar o desactivar sonido">${soundOn ? 'SONIDO ON' : 'SONIDO OFF'}</button>
     <button class="cloud-chip ${cloudState}" onclick="Game.cloudSync()" title="Sincronizar la partida con Firebase">${cloudLabel}</button>
+    <button class="account-chip" onclick="Game.showAccount()" title="Cuenta de usuario">${accountShort}</button>
     <nav class="nav">
       ${navs.map(n => `<button class="${state.view === n[0] ? 'active' : ''}" onclick="Game.go('${n[0]}')">${n[1]}</button>`).join('')}
     </nav>`;
@@ -71,8 +75,9 @@ function renderMenu(v) {
           ${state ? `<button class="btn primary" onclick="Game.go('hq')">Continuar campaña</button>` : ''}
           <button class="btn ${state ? 'ghost' : 'primary'}" onclick="Game.scrollStarters()">Nueva campaña</button>
           <button class="btn ghost" onclick="Game.howTo()">Cómo se juega</button>
+          <button class="btn ghost" onclick="Game.showAccount()">Cuenta / Iniciar sesión</button>
         </div>
-        <div class="hero-note">91 buques reales · 10 capítulos · 19 logros · cofres y Firebase</div>
+        <div class="hero-note">91 buques reales · 10 capítulos · 19 logros · cuentas y cofres</div>
       </div>
       <div class="starter-head" id="starters">
         <h2>Elige tu buque insignia</h2>
@@ -468,9 +473,130 @@ Game.regenOps = function () {
 Game.reset = function () {
   if (!confirm('¿Reiniciar la campaña? Se perderá todo el progreso.')) return;
   try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* sin almacenamiento */ }
+  if (typeof deleteCloudSave === 'function') deleteCloudSave();
   state = null;
   battle = null;
   render();
+};
+
+/* ---------- cuenta ---------- */
+
+function showAuthError(message) {
+  const box = $('#authError');
+  if (box) {
+    box.textContent = message;
+    box.className = 'auth-error';
+    box.classList.remove('hidden');
+  } else {
+    toast(message);
+  }
+}
+
+function showAuthInfo(message) {
+  const box = $('#authError');
+  if (box) {
+    box.textContent = message;
+    box.className = 'auth-error success';
+    box.classList.remove('hidden');
+  } else {
+    toast(message);
+  }
+}
+
+Game.showAccount = function () {
+  const cloud = window.GameCloud;
+  const user = cloud ? cloud.user : null;
+
+  if (user && !user.isAnonymous) {
+    Game.modal(`
+      <div class="modal-head">
+        <div><div class="eyebrow">CUENTA</div><h2>${user.email || 'Sesión iniciada'}</h2></div>
+        <button class="modal-close" onclick="Game.closeModal()">×</button>
+      </div>
+      <p class="account-lead">Tu progreso se guarda en Firebase y se sincroniza en los dispositivos donde inicies sesión con esta cuenta.</p>
+      <div class="account-uid"><span>UID</span><code>${cloud.uid || '—'}</code></div>
+      <div class="modal-actions">
+        <button class="btn primary" onclick="Game.cloudSync()">Sincronizar ahora</button>
+        <button class="btn ghost" onclick="window.location.href='nexus/'">Centro Nexus</button>
+        <button class="btn danger" onclick="Game.authLogout()">Cerrar sesión</button>
+      </div>
+    `);
+    return;
+  }
+
+  const ready = !!(cloud && cloud.ready);
+  Game.modal(`
+    <div class="modal-head">
+      <div><div class="eyebrow">CUENTA</div><h2>Iniciar sesión o crear cuenta</h2></div>
+      <button class="modal-close" onclick="Game.closeModal()">×</button>
+    </div>
+    <p class="account-lead">Estás jugando como <strong>invitado</strong>. Crea una cuenta para conservar tu progreso actual y recuperarlo en otros dispositivos. Si inicias sesión en una cuenta existente, se cargará la partida de esa cuenta.</p>
+    <div class="auth-form">
+      <label>Email<input id="authEmail" type="email" autocomplete="email" placeholder="tu@email.com"/></label>
+      <label>Contraseña<input id="authPass" type="password" autocomplete="current-password" placeholder="Mínimo 6 caracteres"/></label>
+      <div id="authError" class="auth-error hidden"></div>
+      <div class="modal-actions">
+        <button class="btn primary" ${ready ? '' : 'disabled'} onclick="Game.authLogin()">Iniciar sesión</button>
+        <button class="btn ghost" ${ready ? '' : 'disabled'} onclick="Game.authRegister()">Crear cuenta y conservar progreso</button>
+        <button class="btn ghost" onclick="Game.closeModal()">Seguir como invitado</button>
+      </div>
+      <button class="link-btn" ${ready ? '' : 'disabled'} onclick="Game.authReset()">¿Olvidaste tu contraseña?</button>
+    </div>
+    ${ready ? '' : '<p class="tiny">Conectando con Firebase…</p>'}
+  `);
+};
+
+Game.authLogin = function () {
+  if (!window.cloudLogin) { showAuthError('La nube aún no está conectada.'); return; }
+  const email = $('#authEmail') ? $('#authEmail').value.trim() : '';
+  const pass = $('#authPass') ? $('#authPass').value : '';
+  if (!email || email.indexOf('@') === -1) { showAuthError('Introduce un email válido.'); return; }
+  if (pass.length < 6) { showAuthError('La contraseña debe tener al menos 6 caracteres.'); return; }
+  window.cloudLogin(email, pass).then(function () {
+    Game.closeModal();
+    toast('Sesión iniciada. Partida sincronizada.');
+    render();
+  }).catch(function (e) {
+    showAuthError(window.authErrorMessage ? window.authErrorMessage(e) : (e.message || 'Error'));
+  });
+};
+
+Game.authRegister = function () {
+  if (!window.cloudRegister) { showAuthError('La nube aún no está conectada.'); return; }
+  const email = $('#authEmail') ? $('#authEmail').value.trim() : '';
+  const pass = $('#authPass') ? $('#authPass').value : '';
+  if (!email || email.indexOf('@') === -1) { showAuthError('Introduce un email válido.'); return; }
+  if (pass.length < 6) { showAuthError('La contraseña debe tener al menos 6 caracteres.'); return; }
+  window.cloudRegister(email, pass).then(function () {
+    Game.closeModal();
+    toast('Cuenta creada. Tu progreso queda vinculado a ' + email + '.');
+    render();
+  }).catch(function (e) {
+    showAuthError(window.authErrorMessage ? window.authErrorMessage(e) : (e.message || 'Error'));
+  });
+};
+
+Game.authLogout = function () {
+  if (!window.cloudLogout) { toast('La nube aún no está conectada.'); return; }
+  if (!confirm('¿Cerrar sesión? Tu partida quedará guardada en Firebase.')) return;
+  window.cloudLogout().then(function () {
+    Game.closeModal();
+    toast('Sesión cerrada. Ahora juegas como invitado.');
+    render();
+  }).catch(function (e) {
+    toast(window.authErrorMessage ? window.authErrorMessage(e) : (e.message || 'No se pudo cerrar sesión.'));
+  });
+};
+
+Game.authReset = function () {
+  if (!window.cloudResetPassword) { showAuthError('La nube aún no está conectada.'); return; }
+  const email = $('#authEmail') ? $('#authEmail').value.trim() : '';
+  if (!email || email.indexOf('@') === -1) { showAuthError('Introduce tu email para restablecer la contraseña.'); return; }
+  window.cloudResetPassword(email).then(function () {
+    showAuthInfo('Si el email está registrado, recibirás un enlace para restablecer la contraseña.');
+  }).catch(function (e) {
+    showAuthError(window.authErrorMessage ? window.authErrorMessage(e) : (e.message || 'No se pudo enviar el correo.'));
+  });
 };
 
 /* ---------- modales ---------- */

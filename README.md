@@ -19,7 +19,8 @@ Sitio jugable: [`game/index.html`](game/index.html)
 - **Buscador y filtros** de buques por rol, nación y tier en Astillero y Códice.
 - **Flota y astillero**: compra buques únicos, activa hasta 4 unidades según tu nivel, repara daños y asigna oficiales.
 - **Operaciones dinámicas** con recompensas, operaciones especiales contra buques capitales y guardado automático local.
-- **Guardado en la nube con Firebase**: autenticación anónima + Firestore. La partida se sincroniza automáticamente y se restaura al recargar.
+- **Guardado en la nube con Firebase**: autenticación de invitado o cuenta email + Firestore. La partida se sincroniza automáticamente y cada usuario tiene su propia partida.
+- **Cuentas de usuario**: registro e inicio de sesión con email/contraseña, vinculación del progreso de invitado y recuperación de contraseña.
 - **Códice histórico** con ficha, armamento, desplazamiento, tripulación e historia de cada buque.
 - Interfaz responsive, sonido procedural (sin archivos externos) y funcionamiento 100% estático.
 
@@ -51,10 +52,11 @@ En **Puente** puedes tomar el timón y manejar el buque con física naval:
 
 ## Base de datos en Firebase
 
-El juego usa **Cloud Firestore** con autenticación anónima para guardar la partida en la nube:
+El juego usa **Cloud Firestore** con autenticación de invitado o cuenta email para guardar la partida en la nube:
 
-- Al abrir el juego se crea una sesión anónima y se lee el documento `saves/{uid}`.
-- Cada cambio se guarda en `localStorage` y se sincroniza con Firestore (con retardo de 1,2 s).
+- Al abrir el juego se crea una sesión de invitado y se lee el documento `saves/{uid}`.
+- Al registrarte, tu progreso de invitado se vincula a la cuenta y se conserva.
+- Cada cuenta tiene su propio documento `saves/{uid}` y su propia clave local por usuario.
 - El indicador `NUBE · ON` de la cabecera muestra el estado. Al pulsarlo se fuerza una sincronización.
 - Si Firestore no está disponible, el juego sigue funcionando solo con `localStorage`.
 
@@ -62,7 +64,7 @@ Configuración ya aplicada en el proyecto `juego-e0d5f`:
 
 - Firestore en modo producción con las reglas de `firestore.rules`:
   cada usuario solo puede leer y escribir su propio documento.
-- Autenticación anónima habilitada.
+- Autenticación anónima y email/contraseña habilitadas.
 - Configuración web pública en `game/assets/firebase-config.js`.
 - Reglas desplegadas con `firebase deploy --only firestore:rules`.
 
@@ -76,13 +78,22 @@ Si algún día la consola muestra que se superó una cuota:
 2. Para solicitar más capacidad: Google Cloud Console → IAM y administración → Cuotas, filtra por **Cloud Firestore**, selecciona la cuota y pulsa **Editar cuota** / **Solicitar aumento**.
 3. Firestore escala solo; no hay que "aumentar la base de datos" manualmente.
 
-> El guardado en la nube queda vinculado al navegador mediante la sesión anónima. Para llevarlo a otro dispositivo habría que añadir inicio de sesión con Google (siguiente paso opcional).
+> Con una cuenta de email, la partida se sincroniza entre dispositivos iniciando sesión. Como invitado, queda ligada al navegador.
+
+## Cuentas de usuario
+
+- Se juega como **invitado** por defecto.
+- **Crear cuenta** desde el botón de cuenta (menú o cabecera): vincula el progreso actual a un email y contraseña.
+- **Iniciar sesión**: carga la partida guardada de esa cuenta.
+- **Cerrar sesión**: guarda la partida en la nube y vuelve al modo invitado.
+- **Recuperar contraseña**: envía un enlace de restablecimiento al email.
+- Cada cuenta tiene su propia partida y su propia clave local. El progreso de invitado no se fusiona al iniciar sesión en una cuenta existente; para conservarlo usa **Crear cuenta**.
 
 ## Centro de Mando Nexus
 
 La página **Nexus** (`/nexus/`) comparte la misma sesión y la misma base de datos que el juego. Desde ella puedes:
 
-- Ver el estado de conexión con Firestore y el UID de la sesión anónima.
+- Ver el estado de conexión con Firestore y el UID de la sesión (invitado o cuenta).
 - Consultar la partida guardada: nivel, créditos, operaciones, flota y poder naval.
 - **Descargar una copia** de la partida en JSON.
 - **Restaurar una copia** en Firestore para usarla en otro navegador.
@@ -98,8 +109,8 @@ El acceso está protegido por las reglas de `firestore.rules`: cada sesión solo
 Descarga el paquete desde [Releases](https://github.com/GonzalitoDev/h4ck3r-zone/releases) y instálalo:
 
 ```bash
-wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.3.0_all.deb
-sudo apt install ./acero-y-sal_1.3.0_all.deb
+wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.4.0_all.deb
+sudo apt install ./acero-y-sal_1.4.0_all.deb
 ```
 
 Después búscalo en el menú como **ACERO Y SAL**. El lanzador sirve el juego localmente en `http://127.0.0.1:8787/` y abre el navegador.
@@ -151,6 +162,8 @@ El propietario tiene un panel privado en `/admin/` (no está enlazado en el jueg
 - Añadir o quitar créditos, cambiar nivel y puntos de habilidad.
 - Añadir cualquier buque (incluidos los exclusivos), oficiales y cofres.
 - Desbloquear la campaña, marcar logros, reparar la flota y guardar en Firebase.
+
+El panel actúa sobre la partida del usuario con el que hayas iniciado sesión en el juego. Inicia sesión con tu cuenta de propietario antes de abrir `/admin/`.
 
 El acceso está protegido por una contraseña almacenada como hash SHA-256 en `game/admin/admin-config.js`. Para cambiarla, genera un hash nuevo:
 
@@ -215,7 +228,7 @@ game/
     data.js            datos de buques, roles, oficiales, campaña y cofres
     firebase-config.js configuración pública de la Web App de Firebase
     core.js            estado, guardado, estadísticas y gráficos SVG
-    cloud.js           Firestore: sesión anónima y guardado en la nube
+    cloud.js           Firebase Auth (invitado/email) y Firestore
     ui.js              cabecera, menú, mando, flota y modales
     screens.js         operaciones, campaña, astillero y códice
     chests.js          cofres y buques exclusivos

@@ -145,6 +145,23 @@ body {
 .cloud-chip.connecting { color: var(--accent); border-color: rgba(242, 181, 68, 0.4); }
 .cloud-chip.error { color: var(--bad); border-color: rgba(229, 72, 77, 0.45); }
 
+.account-chip {
+  background: transparent;
+  border: 1px solid var(--line2);
+  color: var(--accent2);
+  font-family: inherit;
+  font-size: 0.55rem;
+  letter-spacing: 1px;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-chip:hover { border-color: var(--accent2); filter: brightness(1.15); }
+
 .nav { display: flex; gap: 0.25rem; flex-wrap: wrap; width: 100%; }
 .nav button {
   background: transparent;
@@ -645,6 +662,17 @@ body {
 .special-box p { margin: 0.2rem 0 0; font-size: 0.74rem; color: var(--muted); }
 .manual h3 { margin: 0.9rem 0 0.25rem; font-size: 0.9rem; color: var(--accent); }
 .manual p { margin: 0; color: var(--muted); font-size: 0.8rem; line-height: 1.6; }
+
+.account-lead { color: var(--muted); font-size: 0.8rem; line-height: 1.6; }
+.account-uid { display: flex; align-items: center; gap: 0.5rem; margin: 0.6rem 0; font-size: 0.62rem; color: var(--dim); }
+.account-uid code { color: var(--accent2); font-size: 0.6rem; word-break: break-all; }
+.auth-form { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.7rem; }
+.auth-form label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.58rem; letter-spacing: 1px; color: var(--dim); text-transform: uppercase; }
+.auth-form input { background: #08131f; color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 0.55rem 0.6rem; font-family: inherit; font-size: 0.78rem; outline: none; text-transform: none; letter-spacing: normal; }
+.auth-form input:focus { border-color: var(--accent2); }
+.auth-error { border: 1px solid rgba(229, 72, 77, 0.5); background: rgba(229, 72, 77, 0.08); color: #ff9b9b; border-radius: 8px; padding: 0.5rem 0.6rem; font-size: 0.72rem; }
+.auth-error.success { border-color: rgba(87, 214, 141, 0.5); background: rgba(87, 214, 141, 0.08); color: #8ef0b6; }
+.tiny { font-size: 0.62rem; color: var(--dim); }
 
 /* ---------- aviso ---------- */
 
