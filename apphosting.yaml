@@ -5,9 +5,9 @@ runConfig:
   maxInstances: 10
   concurrency: 80
 
-# PostgreSQL opcional (Neon/Supabase):
-# 1) firebase apphosting:secrets:set DATABASE_URL --project juego-e0d5f
-# 2) Descomenta este bloque y despliega:
-# env:
-#   - variable: DATABASE_URL
-#     secret: DATABASE_URL
+# PostgreSQL (Neon/Supabase). El valor vive en Secret Manager como DATABASE_URL.
+env:
+  - variable: DATABASE_URL
+    secret: DATABASE_URL
+    availability:
+      - RUNTIME
