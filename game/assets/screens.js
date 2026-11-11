@@ -24,7 +24,7 @@ function generateOps() {
     const count = fleetSize;
     const minTier = opLevel <= 8 ? 1 : opLevel <= 10 ? 2 : 3;
     const maxTier = opLevel <= 6 ? 1 : opLevel <= 8 ? 2 : opLevel <= 10 ? 3 : 4;
-    const pool = SHIPS.filter(s => s.tier >= minTier && s.tier <= maxTier);
+    const pool = SHIPS.filter(s => !s.exclusive && s.tier >= minTier && s.tier <= maxTier);
     const enemyIds = [];
     for (let k = 0; k < count; k++) {
       const candidates = pool.filter(s => enemyIds.indexOf(s.id) === -1);
@@ -192,7 +192,7 @@ function renderYard(v) {
       <p class="hint">Buques reales de la historia naval. Cada unidad es única: no puedes comprar dos veces el mismo buque.</p>
       ${filterBar('yard')}
       <div class="catalog-grid" id="yardGrid">
-        ${SHIPS.slice().sort((a, b) => a.tier - b.tier || a.cost - b.cost).map(s => {
+        ${SHIPS.filter(s => !s.exclusive).slice().sort((a, b) => a.tier - b.tier || a.cost - b.cost).map(s => {
           const isOwned = !!owned[s.id];
           const locked = state.commander.level < s.unlockLevel;
           const poor = state.commander.credits < s.cost;
@@ -321,7 +321,7 @@ function renderCodex(v) {
         ${SHIPS.map(s => `<article class="codex-card" data-ship="${s.id}" data-name="${s.name.toLowerCase()}" data-role="${s.role}" data-nation="${s.nation}" data-tier="${s.tier}" onclick="Game.shipDetails('${s.id}')">
           ${shipSVG(s.role, 130)}
           <h3>${s.name}</h3>
-          <div class="tags"><span class="tag">${SHIP_ROLES[s.role].label}</span><span class="tag">${s.year}</span></div>
+          <div class="tags"><span class="tag">${SHIP_ROLES[s.role].label}</span><span class="tag">${s.year}</span>${s.exclusive ? '<span class="tag danger">EXCLUSIVO</span>' : ''}</div>
           <p>${s.history.slice(0, 108)}…</p>
           <span class="link">Ver ficha</span>
         </article>`).join('')}

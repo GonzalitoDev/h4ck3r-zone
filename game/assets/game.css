@@ -839,6 +839,50 @@ body {
   .bridge-help { display: none; }
 }
 
+/* ---------- baúles y exclusivos ---------- */
+
+.chest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.9rem; margin-bottom: 1.4rem; }
+.chest-card {
+  background: linear-gradient(180deg, rgba(16, 33, 51, 0.9), rgba(10, 20, 33, 0.94));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.chest-svg { display: block; margin: 0.2rem auto 0.4rem; max-width: 100%; height: auto; }
+.chest-card-body { width: 100%; display: flex; flex-direction: column; gap: 0.2rem; flex: 1; }
+.chest-top { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; }
+.chest-top h3 { margin: 0; font-size: 0.9rem; }
+.chest-count { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(242, 181, 68, 0.45); color: var(--accent); font-size: 0.66rem; }
+.chest-card p { margin: 0.2rem 0; color: var(--muted); font-size: 0.7rem; line-height: 1.45; }
+.chest-rewards { font-size: 0.58rem; color: var(--dim); margin-bottom: 0.45rem; }
+.chest-card .btn { margin-top: auto; }
+
+.chest-reveal { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+.chest-reward-list { display: flex; flex-direction: column; gap: 0.35rem; width: 100%; margin: 0.5rem 0; }
+.chest-reward-list div { font-size: 0.78rem; color: var(--accent); border: 1px solid var(--line); border-radius: 8px; padding: 0.45rem 0.6rem; background: rgba(0, 0, 0, 0.16); }
+.modal-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.7rem; }
+
+.exclusive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.7rem; }
+.exclusive-card {
+  background: linear-gradient(180deg, rgba(16, 33, 51, 0.9), rgba(10, 20, 33, 0.94));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.7rem;
+  text-align: center;
+  cursor: pointer;
+  opacity: 0.68;
+  transition: opacity 0.2s, border-color 0.2s, transform 0.2s;
+}
+.exclusive-card:hover { transform: translateY(-2px); border-color: var(--line2); }
+.exclusive-card.owned { opacity: 1; border-color: rgba(242, 181, 68, 0.4); }
+.exclusive-card h3 { margin: 0.2rem 0; font-size: 0.82rem; }
+.exclusive-card .tags { justify-content: center; }
+.exclusive-state { display: inline-block; margin-top: 0.3rem; font-size: 0.56rem; letter-spacing: 1px; color: var(--dim); border: 1px solid var(--line); border-radius: 20px; padding: 0.15rem 0.45rem; }
+.exclusive-state.on { color: var(--good); border-color: rgba(87, 214, 141, 0.4); }
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 900px) {

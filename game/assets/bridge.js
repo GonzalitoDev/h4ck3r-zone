@@ -13,7 +13,7 @@ const BRIDGE_ISLANDS = [
 ];
 
 const BRIDGE_TARGET_POOL = SHIPS.filter(function (s) {
-  return s.tier <= 3 && s.role !== 'carrier' && s.role !== 'frigate';
+  return !s.exclusive && s.tier <= 3 && s.role !== 'carrier' && s.role !== 'frigate';
 });
 
 const BRIDGE_TELEGRAPH = [

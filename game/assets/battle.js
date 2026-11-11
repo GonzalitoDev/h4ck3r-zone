@@ -509,6 +509,23 @@ function finishBattle(victory) {
       }
     }
 
+    let chestId = null;
+    if (op.campaignIndex != null && CAMPAIGN[op.campaignIndex] && CAMPAIGN[op.campaignIndex].rewards && CAMPAIGN[op.campaignIndex].rewards.chest) {
+      chestId = CAMPAIGN[op.campaignIndex].rewards.chest;
+    } else if (op.boss) {
+      chestId = 'gold';
+    } else {
+      const roll = rng();
+      if (roll < 0.01) chestId = 'gold';
+      else if (roll < 0.07) chestId = 'silver';
+      else if (roll < 0.25) chestId = 'bronze';
+    }
+    if (chestId && CHEST_MAP[chestId]) {
+      state.chests = state.chests || { bronze: 0, silver: 0, gold: 0, legendary: 0 };
+      state.chests[chestId] = (state.chests[chestId] || 0) + 1;
+      result.notes.push('Cofre obtenido: ' + CHEST_MAP[chestId].name + '.');
+    }
+
     state.missionsWon++;
     op.done = true;
   } else {

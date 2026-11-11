@@ -616,8 +616,78 @@ const SHIPS = [
     stats: { hp: 540, armor: 26, firepower: 70, torpedo: 38, aa: 50, speed: 30, evade: 22 },
     cost: 3000, unlockLevel: 6,
     history: 'Uno de los primeros portaaviones de la Royal Navy. Sus aviones atacaron al Tirpitz en 1944 y participaron en la campaña de Noruega.'
+  },
+  {
+    id: 'goldenHind', name: 'Golden Hind', role: 'frigate', nation: 'Reino Unido', year: 1577, tier: 1, exclusive: true,
+    length: '30 m', displacement: '120 t', crew: '80', armament: '18 cañones',
+    stats: { hp: 190, armor: 16, firepower: 40, torpedo: 0, aa: 0, speed: 8, evade: 12 },
+    cost: 0, unlockLevel: 1,
+    history: 'Galeón de Francis Drake, el primer barco inglés en circunnavegar el mundo. Volvió cargado de oro y especias en 1580.'
+  },
+  {
+    id: 'maryRose', name: 'Mary Rose', role: 'frigate', nation: 'Reino Unido', year: 1511, tier: 1, exclusive: true,
+    length: '45 m', displacement: '700 t', crew: '400', armament: '78 cañones',
+    stats: { hp: 230, armor: 20, firepower: 46, torpedo: 0, aa: 0, speed: 6, evade: 6 },
+    cost: 0, unlockLevel: 1,
+    history: 'Nave insignia de Enrique VIII. Se hundió frente a Portsmouth en 1545 y fue rescatada del fondo del mar en 1982.'
+  },
+  {
+    id: 'vasa', name: 'Vasa', role: 'frigate', nation: 'Suecia', year: 1628, tier: 1, exclusive: true,
+    length: '69 m', displacement: '1.200 t', crew: '437', armament: '64 cañones',
+    stats: { hp: 260, armor: 22, firepower: 52, torpedo: 0, aa: 0, speed: 7, evade: 6 },
+    cost: 0, unlockLevel: 1,
+    history: 'Galeón sueco que se hundió en su viaje inaugural en 1628. Recuperado casi intacto en 1961, es un museo único en Estocolmo.'
+  },
+  {
+    id: 'santisimaTrinidad', name: 'Santísima Trinidad', role: 'frigate', nation: 'España', year: 1769, tier: 2, exclusive: true,
+    length: '61 m', displacement: '4.950 t', crew: '1.100', armament: '140 cañones',
+    stats: { hp: 380, armor: 28, firepower: 72, torpedo: 0, aa: 0, speed: 8, evade: 5 },
+    cost: 0, unlockLevel: 1,
+    history: 'El navío más artillado de su época. Combatió en Trafalgar en 1805 y fue capturado tras una resistencia desesperada.'
+  },
+  {
+    id: 'sovereignSeas', name: 'Sovereign of the Seas', role: 'frigate', nation: 'Reino Unido', year: 1637, tier: 2, exclusive: true,
+    length: '70 m', displacement: '1.500 t', crew: '800', armament: '102 cañones',
+    stats: { hp: 340, armor: 26, firepower: 66, torpedo: 0, aa: 0, speed: 9, evade: 6 },
+    cost: 0, unlockLevel: 1,
+    history: 'El navío más lujoso de su tiempo, con tres cubiertas artilladas. Su coste provocó una crisis política en Inglaterra.'
+  },
+  {
+    id: 'caroline', name: 'HMS Caroline', role: 'cruiser', nation: 'Reino Unido', year: 1914, tier: 2, exclusive: true,
+    length: '135 m', displacement: '5.900 t', crew: '325', armament: '8x152 mm',
+    stats: { hp: 380, armor: 32, firepower: 52, torpedo: 30, aa: 20, speed: 28, evade: 24 },
+    cost: 0, unlockLevel: 1,
+    history: 'Crucero ligero que combatió en Jutlandia. Es el último buque de la Gran Guerra que sigue a flote en Belfast.'
+  },
+  {
+    id: 'emden', name: 'SMS Emden', role: 'cruiser', nation: 'Alemania', year: 1908, tier: 2, exclusive: true,
+    length: '118 m', displacement: '4.300 t', crew: '361', armament: '10x105 mm',
+    stats: { hp: 360, armor: 30, firepower: 50, torpedo: 40, aa: 10, speed: 24, evade: 22 },
+    cost: 0, unlockLevel: 1,
+    history: 'Corsario alemán que sembró el caos en el Índico en 1914. Hundió más de 20 buques mercantes antes de ser acorralado.'
+  },
+  {
+    id: 'sydney', name: 'HMAS Sydney', role: 'cruiser', nation: 'Australia', year: 1934, tier: 3, exclusive: true,
+    length: '169 m', displacement: '7.000 t', crew: '645', armament: '8x152 mm',
+    stats: { hp: 400, armor: 34, firepower: 58, torpedo: 30, aa: 30, speed: 32, evade: 30 },
+    cost: 0, unlockLevel: 1,
+    history: 'Crucero ligero australiano. Hundió al corsario Kormoran en 1941, pero se perdió con toda su tripulación en el combate.'
   }
 ];
+
+/* ---------- cofres ---------- */
+
+const CHESTS = [
+  { id: 'bronze', name: 'Cofre de bronce', color: '#c98a4b', desc: 'Un cofre común con créditos para reparaciones.', credits: [250, 600], exclusiveChance: 0 },
+  { id: 'silver', name: 'Cofre de plata', color: '#c9d4e0', desc: 'Créditos y una probabilidad del 25% de un buque exclusivo.', credits: [800, 1500], exclusiveChance: 0.25 },
+  { id: 'gold', name: 'Cofre de oro', color: '#f2b544', desc: 'Créditos y un buque exclusivo garantizado.', credits: [2000, 4000], exclusiveChance: 1 },
+  { id: 'legendary', name: 'Cofre legendario', color: '#b39cff', desc: 'Gran botín: créditos, buque exclusivo y recompensa extra.', credits: [5000, 9000], exclusiveChance: 1, bonus: 2500 }
+];
+
+const CHEST_MAP = {};
+CHESTS.forEach(function (c) { CHEST_MAP[c.id] = c; });
+
+const EXCLUSIVE_SHIPS = SHIPS.filter(function (s) { return s.exclusive; });
 
 const SHIP_MAP = {};
 SHIPS.forEach(function (ship) { SHIP_MAP[ship.id] = ship; });
@@ -767,7 +837,7 @@ const CAMPAIGN = [
     desc: 'Dos cruceros enemigos atacan el tráfico mercante en aguas abiertas.',
     narrative: 'La inteligencia ha detectado dos cruceros hostiles. Debes alcanzarlos antes de que desaparezcan entre las islas.',
     enemyIds: ['olympia', 'aurora'], boss: false,
-    rewards: { credits: 550, xp: 160, ship: 'aurora' }
+    rewards: { credits: 550, xp: 160, ship: 'aurora', chest: 'silver' }
   },
   {
     id: 'c04', chapter: 'IV', name: 'Aguas del Atlántico', level: 4,
@@ -788,7 +858,7 @@ const CAMPAIGN = [
     desc: 'El Scharnhorst y el Gneisenau han roto el bloqueo. Debes detenerlos.',
     narrative: 'Los dos cruceros de batalla alemanes avanzan en línea. Su artillería es rápida y su velocidad, endiablada. No habrá segunda oportunidad.',
     enemyIds: ['scharnhorst', 'gneisenau'], boss: true,
-    rewards: { credits: 1200, xp: 320, ship: 'scharnhorst' }
+    rewards: { credits: 1200, xp: 320, ship: 'scharnhorst', chest: 'gold' }
   },
   {
     id: 'c07', chapter: 'VII', name: 'Tormenta sobre el Pacífico', level: 7,
@@ -816,7 +886,7 @@ const CAMPAIGN = [
     desc: 'La flota enemiga reúne al Yamato, al Bismarck y al Enterprise para su última ofensiva.',
     narrative: 'Todo el teatro de operaciones converge en una sola batalla. Tu flota, tus oficiales y tu experiencia son la última línea de defensa.',
     enemyIds: ['yamato', 'bismarck', 'enterprise'], boss: true,
-    rewards: { credits: 3000, xp: 800, ship: 'iowa', officer: 'nimitz' }
+    rewards: { credits: 3000, xp: 800, ship: 'iowa', officer: 'nimitz', chest: 'legendary' }
   }
 ];
 
@@ -831,10 +901,10 @@ function killed(s, role) {
 }
 
 const ACHIEVEMENTS = [
-  { id: 'first_win', name: 'Primera victoria', desc: 'Gana tu primera operación.', reward: { credits: 150, xp: 50 }, check: function (s) { return (s.missionsWon || 0) >= 1; } },
+  { id: 'first_win', name: 'Primera victoria', desc: 'Gana tu primera operación.', reward: { credits: 150, xp: 50, chest: 'bronze' }, check: function (s) { return (s.missionsWon || 0) >= 1; } },
   { id: 'wins_5', name: 'Veterano', desc: 'Gana 5 operaciones.', reward: { credits: 250, xp: 80 }, check: function (s) { return (s.missionsWon || 0) >= 5; } },
-  { id: 'wins_10', name: 'Comandante de guerra', desc: 'Gana 10 operaciones.', reward: { credits: 400, xp: 140 }, check: function (s) { return (s.missionsWon || 0) >= 10; } },
-  { id: 'wins_25', name: 'Leyenda naval', desc: 'Gana 25 operaciones.', reward: { credits: 900, xp: 300 }, check: function (s) { return (s.missionsWon || 0) >= 25; } },
+  { id: 'wins_10', name: 'Comandante de guerra', desc: 'Gana 10 operaciones.', reward: { credits: 400, xp: 140, chest: 'silver' }, check: function (s) { return (s.missionsWon || 0) >= 10; } },
+  { id: 'wins_25', name: 'Leyenda naval', desc: 'Gana 25 operaciones.', reward: { credits: 900, xp: 300, chest: 'gold' }, check: function (s) { return (s.missionsWon || 0) >= 25; } },
   { id: 'fleet_5', name: 'Escuadrón', desc: 'Reúne 5 buques en tu flota.', reward: { credits: 250, xp: 60 }, check: function (s) { return (s.fleet || []).length >= 5; } },
   { id: 'fleet_10', name: 'Flota de batalla', desc: 'Reúne 10 buques en tu flota.', reward: { credits: 600, xp: 160 }, check: function (s) { return (s.fleet || []).length >= 10; } },
   { id: 'level_5', name: 'Capitán de corbeta', desc: 'Alcanza el nivel 5 de comandante.', reward: { credits: 300, xp: 60 }, check: function (s) { return (s.commander && s.commander.level) >= 5; } },
@@ -845,8 +915,8 @@ const ACHIEVEMENTS = [
   { id: 'sink_50', name: 'Azote de los mares', desc: 'Hunde 50 buques enemigos.', reward: { credits: 900, xp: 300 }, check: function (s) { return (s.stats && s.stats.sunk || 0) >= 50; } },
   { id: 'specials_20', name: 'Maestro de maniobras', desc: 'Usa 20 habilidades especiales.', reward: { credits: 400, xp: 120 }, check: function (s) { return (s.stats && s.stats.specials || 0) >= 20; } },
   { id: 'campaign_5', name: 'Media campaña', desc: 'Completa 5 capítulos de la campaña.', reward: { credits: 700, xp: 200 }, check: function (s) { return campaignCount(s) >= 5; } },
-  { id: 'campaign_10', name: 'Acero final', desc: 'Completa toda la campaña.', reward: { credits: 2000, xp: 600 }, check: function (s) { return campaignCount(s) >= 10; } },
-  { id: 'boss_win', name: 'Matagigantes', desc: 'Gana una operación especial.', reward: { credits: 500, xp: 150 }, check: function (s) { return (s.stats && s.stats.bossWins || 0) >= 1; } },
+  { id: 'campaign_10', name: 'Acero final', desc: 'Completa toda la campaña.', reward: { credits: 2000, xp: 600, chest: 'legendary' }, check: function (s) { return campaignCount(s) >= 10; } },
+  { id: 'boss_win', name: 'Matagigantes', desc: 'Gana una operación especial.', reward: { credits: 500, xp: 150, chest: 'silver' }, check: function (s) { return (s.stats && s.stats.bossWins || 0) >= 1; } },
   { id: 'rich_15000', name: 'Magnate naval', desc: 'Acumula 15.000 créditos.', reward: { credits: 300, xp: 100 }, check: function (s) { return (s.commander && s.commander.credits) >= 15000; } },
   { id: 'carrier_3', name: 'Cazaportaviones', desc: 'Hunde 3 portaaviones enemigos.', reward: { credits: 600, xp: 180 }, check: function (s) { return killed(s, 'carrier') >= 3; } },
   { id: 'battleship_5', name: 'Rompeblindajes', desc: 'Hunde 5 acorazados enemigos.', reward: { credits: 700, xp: 220 }, check: function (s) { return killed(s, 'battleship') >= 5; } }

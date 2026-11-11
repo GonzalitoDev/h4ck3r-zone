@@ -13,7 +13,7 @@ function renderHeader() {
   const cm = state.commander;
   const need = xpNeedCommander(cm.level);
   const xpPct = clamp(Math.round(cm.xp / need * 100), 0, 100);
-  const navs = [['hq', 'Mando'], ['fleet', 'Flota'], ['ops', 'Operaciones'], ['campaign', 'Campaña'], ['bridge', 'Puente'], ['yard', 'Astillero'], ['codex', 'Códice']];
+  const navs = [['hq', 'Mando'], ['fleet', 'Flota'], ['ops', 'Operaciones'], ['chests', 'Baúles'], ['campaign', 'Campaña'], ['bridge', 'Puente'], ['yard', 'Astillero'], ['codex', 'Códice']];
   const cloudState = window.GameCloud ? window.GameCloud.state : 'local';
   const cloudLabel = cloudState === 'online' ? 'NUBE · ON'
     : cloudState === 'connecting' ? 'NUBE · ...'
@@ -30,6 +30,7 @@ function renderHeader() {
       <div class="res wide"><span class="res-label">EXPERIENCIA</span><div class="mini-bar"><i style="width:${xpPct}%"></i></div><span class="res-sub">${fmt(cm.xp)} / ${fmt(need)}</span></div>
       <div class="res"><span class="res-label">CRÉDITOS</span><span class="res-val">${fmt(cm.credits)}</span></div>
       <div class="res"><span class="res-label">MISIONES</span><span class="res-val">${state.missionsWon}</span></div>
+      <div class="res"><span class="res-label">BAÚLES</span><span class="res-val">${totalChests()}</span></div>
     </div>
     <button class="sound-btn" onclick="Game.toggleSound()" title="Activar o desactivar sonido">${soundOn ? 'SONIDO ON' : 'SONIDO OFF'}</button>
     <button class="cloud-chip ${cloudState}" onclick="Game.cloudSync()" title="Sincronizar la partida con Firebase">${cloudLabel}</button>
@@ -46,6 +47,7 @@ function render() {
   if (state.view === 'hq') renderHQ(v);
   else if (state.view === 'fleet') renderFleet(v);
   else if (state.view === 'ops') renderOps(v);
+  else if (state.view === 'chests') renderChests(v);
   else if (state.view === 'campaign') renderCampaign(v);
   else if (state.view === 'bridge') renderBridge(v);
   else if (state.view === 'yard') renderYard(v);
@@ -70,7 +72,7 @@ function renderMenu(v) {
           <button class="btn ${state ? 'ghost' : 'primary'}" onclick="Game.scrollStarters()">Nueva campaña</button>
           <button class="btn ghost" onclick="Game.howTo()">Cómo se juega</button>
         </div>
-        <div class="hero-note">83 buques reales · 10 capítulos · 19 logros · guardado en Firebase</div>
+        <div class="hero-note">91 buques reales · 10 capítulos · 19 logros · cofres y Firebase</div>
       </div>
       <div class="starter-head" id="starters">
         <h2>Elige tu buque insignia</h2>
@@ -164,6 +166,7 @@ function renderHQ(v) {
       </article>
       <div class="quick-actions">
         <button class="btn primary" onclick="Game.go('ops')">Ir a operaciones</button>
+        <button class="btn ghost" onclick="Game.go('chests')">Abrir baúles</button>
         <button class="btn ghost" onclick="Game.go('campaign')">Campaña</button>
         <button class="btn ghost" onclick="Game.go('bridge')">Tomar el timón</button>
         <button class="btn ghost" onclick="Game.go('fleet')">Gestionar flota</button>
@@ -274,6 +277,10 @@ function checkAchievements() {
       state.achievements.push(a.id);
       if (a.reward.credits) state.commander.credits += a.reward.credits;
       if (a.reward.xp && typeof addCommanderXp === 'function') addCommanderXp(a.reward.xp);
+      if (a.reward.chest && typeof CHEST_MAP !== 'undefined' && CHEST_MAP[a.reward.chest]) {
+        state.chests = state.chests || { bronze: 0, silver: 0, gold: 0, legendary: 0 };
+        state.chests[a.reward.chest] = (state.chests[a.reward.chest] || 0) + 1;
+      }
       unlocked.push(a);
       changed = true;
     }
@@ -318,6 +325,7 @@ Game.newGame = function (starterId) {
     achievements: [],
     campaign: { cleared: {} },
     stats: { sunk: 0, specials: 0, bossWins: 0, kills: {} },
+    chests: { bronze: 1, silver: 0, gold: 0, legendary: 0 },
     view: 'hq'
   };
   save();
@@ -422,6 +430,7 @@ Game.repairAll = function () {
 
 Game.buyShip = function (id) {
   const s = SHIP_MAP[id];
+  if (s.exclusive) { toast('Ese buque es exclusivo: solo se obtiene en cofres.'); return; }
   if (state.fleet.some(e => e.shipId === id)) { toast('Ya tienes este buque.'); return; }
   if (state.commander.level < s.unlockLevel) { toast('Requiere nivel ' + s.unlockLevel + '.'); return; }
   if (state.commander.credits < s.cost) { toast('Créditos insuficientes.'); return; }

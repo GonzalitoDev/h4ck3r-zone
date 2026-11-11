@@ -1,18 +1,21 @@
 # ACERO Y SAL — RPG naval con buques reales
 
-Juego web de rol y combate naval por turnos. Comandas una flota de **83 buques históricos reales**, formas oficiales, mejoras cada nave y completas una campaña de 10 capítulos inspirada en la historia naval.
+Juego web de rol y combate naval por turnos. Comandas una flota de **91 buques históricos reales**, formas oficiales, mejoras cada nave y completas una campaña de 10 capítulos inspirada en la historia naval.
 
 Sitio jugable: [`game/index.html`](game/index.html)
 
 ## Qué incluye
 
-- **83 buques reales** con datos históricos: HMS Victory, USS Monitor, HMS Dreadnought, HMS Hood, Bismarck, USS Iowa, Yamato, USS Enterprise, Akagi, U-96, PT-109, Scharnhorst, Richelieu, Roma, Shōkaku, USS Tang, USS Missouri, HMS Vanguard, Jean Bart, USS Alaska y muchos más.
+- **91 buques reales** con datos históricos: HMS Victory, USS Monitor, HMS Dreadnought, HMS Hood, Bismarck, USS Iowa, Yamato, USS Enterprise, Akagi, U-96, PT-109, Scharnhorst, Richelieu, Roma, Shōkaku, USS Tang, USS Missouri, HMS Vanguard, Jean Bart, USS Alaska y muchos más.
+- **8 buques exclusivos** que no se venden: Golden Hind, Mary Rose, Vasa, Santísima Trinidad, Sovereign of the Seas, HMS Caroline, SMS Emden y HMAS Sydney.
 - **8 roles de combate**: acorazados, portaaviones, cruceros, destructores, submarinos, lanchas torpederas, ironclads y fragatas.
 - **Combate por turnos**: cañoneo, torpedos, maniobras evasivas, reparaciones y una habilidad especial por rol (andanada de precisión, oleada aérea, inmersión, cortina de humo, etc.).
 - **Puente de mando**: pilotaje con física naval, telégrafo de máquina, timón progresivo, clima dinámico, torpedos, enemigos que disparan, casco, reparaciones de emergencia y hundimiento.
 - **Progresión RPG**: nivel de comandante, 7 habilidades, puntos de habilidad, XP por buque, módulos de cañones/blindaje/motores y 19 oficiales históricos con bonus.
 - **Campaña narrativa de 10 capítulos** con flotas fijas, jefes históricos, recompensas únicas (buques y oficiales) y desbloqueo progresivo.
 - **19 logros** con recompensas en créditos y XP.
+- **Cofres de bronce, plata, oro y legendario** con monedas y buques exclusivos.
+- **Panel de administración privado** en `/admin/` para gestionar créditos, buques, oficiales, cofres y progreso.
 - **Buscador y filtros** de buques por rol, nación y tier en Astillero y Códice.
 - **Flota y astillero**: compra buques únicos, activa hasta 4 unidades según tu nivel, repara daños y asigna oficiales.
 - **Operaciones dinámicas** con recompensas, operaciones especiales contra buques capitales y guardado automático local.
@@ -95,8 +98,8 @@ El acceso está protegido por las reglas de `firestore.rules`: cada sesión solo
 Descarga el paquete desde [Releases](https://github.com/GonzalitoDev/h4ck3r-zone/releases) y instálalo:
 
 ```bash
-wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.2.0_all.deb
-sudo apt install ./acero-y-sal_1.2.0_all.deb
+wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.3.0_all.deb
+sudo apt install ./acero-y-sal_1.3.0_all.deb
 ```
 
 Después búscalo en el menú como **ACERO Y SAL**. El lanzador sirve el juego localmente en `http://127.0.0.1:8787/` y abre el navegador.
@@ -131,6 +134,31 @@ bash packaging/linux/build-deb.sh
 ```
 
 También se compila automáticamente en GitHub Actions al publicar un tag `v*` y adjunta el `.deb` al release.
+
+## Cofres y buques exclusivos
+
+- **Cofre de bronce**: 250–600 créditos.
+- **Cofre de plata**: 800–1.500 créditos y 25% de probabilidad de un buque exclusivo.
+- **Cofre de oro**: 2.000–4.000 créditos y un buque exclusivo garantizado.
+- **Cofre legendario**: 5.000–9.000 créditos, buque exclusivo y bonus extra.
+
+Los cofres se consiguen en operaciones (especialmente jefes), campaña y logros. Los 8 buques exclusivos aparecen en el Códice con la etiqueta **EXCLUSIVO** y no se pueden comprar en el Astillero.
+
+## Panel de administración
+
+El propietario tiene un panel privado en `/admin/` (no está enlazado en el juego) para:
+
+- Añadir o quitar créditos, cambiar nivel y puntos de habilidad.
+- Añadir cualquier buque (incluidos los exclusivos), oficiales y cofres.
+- Desbloquear la campaña, marcar logros, reparar la flota y guardar en Firebase.
+
+El acceso está protegido por una contraseña almacenada como hash SHA-256 en `game/admin/admin-config.js`. Para cambiarla, genera un hash nuevo:
+
+```bash
+node -e "console.log(require('crypto').createHash('sha256').update('TU_NUEVA_CLAVE').digest('hex'))"
+```
+
+y reemplaza `passwordHash` en ese archivo. La protección es local (cliente); no sustituye una autenticación de servidor.
 
 ## Publicar con Firebase
 
@@ -178,14 +206,20 @@ game/
     index.html      Centro de Mando Nexus: partida en la nube, copias y restauración
     nexus.css
     nexus.js
+  admin/
+    index.html      Panel privado del propietario
+    admin.css
+    admin.js
+    admin-config.js
   assets/
-    data.js            datos de buques, roles, oficiales y operaciones
+    data.js            datos de buques, roles, oficiales, campaña y cofres
     firebase-config.js configuración pública de la Web App de Firebase
     core.js            estado, guardado, estadísticas y gráficos SVG
     cloud.js           Firestore: sesión anónima y guardado en la nube
     ui.js              cabecera, menú, mando, flota y modales
-    screens.js         operaciones, astillero y códice
-    bridge.js          puente de mando: pilotaje, físicas, islas y cañones
+    screens.js         operaciones, campaña, astillero y códice
+    chests.js          cofres y buques exclusivos
+    bridge.js          puente de mando: pilotaje, físicas, clima y combate
     battle.js          motor de combate, resultados e inicio
     game.css           estilos
 server.mjs             servidor estático para App Hosting

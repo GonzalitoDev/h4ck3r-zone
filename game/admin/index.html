@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#070d16"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>NEXUS ADMIN · Propietario</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23070d16'/%3E%3Cpath d='M32 8l18 12v24L32 56 14 44V20z' fill='none' stroke='%23e5484d' stroke-width='4'/%3E%3Cpath d='M22 40l20-20M22 22l20 20' stroke='%23f2b544' stroke-width='4'/%3E%3C/svg%3E"/>
+<link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"><div class="grid"></div><div class="glow"></div></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="mark">A</div>
+    <div class="brand-text"><strong>NEXUS ADMIN</strong><small>ACCESO PROPIETARIO</small></div>
+  </div>
+  <a class="btn ghost" href="../">Volver al juego</a>
+</header>
+
+<main class="wrap">
+  <section id="gate" class="gate">
+    <div class="gate-card">
+      <div class="eyebrow">ÁREA RESTRINGIDA</div>
+      <h1>Panel del propietario</h1>
+      <p>Introduce la contraseña de administración para gestionar créditos, buques, oficiales, cofres y progreso.</p>
+      <input type="password" id="adminPass" placeholder="Contraseña" autocomplete="current-password"/>
+      <button class="btn primary full" onclick="adminUnlock()">Entrar</button>
+      <div id="gateError" class="notice error hidden"></div>
+      <p class="tiny">Página privada no enlazada. La protección es local; para seguridad de servidor haría falta autenticación con Firebase Auth.</p>
+    </div>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <div class="screen-head">
+      <div><div class="eyebrow">NEXUS ADMIN</div><h2>Control de la flota</h2></div>
+      <div class="head-actions">
+        <span id="cloudChip" class="status-chip">NUBE · LOCAL</span>
+        <button class="btn ghost" onclick="adminLogout()">Salir</button>
+      </div>
+    </div>
+
+    <div id="summary" class="summary"></div>
+
+    <div id="noSave" class="panel hidden">
+      <p>No hay una partida guardada en este navegador.</p>
+      <button class="btn primary" onclick="adminCreateBase()">Crear partida base</button>
+    </div>
+
+    <div id="tools" class="admin-grid">
+      <article class="panel">
+        <h3>Créditos</h3>
+        <div class="form-row">
+          <input type="number" id="creditsAmount" value="1000" min="1"/>
+          <button class="btn primary small" onclick="adminAddCredits(1)">Añadir</button>
+          <button class="btn ghost small" onclick="adminAddCredits(-1)">Quitar</button>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h3>Nivel y puntos</h3>
+        <div class="form-row">
+          <input type="number" id="levelValue" value="10" min="1" max="99"/>
+          <input type="number" id="pointsValue" value="10" min="0" max="99"/>
+          <button class="btn primary small" onclick="adminSetLevel()">Aplicar</button>
+        </div>
+        <small>Nivel / puntos de habilidad</small>
+      </article>
+
+      <article class="panel">
+        <h3>Buque</h3>
+        <div class="form-row">
+          <select id="shipSelect"></select>
+          <button class="btn primary small" onclick="adminAddShip()">Añadir</button>
+        </div>
+        <small>Incluye buques exclusivos de cofres.</small>
+      </article>
+
+      <article class="panel">
+        <h3>Oficial</h3>
+        <div class="form-row">
+          <select id="officerSelect"></select>
+          <button class="btn primary small" onclick="adminAddOfficer()">Añadir</button>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h3>Cofres</h3>
+        <div class="form-row">
+          <select id="chestType"></select>
+          <input type="number" id="chestCount" value="1" min="1" max="99"/>
+          <button class="btn primary small" onclick="adminAddChest()">Dar</button>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h3>Acciones rápidas</h3>
+        <div class="quick">
+          <button class="btn small ghost" onclick="adminGrantExclusive()">Todos los exclusivos</button>
+          <button class="btn small ghost" onclick="adminUnlockCampaign()">Desbloquear campaña</button>
+          <button class="btn small ghost" onclick="adminUnlockAchievements()">Todos los logros</button>
+          <button class="btn small ghost" onclick="adminRepairFleet()">Reparar flota</button>
+          <button class="btn small ghost" onclick="adminSync()">Guardar en Firebase</button>
+        </div>
+      </article>
+    </div>
+
+    <div id="notice" class="notice hidden"></div>
+  </section>
+</main>
+
+<footer class="footer">NEXUS ADMIN · Panel privado del propietario · Proyecto <code>juego-e0d5f</code></footer>
+
+<script src="../assets/firebase-config.js"></script>
+<script src="../assets/data.js"></script>
+<script src="../assets/core.js"></script>
+<script src="../assets/cloud.js"></script>
+<script src="admin-config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

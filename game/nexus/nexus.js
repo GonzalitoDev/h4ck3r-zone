@@ -94,6 +94,8 @@ function renderSave(save, savedAt, updatedAt) {
   el('sCampaign').textContent = cleared + '/' + (typeof CAMPAIGN !== 'undefined' ? CAMPAIGN.length : 10);
   el('sAchievements').textContent = (save.achievements || []).length + '/' + (typeof ACHIEVEMENTS !== 'undefined' ? ACHIEVEMENTS.length : 19);
   el('sSunk').textContent = fmt((save.stats && save.stats.sunk) || 0);
+  const chestCount = save.chests ? ((save.chests.bronze || 0) + (save.chests.silver || 0) + (save.chests.gold || 0) + (save.chests.legendary || 0)) : 0;
+  el('sChests').textContent = fmt(chestCount);
   el('sFleet').textContent = fleet.length;
   el('sPower').textContent = fmt(fleetPower(save));
 

@@ -133,6 +133,11 @@ function repairCost(entry) {
   return Math.ceil(missing * (0.45 + SHIP_MAP[entry.shipId].tier * 0.3));
 }
 
+function totalChests() {
+  if (!state || !state.chests) return 0;
+  return (state.chests.bronze || 0) + (state.chests.silver || 0) + (state.chests.gold || 0) + (state.chests.legendary || 0);
+}
+
 function save() {
   try {
     if (state) state.savedAt = Date.now();
@@ -159,6 +164,7 @@ function load() {
     s.campaign.cleared = s.campaign.cleared || {};
     s.stats = Object.assign({ sunk: 0, specials: 0, bossWins: 0, kills: {} }, s.stats || {});
     s.stats.kills = s.stats.kills || {};
+    s.chests = Object.assign({ bronze: 0, silver: 0, gold: 0, legendary: 0 }, s.chests || {});
     s.commander.skills = Object.assign(
       { artilleria: 0, navegacion: 0, ingenieria: 0, liderazgo: 0, tactica: 0, logistica: 0, inteligencia: 0 },
       s.commander.skills || {}
