@@ -66,6 +66,43 @@ function adminLogout() {
 }
 window.adminLogout = adminLogout;
 
+function showAdminLoginError(message) {
+  const box = document.getElementById('adminLoginError');
+  if (!box) return;
+  box.textContent = message;
+  box.className = 'notice error';
+  box.classList.remove('hidden');
+}
+
+async function adminLogin() {
+  const email = document.getElementById('adminEmail');
+  const password = document.getElementById('adminLoginPass');
+  if (!email || !password) return;
+  if (!window.cloudLogin) {
+    showAdminLoginError('La conexión con Firebase aún no está lista.');
+    return;
+  }
+  try {
+    await window.cloudLogin(email.value.trim(), password.value);
+    if (!(window.isAdminAccount && window.isAdminAccount())) {
+      showAdminLoginError('Esa cuenta no es la cuenta del propietario.');
+      return;
+    }
+    renderAdmin();
+  } catch (e) {
+    showAdminLoginError(window.authErrorMessage ? window.authErrorMessage(e) : (e.message || 'No se pudo iniciar sesión.'));
+  }
+}
+window.adminLogin = adminLogin;
+
+function adminOpenDb() {
+  const panel = document.getElementById('dbPanel');
+  if (!panel) return;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  adminDbStatus();
+}
+window.adminOpenDb = adminOpenDb;
+
 function baseState() {
   return {
     version: 1,

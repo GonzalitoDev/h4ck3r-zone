@@ -48,6 +48,8 @@ h1, h2, h3 { margin-top: 0; }
 .gate-card p { color: var(--muted); font-size: 0.82rem; line-height: 1.55; }
 .gate-card.restricted { border-color: rgba(242, 181, 68, 0.45); }
 .gate-card.restricted h1 { color: var(--accent); }
+.admin-login-form { display: flex; flex-direction: column; gap: 0.5rem; margin: 0.7rem 0; }
+.admin-login-form .notice { margin-top: 0.1rem; }
 .gate-card input { width: 100%; margin: 0.5rem 0 0.7rem; }
 .tiny { font-size: 0.62rem !important; color: var(--dim) !important; margin-top: 0.8rem; }
 

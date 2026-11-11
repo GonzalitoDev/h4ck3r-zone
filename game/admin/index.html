@@ -37,8 +37,14 @@
     <div class="gate-card restricted">
       <div class="eyebrow">ACCESO RESTRINGIDO</div>
       <h1>Solo el propietario</h1>
-      <p>Inicia sesión en el juego con la cuenta de administrador. Los usuarios normales no pueden acceder a este panel.</p>
-      <a class="btn primary full" href="../">Ir al juego e iniciar sesión</a>
+      <p>Inicia sesión con la cuenta de administrador. Los usuarios normales no pueden acceder a este panel.</p>
+      <div class="admin-login-form">
+        <input type="email" id="adminEmail" placeholder="Email del propietario" value="willirexpilowey@gmail.com" autocomplete="username"/>
+        <input type="password" id="adminLoginPass" placeholder="Contraseña de la cuenta" autocomplete="current-password"/>
+        <button class="btn primary full" onclick="adminLogin()">Iniciar sesión</button>
+        <div id="adminLoginError" class="notice error hidden"></div>
+      </div>
+      <p class="tiny">También puedes <a href="../" style="color:var(--accent2)">volver al juego</a> e iniciar sesión allí.</p>
     </div>
   </section>
 
@@ -47,6 +53,7 @@
       <div><div class="eyebrow">NEXUS ADMIN</div><h2>Control de la flota</h2></div>
       <div class="head-actions">
         <span id="cloudChip" class="status-chip">NUBE · LOCAL</span>
+        <button class="btn ghost" onclick="adminOpenDb()">Ver base de datos</button>
         <button class="btn ghost" onclick="adminLogout()">Salir</button>
       </div>
     </div>
