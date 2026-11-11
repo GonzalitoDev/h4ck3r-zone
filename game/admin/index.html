@@ -129,6 +129,7 @@
         <h3>Usuarios</h3>
         <div class="quick">
           <input id="userSearch" placeholder="Buscar email o UID" oninput="adminFilterUsers()"/>
+          <label class="user-filter"><input type="checkbox" id="userOnlyEmail" onchange="adminFilterUsers()"/> Solo con email</label>
           <button class="btn small ghost" onclick="adminLoadUsers()">Actualizar</button>
         </div>
       </div>

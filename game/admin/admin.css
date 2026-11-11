@@ -93,6 +93,7 @@ select { flex: 1; min-width: 130px; }
 
 .users-panel { margin-top: 0.9rem; }
 .users-panel .panel-head input { max-width: 230px; }
+.user-filter { display: flex; align-items: center; gap: 0.35rem; font-size: 0.64rem; color: var(--muted); white-space: nowrap; }
 .users-list { display: flex; flex-direction: column; gap: 0.25rem; max-height: 300px; overflow: auto; margin-top: 0.5rem; }
 .user-row {
   display: flex;

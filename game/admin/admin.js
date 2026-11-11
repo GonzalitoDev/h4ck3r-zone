@@ -471,8 +471,10 @@ function adminRenderUserList() {
   const status = document.getElementById('usersStatus');
   if (!list) return;
   const query = (document.getElementById('userSearch') ? document.getElementById('userSearch').value : '').trim().toLowerCase();
+  const onlyEmail = !!(document.getElementById('userOnlyEmail') && document.getElementById('userOnlyEmail').checked);
   const users = window.__adminUsers || [];
   const filtered = users.filter((u) => {
+    if (onlyEmail && u.anonymous) return false;
     if (!query) return true;
     return (u.email || '').toLowerCase().indexOf(query) !== -1 || u.uid.toLowerCase().indexOf(query) !== -1;
   });
@@ -496,7 +498,10 @@ async function adminLoadUsers() {
   if (status) status.textContent = 'Cargando usuarios…';
   try {
     const data = await adminApi('/api/admin/users');
-    window.__adminUsers = data.users || [];
+    window.__adminUsers = (data.users || []).slice().sort((a, b) => {
+      if (!!a.email !== !!b.email) return a.email ? -1 : 1;
+      return (b.lastSignIn || '').localeCompare(a.lastSignIn || '');
+    });
     adminRenderUserList();
   } catch (e) {
     if (status) status.textContent = e.message;
@@ -630,6 +635,9 @@ async function adminApplyVip() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ vip: vip })
     });
+    data.user.vip = vip;
+    const box = document.getElementById('uVip');
+    if (box) box.checked = vip;
     adminUserNotice(result.message || ('VIP ' + (vip ? 'activado' : 'desactivado') + '.'), true);
     await adminLoadUsers();
     await adminSelectUser(data.user.uid);
