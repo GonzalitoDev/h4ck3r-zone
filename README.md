@@ -15,7 +15,9 @@ Sitio jugable: [`game/index.html`](game/index.html)
 - **Campaña narrativa de 10 capítulos** con flotas fijas, jefes históricos, recompensas únicas (buques y oficiales) y desbloqueo progresivo.
 - **19 logros** con recompensas en créditos y XP.
 - **Cofres de bronce, plata, oro y legendario** con monedas y buques exclusivos.
-- **Panel de administración privado** en `/admin/` para gestionar créditos, buques, oficiales, cofres y progreso.
+- **Panel de administración privado** en `/admin/` para gestionar usuarios, créditos, buques, oficiales, cofres, VIP y progreso.
+- **Gestión de usuarios**: listar cuentas, buscar, cambiar email/contraseña, verificar, desactivar, eliminar y editar partidas ajenas.
+- **VIP**: +20% créditos, +10% XP y +1 espacio de flota. Se activa desde el panel admin.
 - **PostgreSQL opcional** (Neon/Supabase) con visor de tablas y consultas `SELECT` en el panel admin.
 - **Buscador y filtros** de buques por rol, nación y tier en Astillero y Códice.
 - **Flota y astillero**: compra buques únicos, activa hasta 4 unidades según tu nivel, repara daños y asigna oficiales.
@@ -142,8 +144,8 @@ El acceso está protegido por las reglas de `firestore.rules`: cada sesión solo
 Descarga el paquete desde [Releases](https://github.com/GonzalitoDev/h4ck3r-zone/releases) y instálalo:
 
 ```bash
-wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.5.0_all.deb
-sudo apt install ./acero-y-sal_1.5.0_all.deb
+wget https://github.com/GonzalitoDev/h4ck3r-zone/releases/latest/download/acero-y-sal_1.6.0_all.deb
+sudo apt install ./acero-y-sal_1.6.0_all.deb
 ```
 
 Después búscalo en el menú como **ACERO Y SAL**. El lanzador sirve el juego localmente en `http://127.0.0.1:8787/` y abre el navegador.
@@ -195,7 +197,16 @@ El propietario tiene un panel privado en `/admin/` para:
 - Añadir o quitar créditos, cambiar nivel y puntos de habilidad.
 - Añadir cualquier buque (incluidos los exclusivos), oficiales y cofres.
 - Desbloquear la campaña, marcar logros, reparar la flota y guardar en Firebase.
+- Listar usuarios y buscar por email o UID.
+- Cambiar email, contraseña, nombre, verificación y estado activo/desactivado.
+- Activar/desactivar **VIP** y enviar correos de restablecimiento.
+- Editar la partida de cualquier usuario: créditos, nivel, puntos, cofres, campaña, reparaciones, buques y oficiales.
+- Eliminar una cuenta y su partida.
 - Visor de PostgreSQL: estado, tablas, filas y consultas `SELECT` de solo lectura.
+
+La gestión de usuarios y el visor SQL usan `firebase-admin` con la service account de App Hosting. Esa cuenta necesita los roles `roles/firebaseauth.admin` y `roles/datastore.user`. El panel solo responde a la cuenta `window.ADMIN_EMAIL` y vuelve a verificar el token de Firebase en cada petición.
+
+> En el `.deb`, el panel admin funciona para la partida local, pero la gestión de usuarios y el visor SQL necesitan el servidor Node de la web (`npm start` o App Hosting).
 
 El panel actúa sobre la partida del usuario con el que hayas iniciado sesión en el juego. Inicia sesión con tu cuenta de propietario antes de abrir `/admin/`.
 
@@ -208,6 +219,17 @@ node -e "console.log(require('crypto').createHash('sha256').update('TU_NUEVA_CLA
 ```
 
 y reemplaza `passwordHash` en ese archivo. La protección es local (cliente); no sustituye una autenticación de servidor.
+
+## VIP
+
+Desde `/admin/` puedes activar VIP a cualquier cuenta (incluidos invitados). Beneficios:
+
+- **+20% créditos** en operaciones y campaña.
+- **+10% XP**.
+- **+1 espacio de flota** (hasta 5 buques activos).
+- Insignia VIP en la cabecera y en la cuenta.
+
+El VIP se guarda como custom claim de Firebase. El usuario debe **recargar la página** o volver a iniciar sesión para que se aplique el token actualizado.
 
 ## Publicar con Firebase
 
@@ -228,7 +250,7 @@ La configuración ya apunta al proyecto `juego-e0d5f` (`.firebaserc`) y publica 
 El backend `h4ck3r-zone` puede desplegar este repositorio directamente porque incluye:
 
 - `package.json` con scripts `build` y `start` requeridos por App Hosting.
-- `server.mjs`: servidor Express que sirve `game/` en `process.env.PORT`.
+- `server.mjs`: servidor Express que sirve `game/`, la API de PostgreSQL y la API de administración de usuarios.
 - `apphosting.yaml`: configuración de Cloud Run.
 - `firebase.json` con el bloque `apphosting`.
 
@@ -271,7 +293,7 @@ game/
     bridge.js          puente de mando: pilotaje, físicas, clima y combate
     battle.js          motor de combate, resultados e inicio
     game.css           estilos
-server.mjs             servidor Express + API PostgreSQL para App Hosting
+server.mjs             servidor Express + API PostgreSQL + API de usuarios
 firebase.json          Firebase Hosting + Firestore + App Hosting
 firestore.rules        reglas de seguridad de la base de datos
 apphosting.yaml        configuración de Cloud Run

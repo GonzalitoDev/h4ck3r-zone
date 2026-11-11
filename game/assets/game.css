@@ -162,6 +162,22 @@ body {
 }
 .account-chip:hover { border-color: var(--accent2); filter: brightness(1.15); }
 
+.vip-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(242, 181, 68, 0.6);
+  background: linear-gradient(180deg, rgba(242, 181, 68, 0.22), rgba(242, 181, 68, 0.08));
+  color: var(--accent);
+  font-size: 0.54rem;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+}
+.vip-box { display: flex; flex-direction: column; gap: 0.15rem; border: 1px solid rgba(242, 181, 68, 0.5); background: rgba(242, 181, 68, 0.07); border-radius: 9px; padding: 0.55rem 0.7rem; margin: 0.6rem 0; }
+.vip-box strong { color: var(--accent); letter-spacing: 1.5px; font-size: 0.72rem; }
+.vip-box span { color: var(--muted); font-size: 0.66rem; }
+
 .admin-chip {
   background: rgba(229, 72, 77, 0.1);
   border: 1px solid rgba(229, 72, 77, 0.6);

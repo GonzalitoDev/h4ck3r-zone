@@ -173,6 +173,10 @@ function renderAdmin() {
     window.__dbAutoChecked = true;
     setTimeout(function () { adminDbStatus(); }, 600);
   }
+  if (!window.__usersAutoLoaded) {
+    window.__usersAutoLoaded = true;
+    setTimeout(function () { adminLoadUsers(); }, 800);
+  }
 
   const summary = document.getElementById('summary');
   const noSave = document.getElementById('noSave');
@@ -436,6 +440,305 @@ window.adminDbStatus = adminDbStatus;
 window.adminLoadTables = adminLoadTables;
 window.adminLoadTable = adminLoadTable;
 window.adminRunQuery = adminRunQuery;
+
+/* ---------- usuarios ---------- */
+
+function adminUserNotice(message, ok) {
+  showNotice(message, ok);
+}
+
+function populateUserSelects() {
+  const shipSelect = document.getElementById('uShip');
+  if (shipSelect && !shipSelect.options.length) {
+    shipSelect.innerHTML = SHIPS.slice().sort((a, b) => a.name.localeCompare(b.name)).map((s) =>
+      '<option value="' + s.id + '">' + s.name + (s.exclusive ? ' · EXCLUSIVO' : '') + '</option>'
+    ).join('');
+  }
+  const officerSelect = document.getElementById('uOfficer');
+  if (officerSelect && !officerSelect.options.length) {
+    officerSelect.innerHTML = OFFICERS.slice().sort((a, b) => a.name.localeCompare(b.name)).map((o) =>
+      '<option value="' + o.id + '">' + o.name + '</option>'
+    ).join('');
+  }
+  const chestSelect = document.getElementById('uChestType');
+  if (chestSelect && !chestSelect.options.length) {
+    chestSelect.innerHTML = CHESTS.map((c) => '<option value="' + c.id + '">' + c.name + '</option>').join('');
+  }
+}
+
+function adminRenderUserList() {
+  const list = document.getElementById('usersList');
+  const status = document.getElementById('usersStatus');
+  if (!list) return;
+  const query = (document.getElementById('userSearch') ? document.getElementById('userSearch').value : '').trim().toLowerCase();
+  const users = window.__adminUsers || [];
+  const filtered = users.filter((u) => {
+    if (!query) return true;
+    return (u.email || '').toLowerCase().indexOf(query) !== -1 || u.uid.toLowerCase().indexOf(query) !== -1;
+  });
+  if (status) status.textContent = users.length + ' usuarios · ' + filtered.length + ' mostrados';
+  if (!filtered.length) {
+    list.innerHTML = '<p class="db-empty">Sin usuarios que coincidan.</p>';
+    return;
+  }
+  list.innerHTML = filtered.map((u) => {
+    const selected = window.__adminSelectedUid === u.uid ? ' selected' : '';
+    const me = u.email && window.ADMIN_EMAIL && u.email.toLowerCase() === String(window.ADMIN_EMAIL).toLowerCase() ? ' <span class="tag">TÚ</span>' : '';
+    return '<button class="user-row' + selected + '" onclick="adminSelectUser(\'' + escapeDb(u.uid) + '\')">' +
+      '<span class="user-main">' + escapeDb(u.email || 'Invitado') + me + '</span>' +
+      '<span class="user-badges">' + (u.vip ? '<span class="tag ok">VIP</span>' : '') + (u.disabled ? '<span class="tag danger">OFF</span>' : '') + '<span class="tag">' + (u.anonymous ? 'GUEST' : 'EMAIL') + '</span></span>' +
+      '<span class="user-meta">' + escapeDb(u.uid.slice(0, 8)) + '… · ' + escapeDb((u.lastSignIn || '').slice(0, 10)) + '</span></button>';
+  }).join('');
+}
+
+async function adminLoadUsers() {
+  const status = document.getElementById('usersStatus');
+  if (status) status.textContent = 'Cargando usuarios…';
+  try {
+    const data = await adminApi('/api/admin/users');
+    window.__adminUsers = data.users || [];
+    adminRenderUserList();
+  } catch (e) {
+    if (status) status.textContent = e.message;
+  }
+}
+
+window.adminLoadUsers = adminLoadUsers;
+window.adminFilterUsers = adminRenderUserList;
+
+function adminOpenUsers() {
+  const panel = document.getElementById('usersPanel');
+  if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!window.__adminUsers) adminLoadUsers();
+}
+window.adminOpenUsers = adminOpenUsers;
+
+function adminUserDetailHtml(data) {
+  const user = data.user || {};
+  const save = data.save;
+  const guest = !!user.anonymous;
+  const level = save && save.commander ? save.commander.level : 1;
+  const points = save && save.commander ? save.commander.points : 0;
+  const credits = save && save.commander ? save.commander.credits : 0;
+  const chests = (save && save.chests) || {};
+  const chestTotal = (chests.bronze || 0) + (chests.silver || 0) + (chests.gold || 0) + (chests.legendary || 0);
+  const saveControls = save ? `
+    <div class="form-row"><input id="uLevel" type="number" min="1" max="99" value="${level}"/><input id="uPoints" type="number" min="0" max="99" value="${points}"/><button class="btn small ghost" onclick="adminApplyLevelPoints()">Nivel / puntos</button></div>
+    <div class="form-row"><input id="uCredits" type="number" min="1" value="1000"/><button class="btn small primary" onclick="adminAddUserCredits(1)">+ Créditos</button><button class="btn small ghost" onclick="adminAddUserCredits(-1)">- Créditos</button></div>
+    <div class="form-row"><select id="uChestType"></select><input id="uChestCount" type="number" min="1" max="99" value="1"/><button class="btn small primary" onclick="adminGrantUserChest()">Dar cofres</button></div>
+    <div class="form-row"><select id="uShip"></select><button class="btn small ghost" onclick="adminGrantUserShip()">Añadir buque</button></div>
+    <div class="form-row"><select id="uOfficer"></select><button class="btn small ghost" onclick="adminGrantUserOfficer()">Añadir oficial</button></div>
+    <div class="quick">
+      <button class="btn small ghost" onclick="adminUnlockUserCampaign()">Desbloquear campaña</button>
+      <button class="btn small ghost" onclick="adminRepairUserFleet()">Reparar flota</button>
+    </div>
+    <div class="user-summary"><span>Nivel <b>${level}</b></span><span>Créditos <b>${fmt(credits)}</b></span><span>Buques <b>${(save.fleet || []).length}</b></span><span>Baúles <b>${chestTotal}</b></span></div>
+  ` : '<p class="tiny">Este usuario aún no tiene partida guardada. Debe abrir el juego y crear una campaña.</p>';
+
+  return `
+    <div class="user-detail-head">
+      <div><div class="eyebrow">USUARIO</div><h3>${escapeDb(user.email || 'Invitado')}</h3><div class="tiny">UID: ${escapeDb(user.uid)} · ${escapeDb((user.providers || []).join(', ') || 'sin proveedor')} · ${escapeDb((user.created || '').slice(0, 10))}</div></div>
+      <div class="user-badges">${user.vip ? '<span class="tag ok">VIP</span>' : ''}${user.disabled ? '<span class="tag danger">DESACTIVADO</span>' : ''}${user.emailVerified ? '<span class="tag">VERIFICADO</span>' : ''}</div>
+    </div>
+    <div class="user-grid">
+      <article class="user-card">
+        <h3>Cuenta</h3>
+        ${guest ? '<p class="tiny">Cuenta de invitado: no tiene email ni contraseña. Puedes gestionar su partida, VIP o eliminarla.</p>' : `
+          <label>Email<input id="uEmail" type="email" value="${escapeDb(user.email || '')}"/></label>
+          <label>Nueva contraseña<input id="uPass" type="password" placeholder="Dejar vacío para no cambiar"/></label>
+          <label>Nombre<input id="uName" type="text" value="${escapeDb(user.displayName || '')}"/></label>
+        `}
+        <label class="check-row"><input type="checkbox" id="uDisabled" ${user.disabled ? 'checked' : ''}/> Cuenta desactivada</label>
+        <label class="check-row"><input type="checkbox" id="uVerified" ${user.emailVerified ? 'checked' : ''}/> Email verificado</label>
+        <label class="check-row"><input type="checkbox" id="uVip" ${user.vip ? 'checked' : ''}/> VIP</label>
+        <div class="quick">
+          <button class="btn small primary" onclick="adminSaveUserAccount()">Guardar cuenta</button>
+          <button class="btn small ghost" onclick="adminApplyVip()">Aplicar VIP</button>
+          <button class="btn small ghost" onclick="adminSendUserReset()" ${guest ? 'disabled' : ''}>Enviar reset</button>
+          <button class="btn small danger" onclick="adminDeleteUser()">Eliminar</button>
+        </div>
+        <p class="tiny">El VIP se aplica cuando el usuario recarga la página.</p>
+      </article>
+      <article class="user-card">
+        <h3>Partida</h3>
+        ${saveControls}
+      </article>
+    </div>`;
+}
+
+async function adminSelectUser(uid) {
+  try {
+    const data = await adminApi('/api/admin/users/' + encodeURIComponent(uid));
+    window.__adminSelectedUid = uid;
+    window.__adminSelectedData = data;
+    const detail = document.getElementById('userDetail');
+    if (detail) {
+      detail.innerHTML = adminUserDetailHtml(data);
+      detail.classList.remove('hidden');
+      populateUserSelects();
+    }
+    adminRenderUserList();
+  } catch (e) {
+    showNotice(e.message, false);
+  }
+}
+window.adminSelectUser = adminSelectUser;
+
+async function adminSaveUserAccount() {
+  const data = window.__adminSelectedData;
+  if (!data) return;
+  const body = {};
+  const guest = !!data.user.anonymous;
+  if (!guest) {
+    const email = document.getElementById('uEmail');
+    const pass = document.getElementById('uPass');
+    const name = document.getElementById('uName');
+    if (email && email.value.trim() && email.value.trim() !== (data.user.email || '')) body.email = email.value.trim();
+    if (pass && pass.value) body.password = pass.value;
+    if (name && name.value !== (data.user.displayName || '')) body.displayName = name.value;
+  }
+  const disabled = document.getElementById('uDisabled');
+  const verified = document.getElementById('uVerified');
+  if (disabled && disabled.checked !== !!data.user.disabled) body.disabled = disabled.checked;
+  if (verified && !guest && verified.checked !== !!data.user.emailVerified) body.emailVerified = verified.checked;
+  if (!Object.keys(body).length) {
+    adminUserNotice('No hay cambios en la cuenta.', false);
+    return;
+  }
+  try {
+    await adminApi('/api/admin/users/' + encodeURIComponent(data.user.uid), {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    adminUserNotice('Cuenta actualizada.', true);
+    await adminLoadUsers();
+    await adminSelectUser(data.user.uid);
+  } catch (e) {
+    adminUserNotice(e.message, false);
+  }
+}
+window.adminSaveUserAccount = adminSaveUserAccount;
+
+async function adminApplyVip() {
+  const data = window.__adminSelectedData;
+  if (!data) return;
+  const vip = document.getElementById('uVip') ? document.getElementById('uVip').checked : false;
+  try {
+    const result = await adminApi('/api/admin/users/' + encodeURIComponent(data.user.uid) + '/vip', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ vip: vip })
+    });
+    adminUserNotice(result.message || ('VIP ' + (vip ? 'activado' : 'desactivado') + '.'), true);
+    await adminLoadUsers();
+    await adminSelectUser(data.user.uid);
+  } catch (e) {
+    adminUserNotice(e.message, false);
+  }
+}
+window.adminApplyVip = adminApplyVip;
+
+async function adminSendUserReset() {
+  const data = window.__adminSelectedData;
+  if (!data) return;
+  try {
+    await adminApi('/api/admin/users/' + encodeURIComponent(data.user.uid) + '/send-reset', { method: 'POST' });
+    adminUserNotice('Correo de restablecimiento enviado.', true);
+  } catch (e) {
+    adminUserNotice(e.message, false);
+  }
+}
+window.adminSendUserReset = adminSendUserReset;
+
+async function adminDeleteUser() {
+  const data = window.__adminSelectedData;
+  if (!data) return;
+  if (!confirm('¿Eliminar definitivamente a ' + (data.user.email || data.user.uid) + '? También se borrará su partida.')) return;
+  try {
+    await adminApi('/api/admin/users/' + encodeURIComponent(data.user.uid), { method: 'DELETE' });
+    window.__adminSelectedData = null;
+    window.__adminSelectedUid = null;
+    const detail = document.getElementById('userDetail');
+    if (detail) { detail.innerHTML = ''; detail.classList.add('hidden'); }
+    showNotice('Usuario eliminado.', true);
+    await adminLoadUsers();
+  } catch (e) {
+    adminUserNotice(e.message, false);
+  }
+}
+window.adminDeleteUser = adminDeleteUser;
+
+async function adminApplyUserSave(body, message) {
+  const data = window.__adminSelectedData;
+  if (!data) return;
+  if (!data.save) {
+    adminUserNotice('Este usuario no tiene partida guardada.', false);
+    return;
+  }
+  try {
+    await adminApi('/api/admin/users/' + encodeURIComponent(data.user.uid) + '/save', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    adminUserNotice(message || 'Partida actualizada.', true);
+    await adminSelectUser(data.user.uid);
+  } catch (e) {
+    adminUserNotice(e.message, false);
+  }
+}
+
+function adminAddUserCredits(sign) {
+  const input = document.getElementById('uCredits');
+  const amount = Math.max(1, parseInt(input ? input.value : '0', 10) || 0);
+  adminApplyUserSave({ addCredits: sign * amount }, amount + ' créditos ' + (sign > 0 ? 'añadidos' : 'quitados') + '.');
+}
+window.adminAddUserCredits = adminAddUserCredits;
+
+function adminApplyLevelPoints() {
+  const level = document.getElementById('uLevel');
+  const points = document.getElementById('uPoints');
+  adminApplyUserSave({
+    level: level ? parseInt(level.value, 10) : 1,
+    points: points ? parseInt(points.value, 10) : 0
+  }, 'Nivel y puntos actualizados.');
+}
+window.adminApplyLevelPoints = adminApplyLevelPoints;
+
+function adminGrantUserChest() {
+  const type = document.getElementById('uChestType');
+  const count = document.getElementById('uChestCount');
+  if (!type) return;
+  const chests = {};
+  chests[type.value] = Math.max(1, parseInt(count ? count.value : '1', 10) || 1);
+  adminApplyUserSave({ chests: chests }, 'Cofres añadidos.');
+}
+window.adminGrantUserChest = adminGrantUserChest;
+
+function adminGrantUserShip() {
+  const ship = document.getElementById('uShip');
+  if (!ship) return;
+  adminApplyUserSave({ grantShip: ship.value }, 'Buque añadido.');
+}
+window.adminGrantUserShip = adminGrantUserShip;
+
+function adminGrantUserOfficer() {
+  const officer = document.getElementById('uOfficer');
+  if (!officer) return;
+  adminApplyUserSave({ grantOfficer: officer.value }, 'Oficial añadido.');
+}
+window.adminGrantUserOfficer = adminGrantUserOfficer;
+
+function adminUnlockUserCampaign() {
+  adminApplyUserSave({ unlockCampaign: true }, 'Campaña desbloqueada.');
+}
+window.adminUnlockUserCampaign = adminUnlockUserCampaign;
+
+function adminRepairUserFleet() {
+  adminApplyUserSave({ repair: true }, 'Flota reparada.');
+}
+window.adminRepairUserFleet = adminRepairUserFleet;
 
 document.addEventListener('DOMContentLoaded', function () {
   const saved = load();

@@ -458,6 +458,11 @@ function finishBattle(victory) {
     const sk = state.commander.skills;
     credits = Math.round(credits * (1 + 0.05 * (sk.logistica || 0)));
     xp = Math.round(xp * (1 + 0.03 * (sk.inteligencia || 0)));
+    if (window.GameCloud && window.GameCloud.vip) {
+      credits = Math.round(credits * 1.2);
+      xp = Math.round(xp * 1.1);
+      result.notes.push('Bonus VIP: +20% créditos y +10% XP.');
+    }
 
     state.commander.credits += credits;
     result.credits = credits;

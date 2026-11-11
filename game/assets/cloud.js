@@ -16,7 +16,8 @@ const cloud = {
   fs: null,
   timer: null,
   lastSync: 0,
-  lastError: ''
+  lastError: '',
+  vip: false
 };
 window.GameCloud = cloud;
 
@@ -49,6 +50,11 @@ window.authErrorMessage = authErrorMessage;
 async function applyUser(user, keepState) {
   cloud.uid = user.uid;
   cloud.user = user;
+  cloud.vip = false;
+  try {
+    const token = await user.getIdTokenResult(true);
+    cloud.vip = !!(token.claims && token.claims.vip);
+  } catch (e) { cloud.vip = false; }
   setSaveKey(user.uid, user.isAnonymous);
   cloud.ready = true;
 
@@ -112,6 +118,11 @@ async function initCloud() {
     if (user.isAnonymous) {
       cloud.uid = user.uid;
       cloud.user = user;
+      cloud.vip = false;
+      try {
+        const token = await user.getIdTokenResult(true);
+        cloud.vip = !!(token.claims && token.claims.vip);
+      } catch (e) { cloud.vip = false; }
       setSaveKey(user.uid, true);
       cloud.ready = true;
       setCloudState('online');

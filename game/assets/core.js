@@ -120,7 +120,8 @@ function shipMaxHp(entry) {
 }
 
 function slots() {
-  return clamp(1 + Math.floor(state.commander.level / 3), 1, 4);
+  const vipBonus = (window.GameCloud && window.GameCloud.vip) ? 1 : 0;
+  return clamp(1 + Math.floor(state.commander.level / 3) + vipBonus, 1, 5);
 }
 
 function activeShips() {

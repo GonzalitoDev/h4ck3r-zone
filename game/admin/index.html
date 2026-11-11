@@ -53,6 +53,7 @@
       <div><div class="eyebrow">NEXUS ADMIN</div><h2>Control de la flota</h2></div>
       <div class="head-actions">
         <span id="cloudChip" class="status-chip">NUBE · LOCAL</span>
+        <button class="btn ghost" onclick="adminOpenUsers()">Usuarios</button>
         <button class="btn ghost" onclick="adminOpenDb()">Ver base de datos</button>
         <button class="btn ghost" onclick="adminLogout()">Salir</button>
       </div>
@@ -122,6 +123,19 @@
         </div>
       </article>
     </div>
+
+    <section class="panel users-panel" id="usersPanel">
+      <div class="panel-head">
+        <h3>Usuarios</h3>
+        <div class="quick">
+          <input id="userSearch" placeholder="Buscar email o UID" oninput="adminFilterUsers()"/>
+          <button class="btn small ghost" onclick="adminLoadUsers()">Actualizar</button>
+        </div>
+      </div>
+      <div id="usersStatus" class="db-status">Pulsa «Actualizar» para cargar los usuarios.</div>
+      <div id="usersList" class="users-list"></div>
+      <div id="userDetail" class="user-detail hidden"></div>
+    </section>
 
     <section class="panel db-panel">
       <div class="panel-head">
